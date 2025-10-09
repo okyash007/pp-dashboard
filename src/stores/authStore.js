@@ -7,13 +7,17 @@ export const useAuthStore = create((set, get) => ({
 
   // Initialize auth state
   initialize: async () => {
+    console.log('Initializing auth store...')
     const storedToken = localStorage.getItem('authToken')
+    console.log('Stored token exists:', !!storedToken)
     
     if (storedToken) {
+      console.log('Token found, fetching profile...')
       set({ token: storedToken })
       // Fetch user data from profile API
       await get().fetchUserProfile(storedToken)
     } else {
+      console.log('No token found')
       set({ loading: false })
     }
   },
@@ -34,7 +38,14 @@ export const useAuthStore = create((set, get) => ({
       }
 
       const data = await response.json()
-      set({ user: data.data.creator })
+      console.log('Profile API response:', data)
+      console.log('Response data structure:', data.data)
+      console.log('Available keys in data:', Object.keys(data.data || {}))
+      
+      // Try different possible structures
+      const userData = data.data
+      console.log('Setting user data:', userData)
+      set({ user: userData })
     } catch (error) {
       console.error('Error fetching user profile:', error)
       // If profile fetch fails, clear token and redirect to login

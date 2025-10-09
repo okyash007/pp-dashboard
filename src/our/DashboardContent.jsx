@@ -1,8 +1,12 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { BarChart3, Users, FileText, TrendingUp } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { QRCodeEditor } from '@/components/QRCodeEditor'
+import { useAuthStore } from '@/stores/authStore'
 
 export function DashboardContent() {
+  const { user } = useAuthStore()
+  
   const stats = [
     {
       title: 'Total Views',
@@ -60,6 +64,11 @@ export function DashboardContent() {
             </CardContent>
           </Card>
         ))}
+      </div>
+
+      {/* QR Code Editor Section */}
+      <div>
+        <QRCodeEditor link={`https://link.apextip.space/${user?.username || 'username'}`} />
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">

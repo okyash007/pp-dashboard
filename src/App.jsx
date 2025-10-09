@@ -50,15 +50,15 @@ function App() {
           path="/dashboard" 
           element={
             <ProtectedRoute>
-              <Dashboard />
+              <Analytics />
             </ProtectedRoute>
           } 
         />
         <Route 
-          path="/dashboard/analytics" 
+          path="/dashboard/overview" 
           element={
             <ProtectedRoute>
-              <Analytics />
+              <Dashboard />
             </ProtectedRoute>
           } 
         />
