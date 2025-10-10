@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { 
@@ -8,75 +8,82 @@ import {
   MessageSquare, 
   RefreshCw,
   Download,
-  Filter,
-  Search
+  ChevronLeft,
+  ChevronRight
 } from "lucide-react";
 
-const Tips = () => {
-  // Dummy data for the tips table
-  const dummyTips = [
-    {
-      id: 1,
-      amount: 25.00,
-      currency: "USD",
-      message: "Great content! Keep it up!",
-      visitor_name: "John Doe",
-      visitor_email: "john@example.com",
-      created_at: "2024-01-15T10:30:00Z",
-      payment_gateway: "Razorpay",
-      payment_id: "pay_123456789"
-    },
-    {
-      id: 2,
-      amount: 50.00,
-      currency: "INR",
-      message: "Amazing work!",
-      visitor_name: "Sarah Smith",
-      visitor_email: "sarah@example.com",
-      created_at: "2024-01-14T15:45:00Z",
-      payment_gateway: "Razorpay",
-      payment_id: "pay_987654321"
-    },
-    {
-      id: 3,
-      amount: 15.00,
-      currency: "USD",
-      message: "",
-      visitor_name: "Anonymous",
-      visitor_email: "",
-      created_at: "2024-01-13T09:20:00Z",
-      payment_gateway: "Razorpay",
-      payment_id: "pay_456789123"
-    },
-    {
-      id: 4,
-      amount: 100.00,
-      currency: "INR",
-      message: "Thank you for the inspiration!",
-      visitor_name: "Mike Johnson",
-      visitor_email: "mike@example.com",
-      created_at: "2024-01-12T14:15:00Z",
-      payment_gateway: "Razorpay",
-      payment_id: "pay_789123456"
-    },
-    {
-      id: 5,
-      amount: 30.00,
-      currency: "USD",
-      message: "Love your content!",
-      visitor_name: "Emma Wilson",
-      visitor_email: "emma@example.com",
-      created_at: "2024-01-11T11:30:00Z",
-      payment_gateway: "Razorpay",
-      payment_id: "pay_321654987"
-    }
-  ];
+// API service function
+const fetchTips = async (creatorId, startDate = null, endDate = null, page = 1, limit = 100) => {
+  const baseUrl = "https://pp-backend.apextip.space";
+  let url = `${baseUrl}/tip/${creatorId}?page=${page}&limit=${limit}`;
+  
+  if (startDate) {
+    url += `&start_date=${startDate}`;
+  }
+  if (endDate) {
+    url += `&end_date=${endDate}`;
+  }
+  
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch tips: ${response.statusText}`);
+  }
+  
+  return await response.json();
+};
 
-  const [tips, setTips] = useState(dummyTips);
+const Tips = ({ startDate, endDate }) => {
+  // State management
+  const [tips, setTips] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [pagination, setPagination] = useState({
+    currentPage: 1,
+    totalPages: 1,
+    totalCount: 0,
+    limit: 100,
+    hasNextPage: false,
+    hasPrevPage: false
+  });
+
+  // Creator ID - this should come from auth context or props
+  const creatorId = "568c6a64"; // Replace with actual creator ID from auth
+
+  // Load tips on component mount and when page changes
+  useEffect(() => {
+    loadTips();
+  }, [creatorId, startDate, endDate, pagination.currentPage]);
+
+  const loadTips = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetchTips(
+        creatorId, 
+        convertToUnixTimestamp(startDate), 
+        convertToUnixTimestamp(endDate), 
+        pagination.currentPage, 
+        pagination.limit
+      );
+      
+      if (response.success) {
+        setTips(response.data.tips);
+        setPagination(response.data.pagination);
+      } else {
+        throw new Error(response.message || 'Failed to fetch tips');
+      }
+    } catch (err) {
+      setError(err.message);
+      console.error('Error loading tips:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+    // Handle Unix timestamp (seconds) by converting to milliseconds
+    const date = new Date(parseInt(dateString) * 1000);
+    return date.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
@@ -89,19 +96,40 @@ const Tips = () => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: currency
-    }).format(amount);
+    }).format(parseFloat(amount) / 100);
   };
 
   const handleRefresh = () => {
-    setLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      setLoading(false);
-    }, 1000);
+    loadTips();
   };
 
-  const totalAmount = tips.reduce((sum, tip) => sum + tip.amount, 0);
-  const totalTips = tips.length;
+  const handlePageChange = (newPage) => {
+    setPagination(prev => ({
+      ...prev,
+      currentPage: newPage
+    }));
+  };
+
+  const handlePreviousPage = () => {
+    if (pagination.hasPrevPage) {
+      handlePageChange(pagination.currentPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (pagination.hasNextPage) {
+      handlePageChange(pagination.currentPage + 1);
+    }
+  };
+
+
+  const convertToUnixTimestamp = (dateString) => {
+    if (!dateString) return null;
+    return Math.floor(new Date(dateString).getTime() / 1000);
+  };
+
+  const totalAmount = tips.reduce((sum, tip) => sum + parseFloat(tip.amount) / 100, 0);
+  const totalTips = pagination.totalCount;
 
   return (
     <div className="space-y-6">
@@ -113,10 +141,6 @@ const Tips = () => {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm">
-            <Filter className="h-4 w-4 mr-2" />
-            Filter
-          </Button>
           <Button variant="outline" size="sm">
             <Download className="h-4 w-4 mr-2" />
             Export
@@ -133,59 +157,25 @@ const Tips = () => {
         </div>
       </div>
 
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="bg-gradient-to-br from-green-100 to-green-200 dark:from-green-900/30 dark:to-green-800/30 border-2 border-gray-800">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              Total Tips
-            </CardTitle>
-            <DollarSign className="h-4 w-4 text-gray-600 dark:text-gray-400" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-gray-900 dark:text-white">
-              {totalTips}
+      {/* Error Display */}
+      {error && (
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+          <div className="flex items-center">
+            <div className="text-red-800 dark:text-red-200">
+              <strong>Error:</strong> {error}
             </div>
-            <p className="text-xs text-gray-600 dark:text-gray-400">
-              All time received tips
-            </p>
-          </CardContent>
-        </Card>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={loadTips}
+              className="ml-auto"
+            >
+              Retry
+            </Button>
+          </div>
+        </div>
+      )}
 
-        <Card className="bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900/30 dark:to-blue-800/30 border-2 border-gray-800">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              Total Amount
-            </CardTitle>
-            <DollarSign className="h-4 w-4 text-gray-600 dark:text-gray-400" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-gray-900 dark:text-white">
-              ${totalAmount.toFixed(2)}
-            </div>
-            <p className="text-xs text-gray-600 dark:text-gray-400">
-              Combined value of all tips
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-gradient-to-br from-purple-100 to-purple-200 dark:from-purple-900/30 dark:to-purple-800/30 border-2 border-gray-800">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              Average Tip
-            </CardTitle>
-            <DollarSign className="h-4 w-4 text-gray-600 dark:text-gray-400" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-gray-900 dark:text-white">
-              ${(totalAmount / totalTips).toFixed(2)}
-            </div>
-            <p className="text-xs text-gray-600 dark:text-gray-400">
-              Per tip average
-            </p>
-          </CardContent>
-        </Card>
-      </div>
 
       {/* Tips Table */}
       <Card className="border-2 border-gray-800">
@@ -196,29 +186,44 @@ const Tips = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-gray-200 dark:border-gray-700">
-                  <th className="text-left py-3 px-4 font-semibold text-gray-900 dark:text-white">
-                    Amount
-                  </th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-900 dark:text-white">
-                    From
-                  </th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-900 dark:text-white">
-                    Message
-                  </th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-900 dark:text-white">
-                    Date
-                  </th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-900 dark:text-white">
-                    Payment ID
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {tips.map((tip) => (
+          {loading ? (
+            <div className="space-y-4">
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="animate-pulse">
+                  <div className="flex space-x-4">
+                    <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-20"></div>
+                    <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-32"></div>
+                    <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-24"></div>
+                    <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-28"></div>
+                    <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-36"></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-gray-200 dark:border-gray-700">
+                    <th className="text-left py-3 px-4 font-semibold text-gray-900 dark:text-white">
+                      Amount
+                    </th>
+                    <th className="text-left py-3 px-4 font-semibold text-gray-900 dark:text-white">
+                      From
+                    </th>
+                    <th className="text-left py-3 px-4 font-semibold text-gray-900 dark:text-white">
+                      Message
+                    </th>
+                    <th className="text-left py-3 px-4 font-semibold text-gray-900 dark:text-white">
+                      Date
+                    </th>
+                    <th className="text-left py-3 px-4 font-semibold text-gray-900 dark:text-white">
+                      Payment ID
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {tips.map((tip) => (
                   <tr 
                     key={tip.id} 
                     className="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
@@ -271,12 +276,13 @@ const Tips = () => {
                       </span>
                     </td>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
           
-          {tips.length === 0 && (
+          {!loading && tips.length === 0 && (
             <div className="text-center py-12">
               <MessageSquare className="h-12 w-12 text-gray-400 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
@@ -289,6 +295,69 @@ const Tips = () => {
           )}
         </CardContent>
       </Card>
+
+      {/* Pagination */}
+      {!loading && pagination.totalPages > 1 && (
+        <Card className="border-2 border-gray-800">
+          <CardContent className="py-4">
+            <div className="flex items-center justify-between">
+              <div className="text-sm text-gray-600 dark:text-gray-400">
+                Showing {((pagination.currentPage - 1) * pagination.limit) + 1} to {Math.min(pagination.currentPage * pagination.limit, pagination.totalCount)} of {pagination.totalCount} tips
+              </div>
+              
+              <div className="flex items-center space-x-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handlePreviousPage}
+                  disabled={!pagination.hasPrevPage || loading}
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                  Previous
+                </Button>
+                
+                <div className="flex items-center space-x-1">
+                  {Array.from({ length: Math.min(5, pagination.totalPages) }, (_, i) => {
+                    let pageNum;
+                    if (pagination.totalPages <= 5) {
+                      pageNum = i + 1;
+                    } else if (pagination.currentPage <= 3) {
+                      pageNum = i + 1;
+                    } else if (pagination.currentPage >= pagination.totalPages - 2) {
+                      pageNum = pagination.totalPages - 4 + i;
+                    } else {
+                      pageNum = pagination.currentPage - 2 + i;
+                    }
+                    
+                    return (
+                      <Button
+                        key={pageNum}
+                        variant={pageNum === pagination.currentPage ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => handlePageChange(pageNum)}
+                        disabled={loading}
+                        className="w-8 h-8 p-0"
+                      >
+                        {pageNum}
+                      </Button>
+                    );
+                  })}
+                </div>
+                
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleNextPage}
+                  disabled={!pagination.hasNextPage || loading}
+                >
+                  Next
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 };

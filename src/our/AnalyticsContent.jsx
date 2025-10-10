@@ -136,7 +136,7 @@ export function AnalyticsContent() {
       </div>
 
       <AnalyticsUi data={analyticsData} />
-      <Tips />
+      <Tips startDate={dateRange.from} endDate={dateRange.to} />
     </div>
   );
 }

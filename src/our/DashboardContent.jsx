@@ -46,37 +46,13 @@ export function DashboardContent() {
                 </div>
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-2xl">
+            <DialogContent className="!w-[95vw] !h-[95vh] !max-w-none">
               <DialogHeader>
                 <DialogTitle>Live Page Configuration</DialogTitle>
                 <DialogDescription>
                   Customize your live page appearance and settings
                 </DialogDescription>
               </DialogHeader>
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label>Page Title</Label>
-                  <input 
-                    type="text" 
-                    placeholder="Enter page title"
-                    className="w-full px-3 py-2 border rounded-md"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Description</Label>
-                  <textarea 
-                    placeholder="Enter page description"
-                    className="w-full px-3 py-2 border rounded-md h-20"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Background Color</Label>
-                  <ColorPicker
-                    value="#3734eb"
-                    onChange={(color) => console.log(color)}
-                  />
-                </div>
-              </div>
             </DialogContent>
           </Dialog>
 
@@ -96,43 +72,13 @@ export function DashboardContent() {
                 </div>
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-2xl">
+            <DialogContent className="!w-[95vw] !h-[95vh] !max-w-none">
               <DialogHeader>
                 <DialogTitle>Overlay Configuration</DialogTitle>
                 <DialogDescription>
                   Configure overlay settings and appearance
                 </DialogDescription>
               </DialogHeader>
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label>Overlay Position</Label>
-                  <select className="w-full px-3 py-2 border rounded-md">
-                    <option value="top-left">Top Left</option>
-                    <option value="top-right">Top Right</option>
-                    <option value="bottom-left">Bottom Left</option>
-                    <option value="bottom-right">Bottom Right</option>
-                    <option value="center">Center</option>
-                  </select>
-                </div>
-                <div className="space-y-2">
-                  <Label>Overlay Opacity</Label>
-                  <input 
-                    type="range" 
-                    min="0" 
-                    max="100" 
-                    defaultValue="80"
-                    className="w-full"
-                  />
-                  <div className="text-xs text-gray-500">80%</div>
-                </div>
-                <div className="space-y-2">
-                  <Label>Overlay Color</Label>
-                  <ColorPicker
-                    value="#3734eb"
-                    onChange={(color) => console.log(color)}
-                  />
-                </div>
-              </div>
             </DialogContent>
           </Dialog>
         </div>
