@@ -68,42 +68,62 @@ export function DashboardLayout({ children }) {
   const { user, logout, loading } = useAuthStore();
   const location = useLocation();
 
-  console.log("DashboardLayout - user:", user);
-  console.log("DashboardLayout - loading:", loading);
-
   return (
     <SidebarProvider>
       <div className="flex min-h-screen w-full">
-        <Sidebar>
-          <SidebarHeader>
+        <Sidebar className="bg-blue-50 border-r-2 border-black">
+          <SidebarHeader className="p-4 border-b-2 border-black bg-gradient-to-r from-blue-400 to-purple-400">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                <Home className="w-4 h-4 text-primary-foreground" />
+              <div className="w-8 h-8 bg-orange-400 rounded-lg flex items-center justify-center border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,0.6)]">
+                <Home className="w-4 h-4 text-black" />
               </div>
               <div className="flex flex-col">
-                <span className="text-sm font-semibold">PP Dashboard</span>
-                <span className="text-xs text-muted-foreground">
+                <span className="text-sm font-bold text-black">
+                  PP Dashboard
+                </span>
+                <span className="text-xs text-black font-semibold">
                   Creator Portal
                 </span>
               </div>
             </div>
           </SidebarHeader>
 
-          <SidebarContent>
+          <SidebarContent className="p-3">
             <SidebarGroup>
-              <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+              <SidebarGroupLabel className="text-sm font-medium text-muted-foreground px-3 py-2 mb-3">
+                Navigation
+              </SidebarGroupLabel>
               <SidebarGroupContent>
-                <SidebarMenu>
-                  {menuItems.map((item) => {
+                <SidebarMenu className="space-y-2">
+                  {menuItems.map((item, index) => {
                     const isActive = location.pathname === item.url;
+                    const colors = [
+                      {
+                        bg: "bg-pink-200",
+                        hover: "hover:bg-pink-300",
+                        active: "bg-pink-300",
+                      },
+                      {
+                        bg: "bg-green-200",
+                        hover: "hover:bg-green-300",
+                        active: "bg-green-300",
+                      },
+                      {
+                        bg: "bg-purple-200",
+                        hover: "hover:bg-purple-300",
+                        active: "bg-purple-300",
+                      },
+                    ];
+                    const colorScheme = colors[index % colors.length];
+
                     return (
                       <SidebarMenuItem key={item.title}>
                         <Link
                           to={item.url}
-                          className={`flex items-center gap-2 w-full px-3 py-2 rounded-lg transition-colors ${
+                          className={`flex items-center gap-2 w-full px-3 py-2 rounded-lg transition-all duration-150 ${
                             isActive
-                              ? "bg-primary text-primary-foreground hover:bg-primary/90 font-semibold"
-                              : "hover:bg-muted/50 text-foreground hover:text-foreground"
+                              ? `font-bold text-black border-2 border-black ${colorScheme.active}`
+                              : `text-foreground hover:font-bold hover:text-black border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,0.6)] hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,0.6)] hover:translate-x-0.5 hover:translate-y-0.5 active:translate-x-1 active:translate-y-1 active:shadow-none ${colorScheme.bg} ${colorScheme.hover}`
                           }`}
                         >
                           <item.icon className="w-4 h-4" />
@@ -117,31 +137,38 @@ export function DashboardLayout({ children }) {
             </SidebarGroup>
 
             {/* Live Link Card */}
-            <SidebarGroup>
+            <SidebarGroup className="mt-6">
               <SidebarGroupContent>
-                <Card className="p-3 flex flex-col gap-1">
+                <Card className="p-3 flex flex-col gap-2 bg-orange-200 border-2 border-black rounded-xl shadow-[3px_3px_0px_0px_rgba(0,0,0,0.6)]">
                   <div className="flex items-center gap-2">
-                    <ExternalLink className="w-4 h-4" />
-                    <span className="text-xs font-medium">Live link</span>
+                    <ExternalLink className="w-4 h-4 text-black" />
+                    <span className="text-xs font-bold text-black">
+                      Live link
+                    </span>
                   </div>
-                  <p className="text-xs text-muted-foreground hover:underline cursor-pointer truncate">
+                  <a
+                    href={`https://link.apextip.space/${user?.username}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs text-black hover:underline cursor-pointer truncate font-semibold bg-white px-2 py-1 rounded-lg border border-black block"
+                  >
                     {`https://link.apextip.space/${user?.username}`}
-                  </p>
+                  </a>
                 </Card>
               </SidebarGroupContent>
             </SidebarGroup>
           </SidebarContent>
 
-          <SidebarFooter>
+          <SidebarFooter className="p-3">
             <div>
               {/* User Profile Dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="ghost"
-                    className="w-full bg-white justify-start gap-3 p-3 h-auto hover:bg-muted"
+                    className="w-full bg-red-400 hover:bg-red-500 justify-start gap-3 p-3 h-auto border-2 border-black rounded-xl shadow-[2px_2px_0px_0px_rgba(0,0,0,0.6)] hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,0.6)] transition-all duration-150 hover:translate-x-0.5 hover:translate-y-0.5 active:translate-x-1 active:translate-y-1 active:shadow-none"
                   >
-                    <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center overflow-hidden flex-shrink-0">
+                    <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center overflow-hidden flex-shrink-0 border-2 border-black shadow-[1px_1px_0px_0px_rgba(0,0,0,0.6)]">
                       {user?.image?.src ? (
                         <img
                           src={user.image.src}
@@ -149,86 +176,78 @@ export function DashboardLayout({ children }) {
                           className="w-full h-full object-cover"
                         />
                       ) : (
-                        <User className="w-4 h-4 text-muted-foreground" />
+                        <User className="w-4 h-4 text-black" />
                       )}
                     </div>
                     <div className="flex flex-col items-start text-left flex-1 min-w-0 overflow-hidden">
-                      <span className="text-sm font-medium text-foreground truncate w-full">
+                      <span className="text-sm font-bold text-black truncate w-full">
                         {user?.firstName && user?.lastName
                           ? `${user.firstName} ${user.lastName}`
                           : user?.username || "User"}
                       </span>
-                      <span className="text-xs text-muted-foreground truncate w-full">
+                      <span className="text-xs text-black truncate w-full font-semibold">
                         {user?.email}
                       </span>
                     </div>
-                    <ChevronsUpDown className="w-4 h-4 text-muted-foreground" />
+                    <ChevronsUpDown className="w-4 h-4 text-black" />
                   </Button>
                 </DropdownMenuTrigger>
 
                 <DropdownMenuContent
-                  className="w-56 ml-2 mb-2"
+                  className="w-56 bg-yellow-100 border-2 border-black rounded-xl shadow-[3px_3px_0px_0px_rgba(0,0,0,0.6)] p-3 space-y-2"
                   align="start"
                   side="top"
                 >
                   {/* User Info Header */}
-                  <DropdownMenuLabel className="p-0">
-                    <div className="flex items-center gap-3 p-2">
-                      <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center overflow-hidden">
-                        {user?.image?.src ? (
-                          <img
-                            src={user.image.src}
-                            alt={user?.username || "User"}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <User className="w-4 h-4 text-muted-foreground" />
-                        )}
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="text-sm font-medium">
-                          {user?.firstName && user?.lastName
-                            ? `${user.firstName} ${user.lastName}`
-                            : user?.username || "User"}
-                        </span>
-                        <span className="text-xs text-muted-foreground">
-                          {user?.email}
-                        </span>
-                      </div>
+                  <div className="flex items-center gap-3 p-3 bg-blue-200 rounded-lg border border-black shadow-[1px_1px_0px_0px_rgba(0,0,0,0.6)]">
+                    <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center overflow-hidden flex-shrink-0 border-2 border-black shadow-[1px_1px_0px_0px_rgba(0,0,0,0.6)]">
+                      {user?.image?.src ? (
+                        <img
+                          src={user.image.src}
+                          alt={user?.username || "User"}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <User className="w-4 h-4 text-black" />
+                      )}
                     </div>
-                  </DropdownMenuLabel>
-
-                  <DropdownMenuSeparator />
+                    <div className="flex flex-col items-start text-left flex-1 min-w-0 overflow-hidden">
+                      <span className="text-sm font-bold text-black truncate w-full">
+                        {user?.firstName && user?.lastName
+                          ? `${user.firstName} ${user.lastName}`
+                          : user?.username || "User"}
+                      </span>
+                      <span className="text-xs text-black truncate w-full font-semibold">
+                        {user?.email}
+                      </span>
+                    </div>
+                  </div>
 
                   {/* Upgrade Section */}
-                  <DropdownMenuItem className="gap-2">
+                  <DropdownMenuItem className="gap-2 bg-green-200 hover:bg-green-300 rounded-lg font-bold text-black border border-black shadow-[1px_1px_0px_0px_rgba(0,0,0,0.6)] p-3">
                     <Star className="w-4 h-4" />
                     <span>Upgrade to Pro</span>
                   </DropdownMenuItem>
 
-                  <DropdownMenuSeparator />
-
                   {/* Account Management */}
-                  <DropdownMenuItem className="gap-2">
+                  <DropdownMenuItem className="gap-2 bg-purple-200 hover:bg-purple-300 rounded-lg font-bold text-black border border-black shadow-[1px_1px_0px_0px_rgba(0,0,0,0.6)] p-3">
                     <Check className="w-4 h-4" />
                     <span>Account</span>
                   </DropdownMenuItem>
 
-                  <DropdownMenuItem className="gap-2">
+                  <DropdownMenuItem className="gap-2 bg-pink-200 hover:bg-pink-300 rounded-lg font-bold text-black border border-black shadow-[1px_1px_0px_0px_rgba(0,0,0,0.6)] p-3">
                     <CreditCard className="w-4 h-4" />
                     <span>Billing</span>
                   </DropdownMenuItem>
 
-                  <DropdownMenuItem className="gap-2">
+                  <DropdownMenuItem className="gap-2 bg-orange-200 hover:bg-orange-300 rounded-lg font-bold text-black border border-black shadow-[1px_1px_0px_0px_rgba(0,0,0,0.6)] p-3">
                     <Bell className="w-4 h-4" />
                     <span>Notifications</span>
                   </DropdownMenuItem>
 
-                  <DropdownMenuSeparator />
-
                   {/* Logout */}
                   <DropdownMenuItem
-                    className="gap-2 text-destructive focus:text-destructive"
+                    className="gap-2 bg-red-200 hover:bg-red-300 rounded-lg font-bold text-black border border-black shadow-[1px_1px_0px_0px_rgba(0,0,0,0.6)] p-3"
                     onClick={logout}
                   >
                     <LogOut className="w-4 h-4" />

@@ -25,10 +25,14 @@ export function QRCodeEditor({ link }) {
 
   return (
     <div className="w-[256px]">
-      <canvas ref={canvasRef} className="border border-gray-300 rounded-lg shadow-md" />
-      <div className="mt-2">
-        <Button className="w-full">
-          <Download className="w-4 h-4 mr-2" />
+      <canvas ref={canvasRef} className="border-2 border-black rounded-xl shadow-[2px_2px_0px_0px_rgba(0,0,0,0.6)] mx-auto bg-white" />
+      <div className="mt-3">
+        <Button 
+          variant="outline" 
+          size="sm" 
+          className="w-full h-10 justify-start text-left text-sm bg-blue-400 hover:bg-blue-500 text-black border-2 border-black rounded-xl shadow-[2px_2px_0px_0px_rgba(0,0,0,0.6)] hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,0.6)] transition-all duration-150 transform hover:translate-x-0.5 hover:translate-y-0.5 active:translate-x-1 active:translate-y-1 active:shadow-none"
+        >
+          <Download className="w-4 h-4" />
           Download QR Code
         </Button>
       </div>
