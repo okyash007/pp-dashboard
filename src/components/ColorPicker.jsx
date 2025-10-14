@@ -35,7 +35,7 @@ const ColorPicker = ({ value, onChange }) => {
           >
             <div className="space-y-3">
               <HexColorPicker 
-                value={value} 
+                color={value} 
                 onChange={onChange} 
                 className="rounded-lg border border-black shadow-[1px_1px_0px_0px_rgba(0,0,0,0.6)]"
               />

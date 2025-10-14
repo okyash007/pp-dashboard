@@ -138,7 +138,7 @@ export function DashboardLayout({ children }) {
 
             {/* Live Link Card */}
             <SidebarGroup className="mt-6">
-              <SidebarGroupContent>
+              <SidebarGroupContent className="space-y-3">
                 <Card className="p-3 flex flex-col gap-2 bg-orange-200 border-2 border-black rounded-xl shadow-[3px_3px_0px_0px_rgba(0,0,0,0.6)]">
                   <div className="flex items-center gap-2">
                     <ExternalLink className="w-4 h-4 text-black" />
@@ -147,12 +147,28 @@ export function DashboardLayout({ children }) {
                     </span>
                   </div>
                   <a
-                    href={`https://link.apextip.space/${user?.username}`}
+                    href={`https://link.apextip.space/vt/${user?.username}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-xs text-black hover:underline cursor-pointer truncate font-semibold bg-white px-2 py-1 rounded-lg border border-black block"
                   >
                     {`https://link.apextip.space/${user?.username}`}
+                  </a>
+                </Card>
+                <Card className="p-3 flex flex-col gap-2 bg-orange-200 border-2 border-black rounded-xl shadow-[3px_3px_0px_0px_rgba(0,0,0,0.6)]">
+                  <div className="flex items-center gap-2">
+                    <ExternalLink className="w-4 h-4 text-black" />
+                    <span className="text-xs font-bold text-black">
+                      Overlay link
+                    </span>
+                  </div>
+                  <a
+                    href={`https://link.apextip.space/vo/${user?.username}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs text-black hover:underline cursor-pointer truncate font-semibold bg-white px-2 py-1 rounded-lg border border-black block"
+                  >
+                    {`https://link.apextip.space/overlay/${user?.username}`}
                   </a>
                 </Card>
               </SidebarGroupContent>
