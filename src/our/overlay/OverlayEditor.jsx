@@ -202,7 +202,7 @@ const OverlayEditor = ({ config, setConfig }) => {
                       Primary color
                     </Label>
                     <ColorPicker
-                      value={config.overlay.data.primary_color}
+                      value={config.overlay.data?.primary_color}
                       onChange={(color) => {
                         setConfig((prev) => ({
                           ...prev,
@@ -222,7 +222,7 @@ const OverlayEditor = ({ config, setConfig }) => {
                       Secondary color
                     </Label>
                     <ColorPicker
-                      value={config.overlay.data.secondary_color}
+                      value={config.overlay.data?.secondary_color}
                       onChange={(color) => {
                         setConfig((prev) => ({
                           ...prev,
@@ -242,7 +242,7 @@ const OverlayEditor = ({ config, setConfig }) => {
                       Text color
                     </Label>
                     <ColorPicker
-                      value={config.overlay.data.text_color}
+                      value={config.overlay.data?.text_color}
                       onChange={(color) => {
                         setConfig((prev) => ({
                           ...prev,
