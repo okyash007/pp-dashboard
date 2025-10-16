@@ -12,6 +12,7 @@ import { TrendingUp, AlertTriangle } from "lucide-react";
 import LiquidRenderer from "../LiquidRenderer";
 import { Slider } from "@/components/ui/slider";
 import ColorPicker from "@/components/ColorPicker";
+import ImageUpload from "@/components/ImageUpload";
 import { Label } from "@/components/ui/label";
 
 const OverlayEditor = ({ config, setConfig }) => {
@@ -29,7 +30,7 @@ const OverlayEditor = ({ config, setConfig }) => {
       display_time: 20000,
       className: "animate-in slide-in-from-right-5 duration-500",
       template: `
-        <div class="p-3 rounded-lg space-y-2 relative bg-cover bg-center bg-no-repeat" style="background-color: {{ data.primary_color | default: '#8b5cf6' }}; background-image: url('{{ data.background_image }}');">
+        <div class="p-3 rounded-lg space-y-2 relative bg-cover bg-center bg-no-repeat" style="background-color: {{ data.primary_color | default: '#8b5cf6' }}; {% if data.background_image %}background-image: url('{{ data.background_image }}');{% endif %}">
           <div class="flex items-center">
           <div>
           <img src="https://res.cloudinary.com/dspp405ug/image/upload/v1760471365/cool_zdwwcs.svg" class="w-12 h-12 rounded-full" />
@@ -249,6 +250,26 @@ const OverlayEditor = ({ config, setConfig }) => {
                           overlay: {
                             ...prev.overlay,
                             data: { ...prev.overlay.data, text_color: color },
+                          },
+                        }));
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-xs font-bold text-gray-500">
+                      Background Image
+                    </Label>
+                    <ImageUpload
+                      value={config.overlay.data?.background_image}
+                      onChange={(imageUrl) => {
+                        setConfig((prev) => ({
+                          ...prev,
+                          overlay: {
+                            ...prev.overlay,
+                            data: { 
+                              ...prev.overlay.data, 
+                              background_image: imageUrl 
+                            },
                           },
                         }));
                       }}
