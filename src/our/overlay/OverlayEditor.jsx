@@ -255,6 +255,26 @@ const OverlayEditor = ({ config, setConfig }) => {
                       }}
                     />
                   </div>
+                  <div>
+                    <Label className="text-xs font-bold text-gray-500">
+                      Background Image
+                    </Label>
+                    <ImageUpload
+                      value={config.overlay.data?.background_image}
+                      onChange={(imageUrl) => {
+                        setConfig((prev) => ({
+                          ...prev,
+                          overlay: {
+                            ...prev.overlay,
+                            data: { 
+                              ...prev.overlay.data, 
+                              background_image: imageUrl 
+                            },
+                          },
+                        }));
+                      }}
+                    />
+                  </div>
                 </div>
               </>
             )}
