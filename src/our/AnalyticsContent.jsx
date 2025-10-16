@@ -10,6 +10,7 @@ import { CalendarIcon } from "lucide-react";
 import { useAuthStore } from "@/stores/authStore";
 import AnalyticsUi from "./AnalyticsUi";
 import Tips from "./Tips";
+import { QRCodeEditor } from "@/components/QRCodeEditor";
 
 // Utility function to convert Unix timestamp to readable date string
 const unixToReadableDate = (unixTimestamp) => {
@@ -136,6 +137,16 @@ export function AnalyticsContent() {
       </div>
 
       <AnalyticsUi data={analyticsData} />
+      
+      {/* QR Code Section */}
+      <div className="flex justify-center">
+        <QRCodeEditor
+          link={`https://link.apextip.space/${
+            user?.username || "username"
+          }`}
+        />
+      </div>
+      
       <Tips startDate={dateRange.from} endDate={dateRange.to} />
     </div>
   );

@@ -19,6 +19,15 @@ export function QRCodeEditor({ link }) {
     }
   }, [link]);
 
+  const handleDownload = () => {
+    if (canvasRef.current) {
+      const link = document.createElement('a');
+      link.download = 'qr-code.png';
+      link.href = canvasRef.current.toDataURL();
+      link.click();
+    }
+  };
+
   if (!link) {
     return <div>No link provided</div>;
   }
@@ -31,6 +40,7 @@ export function QRCodeEditor({ link }) {
           variant="outline" 
           size="sm" 
           className="w-full h-10 justify-start text-left text-sm bg-blue-400 hover:bg-blue-500 text-black border-2 border-black rounded-xl shadow-[2px_2px_0px_0px_rgba(0,0,0,0.6)] hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,0.6)] transition-all duration-150 transform hover:translate-x-0.5 hover:translate-y-0.5 active:translate-x-1 active:translate-y-1 active:shadow-none"
+          onClick={handleDownload}
         >
           <Download className="w-4 h-4" />
           Download QR Code
