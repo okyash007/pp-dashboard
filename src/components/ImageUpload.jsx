@@ -17,6 +17,24 @@ const ImageUpload = ({ value, onChange, className = "" }) => {
   const [preview, setPreview] = useState(value || null);
   const fileInputRef = useRef(null);
 
+  // Helper function to get auth token
+  const getAuthToken = () => {
+    // Try to get from localStorage first
+    const localToken = localStorage.getItem('authToken');
+    if (localToken) return localToken;
+    
+    // Try to get from auth store if available
+    try {
+      const authStore = JSON.parse(localStorage.getItem('authStore') || '{}');
+      return authStore.token || authStore.accessToken;
+    } catch (e) {
+      console.warn('Could not parse auth store:', e);
+    }
+    
+    // If no token found, throw an error
+    throw new Error('No authentication token found. Please log in again.');
+  };
+
   // Log when value changes
   useEffect(() => {
     if (value) {
@@ -24,18 +42,19 @@ const ImageUpload = ({ value, onChange, className = "" }) => {
     }
   }, [value]);
 
-  const handleFileSelect = (file) => {
+  const handleFileSelect = async (file) => {
     if (!file) return;
 
-    // Validate file type
-    if (!file.type.startsWith('image/')) {
-      setError('Please select a valid image file');
+    // Validate file type - support common image formats
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml'];
+    if (!allowedTypes.includes(file.type)) {
+      setError('Please select a valid image file (JPEG, PNG, GIF, WebP, or SVG)');
       return;
     }
 
-    // Validate file size (5MB max)
-    if (file.size > 5 * 1024 * 1024) {
-      setError('Image size must be less than 5MB');
+    // Validate file size (10MB max for better compatibility)
+    if (file.size > 10 * 1024 * 1024) {
+      setError('Image size must be less than 10MB');
       return;
     }
 
@@ -46,14 +65,80 @@ const ImageUpload = ({ value, onChange, className = "" }) => {
     const previewUrl = URL.createObjectURL(file);
     setPreview(previewUrl);
 
-    // Simulate upload (replace with actual upload logic)
-    setTimeout(() => {
-      // For now, we'll use the preview URL as the final URL
-      // In production, upload to cloud storage and get the actual URL
-      console.log('Image uploaded successfully:', previewUrl);
-      onChange(previewUrl);
+    try {
+      // Create FormData for the API
+      const formData = new FormData();
+      formData.append('image', file);
+
+      // Get auth token
+      const token = getAuthToken();
+
+      // Make API call
+      const response = await fetch('https://pp-backend.apextip.space/upload/image', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'accept': 'application/json',
+        },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        let errorMessage = `Upload failed with status: ${response.status}`;
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.message || errorData.error || errorMessage;
+        } catch (e) {
+          // If response is not JSON, use status text
+          errorMessage = response.statusText || errorMessage;
+        }
+        throw new Error(errorMessage);
+      }
+
+      const result = await response.json();
+      console.log('Image uploaded successfully:', result);
+
+      // Use the uploaded image URL from the API response
+      // Try different possible response formats
+      const uploadedImageUrl = result.url || 
+                              result.imageUrl || 
+                              result.data?.url || 
+                              result.data?.imageUrl ||
+                              result.image?.url ||
+                              result.image?.secure_url;
+      
+      if (uploadedImageUrl) {
+        // Clean up the preview URL
+        URL.revokeObjectURL(previewUrl);
+        setPreview(uploadedImageUrl);
+        onChange(uploadedImageUrl);
+      } else {
+        throw new Error('No image URL returned from server');
+      }
+
+    } catch (error) {
+      console.error('Upload error:', error);
+      
+      // Handle specific error types
+      if (error.message.includes('authentication token')) {
+        setError('Authentication required. Please log in again.');
+      } else if (error.message.includes('status: 401')) {
+        setError('Authentication failed. Please log in again.');
+      } else if (error.message.includes('status: 413')) {
+        setError('File too large. Please choose a smaller image.');
+      } else if (error.message.includes('status: 415')) {
+        setError('Unsupported file type. Please choose a valid image.');
+      } else {
+        setError(error.message || 'Failed to upload image. Please try again.');
+      }
+      
+      // Clean up preview on error
+      URL.revokeObjectURL(previewUrl);
+      setPreview(null);
+      onChange(null);
+    } finally {
       setIsUploading(false);
-    }, 1500);
+    }
   };
 
   const handleDragOver = (e) => {
@@ -179,7 +264,7 @@ const ImageUpload = ({ value, onChange, className = "" }) => {
                 {isDragging ? 'Drop image here' : 'Click to upload or drag & drop'}
               </p>
               <p className="text-xs text-gray-500 mt-1">
-                PNG, JPG, GIF up to 5MB
+                PNG, JPG, GIF, WebP, SVG up to 10MB
               </p>
             </div>
           </div>
