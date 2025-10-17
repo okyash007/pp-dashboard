@@ -43,6 +43,7 @@ import {
   Check,
   ChevronsUpDown,
   ExternalLink,
+  UserCircle,
 } from "lucide-react";
 import { useAuthStore } from "@/stores/authStore";
 
@@ -61,6 +62,11 @@ const menuItems = [
     title: "Rules",
     icon: Settings,
     url: "/dashboard/rules",
+  },
+  {
+    title: "Profile",
+    icon: UserCircle,
+    url: "/dashboard/profile",
   },
 ];
 
@@ -112,6 +118,11 @@ export function DashboardLayout({ children }) {
                         bg: "bg-purple-200",
                         hover: "hover:bg-purple-300",
                         active: "bg-purple-300",
+                      },
+                      {
+                        bg: "bg-blue-200",
+                        hover: "hover:bg-blue-300",
+                        active: "bg-blue-300",
                       },
                     ];
                     const colorScheme = colors[index % colors.length];
