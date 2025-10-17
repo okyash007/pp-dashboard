@@ -7,6 +7,7 @@ import { DashboardLayout } from './our/DashboardLayout'
 import { DashboardContent } from './our/DashboardContent'
 import { AnalyticsContent } from './our/AnalyticsContent'
 import { RulesContent } from './our/RulesContent'
+import { ProfileContent } from './our/ProfileContent'
 import { useAuthStore } from './stores/authStore'
 
 function Dashboard() {
@@ -29,6 +30,14 @@ function Rules() {
   return (
     <DashboardLayout>
       <RulesContent />
+    </DashboardLayout>
+  )
+}
+
+function Profile() {
+  return (
+    <DashboardLayout>
+      <ProfileContent />
     </DashboardLayout>
   )
 }
@@ -67,6 +76,14 @@ function App() {
           element={
             <ProtectedRoute>
               <Rules />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/dashboard/profile" 
+          element={
+            <ProtectedRoute>
+              <Profile />
             </ProtectedRoute>
           } 
         />
