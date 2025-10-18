@@ -44,6 +44,7 @@ import {
   ChevronsUpDown,
   ExternalLink,
   UserCircle,
+  TreePine,
 } from "lucide-react";
 import { useAuthStore } from "@/stores/authStore";
 
@@ -67,6 +68,11 @@ const menuItems = [
     title: "Profile",
     icon: UserCircle,
     url: "/dashboard/profile",
+  },
+  {
+    title: "Potato Tree",
+    icon: TreePine,
+    url: "/dashboard/potato-tree",
   },
 ];
 
@@ -286,8 +292,8 @@ export function DashboardLayout({ children }) {
           </SidebarFooter>
         </Sidebar>
 
-        <main className="flex-1 flex flex-col sticky top-0">
-          <header className="flex items-center gap-2 p-4 border-b sticky top-0 bg-white z-10">
+        <main className="flex-1 flex flex-col sticky top-0 border-l border-black">
+          <header className="flex items-center gap-2 p-4 border-b-2 border-black sticky top-0 bg-white z-10">
             <SidebarTrigger className="bg-blue-200 mr-2 p-4 hover:bg-blue-300 border-2 border-black rounded-lg shadow-[2px_2px_0px_0px_rgba(0,0,0,0.6)] hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,0.6)] transition-all duration-150 hover:translate-x-0.5 hover:translate-y-0.5 active:translate-x-1 active:translate-y-1 active:shadow-none text-black hover:text-black font-bold" />
             <h1 className="text-lg font-semibold">
               {menuItems.find((item) => item.url === location.pathname)

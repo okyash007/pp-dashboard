@@ -8,6 +8,7 @@ import { DashboardContent } from './our/DashboardContent'
 import { AnalyticsContent } from './our/AnalyticsContent'
 import { RulesContent } from './our/RulesContent'
 import { ProfileContent } from './our/ProfileContent'
+import { PotatoTreeContent } from './our/PotatoTreeContent'
 import { useAuthStore } from './stores/authStore'
 import { Toaster } from './components/ui/sonner'
 
@@ -39,6 +40,14 @@ function Profile() {
   return (
     <DashboardLayout>
       <ProfileContent />
+    </DashboardLayout>
+  )
+}
+
+function PotatoTree() {
+  return (
+    <DashboardLayout>
+      <PotatoTreeContent />
     </DashboardLayout>
   )
 }
@@ -85,6 +94,14 @@ function App() {
           element={
             <ProtectedRoute>
               <Profile />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/dashboard/potato-tree" 
+          element={
+            <ProtectedRoute>
+              <PotatoTree />
             </ProtectedRoute>
           } 
         />
