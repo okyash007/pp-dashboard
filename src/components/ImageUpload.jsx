@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { 
-  Upload, 
   X, 
   Image as ImageIcon, 
   Loader2,
@@ -74,7 +73,7 @@ const ImageUpload = ({ value, onChange, className = "" }) => {
       const token = getAuthToken();
 
       // Make API call
-      const response = await fetch('https://pp-backend.apextip.space/upload/image', {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/upload/image`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -279,18 +278,6 @@ const ImageUpload = ({ value, onChange, className = "" }) => {
         </div>
       )}
 
-      {/* Upload Button (when no image) */}
-      {!preview && (
-        <Button
-          type="button"
-          onClick={handleClick}
-          disabled={isUploading}
-          className="w-full h-10 bg-blue-200 hover:bg-blue-300 text-black border-2 border-black rounded-xl shadow-[2px_2px_0px_0px_rgba(0,0,0,0.6)] hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,0.6)] transition-all duration-150 transform hover:translate-x-0.5 hover:translate-y-0.5 active:translate-x-1 active:translate-y-1 active:shadow-none disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          <Upload className="w-4 h-4 mr-2" />
-          {isUploading ? 'Uploading...' : 'Choose Image'}
-        </Button>
-      )}
     </div>
   );
 };

@@ -30,7 +30,7 @@ const fetchAnalytics = async (
   username
 ) => {
   try {
-    const url = new URL("https://pp-backend.apextip.space/analytics");
+    const url = new URL(`${import.meta.env.VITE_BACKEND_URL}/analytics`);
     url.searchParams.append("start_date", startDate);
     url.searchParams.append("end_date", endDate);
     url.searchParams.append("creator_id", creatorId);

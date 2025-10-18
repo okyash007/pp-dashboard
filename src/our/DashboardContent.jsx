@@ -41,7 +41,7 @@ const updateConfig = async (configId, config) => {
   console.log(configId, config);
   try {
     const response = await fetch(
-      `https://pp-backend.apextip.space/config/${configId}`,
+      `${import.meta.env.VITE_BACKEND_URL}/config/${configId}`,
       {
         method: "PUT",
         headers: {

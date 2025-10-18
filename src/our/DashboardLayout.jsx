@@ -76,7 +76,7 @@ export function DashboardLayout({ children }) {
 
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen w-full">
+      <div className="flex min-h-screen w-full relative">
         <Sidebar className="bg-blue-50 border-r-2 border-black">
           <SidebarHeader className="p-4 border-b-2 border-black bg-gradient-to-r from-blue-400 to-purple-400">
             <div className="flex items-center gap-2">
@@ -286,9 +286,9 @@ export function DashboardLayout({ children }) {
           </SidebarFooter>
         </Sidebar>
 
-        <main className="flex-1 flex flex-col">
-          <header className="flex items-center gap-2 p-4 border-b">
-            <SidebarTrigger />
+        <main className="flex-1 flex flex-col sticky top-0">
+          <header className="flex items-center gap-2 p-4 border-b sticky top-0 bg-white z-10">
+            <SidebarTrigger className="bg-blue-200 mr-2 p-4 hover:bg-blue-300 border-2 border-black rounded-lg shadow-[2px_2px_0px_0px_rgba(0,0,0,0.6)] hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,0.6)] transition-all duration-150 hover:translate-x-0.5 hover:translate-y-0.5 active:translate-x-1 active:translate-y-1 active:shadow-none text-black hover:text-black font-bold" />
             <h1 className="text-lg font-semibold">
               {menuItems.find((item) => item.url === location.pathname)
                 ?.title || "Dashboard"}

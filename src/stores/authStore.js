@@ -21,7 +21,7 @@ export const useAuthStore = create((set, get) => ({
   // Fetch user profile from API
   fetchUserProfile: async (token) => {
     try {
-      const response = await fetch('https://pp-backend.apextip.space/creator/profile', {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/creator/profile`, {
         method: 'GET',
         headers: {
           'accept': 'application/json',
@@ -51,7 +51,7 @@ export const useAuthStore = create((set, get) => ({
   // Login function
   login: async (emailOrUsername, password) => {
     try {
-      const response = await fetch('https://pp-backend.apextip.space/creator/login', {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/creator/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -86,7 +86,7 @@ export const useAuthStore = create((set, get) => ({
   // Signup function
   signup: async (userData) => {
     try {
-      const response = await fetch('https://pp-backend.apextip.space/creator/signup', {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/creator/signup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -126,6 +126,41 @@ export const useAuthStore = create((set, get) => ({
   logout: () => {
     localStorage.removeItem('authToken')
     set({ token: null, user: null })
+  },
+
+  // Update user profile
+  updateProfile: async (profileData) => {
+    const { token } = get()
+    if (!token) {
+      throw new Error('No authentication token found')
+    }
+
+    try {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/creator/profile`, {
+        method: 'PUT',
+        headers: {
+          'accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(profileData),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.message || 'Failed to update profile')
+      }
+
+      const data = await response.json()
+      
+      // Update user data in store
+      set({ user: data.data })
+      
+      return data
+    } catch (error) {
+      console.error('Error updating profile:', error)
+      throw error
+    }
   },
 
   // Check if user is authenticated

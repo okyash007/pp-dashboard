@@ -122,3 +122,205 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* Custom Toast Styles */
+.toast-item {
+  @apply transition-all duration-300 ease-out;
+  transform: translateX(0) scale(1);
+}
+
+.toast-item[data-state="open"] {
+  animation: slideInRight 0.3s ease-out;
+}
+
+.toast-item[data-state="closed"] {
+  animation: slideOutRight 0.2s ease-in;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%) scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%) scale(0.95);
+    opacity: 0;
+  }
+}
+
+/* Toast hover effects */
+.toast-item:hover {
+  transform: translateX(-2px) scale(1.02);
+  box-shadow: 6px 6px 0px 0px rgba(0,0,0,0.6), 0px 0px 0px 1px rgba(0,0,0,0.1);
+}
+
+/* Success toast specific styling */
+.toast-item[data-type="success"] {
+  background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+  border-color: #22c55e;
+}
+
+.toast-item[data-type="success"]:hover {
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+}
+
+/* Error toast specific styling */
+.toast-item[data-type="error"] {
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border-color: #ef4444;
+}
+
+.toast-item[data-type="error"]:hover {
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+}
+
+/* Warning toast specific styling */
+.toast-item[data-type="warning"] {
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+  border-color: #f59e0b;
+}
+
+.toast-item[data-type="warning"]:hover {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+}
+
+/* Info toast specific styling */
+.toast-item[data-type="info"] {
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  border-color: #3b82f6;
+}
+
+.toast-item[data-type="info"]:hover {
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+}
+
+/* Toast close button styling */
+.toast-item [data-close-button] {
+  @apply bg-transparent text-black border-2 border-black rounded-lg p-1.5 text-xs font-semibold;
+  box-shadow: 2px 2px 0px 0px rgba(0,0,0,0.6);
+  transition: all 0.15s ease;
+  min-width: 24px;
+  min-height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 8px;
+  flex-shrink: 0;
+  border: 3px solid black;
+  border-radius: 0;
+}
+
+.toast-item [data-close-button]:hover {
+  @apply bg-black text-white;
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0px 0px rgba(0,0,0,0.6);
+}
+
+.toast-item [data-close-button]:active {
+  transform: translate(2px, 2px);
+  box-shadow: none;
+}
+
+/* Toast close button icon */
+.toast-item [data-close-button] svg {
+  @apply w-3 h-3;
+}
+
+/* Additional close button selectors for better coverage */
+.toast-item button[data-close-button],
+.toast-item [data-close-button],
+.toast-item button[aria-label="Close"],
+.toast-item [data-sonner-toast] button[aria-label="Close"],
+.toast-item [data-sonner-toast] [data-close-button] {
+  @apply bg-transparent text-black p-1.5 text-xs font-semibold;
+  border: 3px solid black !important;
+  border-radius: 0 !important;
+  box-shadow: 2px 2px 0px 0px rgba(0,0,0,0.6) !important;
+  transition: all 0.15s ease;
+  min-width: 24px;
+  min-height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 8px;
+  flex-shrink: 0;
+}
+
+.toast-item button[data-close-button]:hover,
+.toast-item [data-close-button]:hover,
+.toast-item button[aria-label="Close"]:hover,
+.toast-item [data-sonner-toast] button[aria-label="Close"]:hover,
+.toast-item [data-sonner-toast] [data-close-button]:hover {
+  @apply bg-black text-white;
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0px 0px rgba(0,0,0,0.6) !important;
+}
+
+.toast-item button[data-close-button]:active,
+.toast-item [data-close-button]:active,
+.toast-item button[aria-label="Close"]:active,
+.toast-item [data-sonner-toast] button[aria-label="Close"]:active,
+.toast-item [data-sonner-toast] [data-close-button]:active {
+  transform: translate(2px, 2px);
+  box-shadow: none !important;
+}
+
+/* Alternative close button selectors for Sonner */
+.toast-item button[aria-label="Close"] {
+  @apply bg-transparent text-black border-2 border-black rounded-lg p-1.5 text-xs font-semibold;
+  box-shadow: 2px 2px 0px 0px rgba(0,0,0,0.6);
+  transition: all 0.15s ease;
+  min-width: 24px;
+  min-height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 8px;
+  flex-shrink: 0;
+  border: 3px solid black;
+  border-radius: 0;
+}
+
+.toast-item button[aria-label="Close"]:hover {
+  @apply bg-black text-white;
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0px 0px rgba(0,0,0,0.6);
+}
+
+.toast-item button[aria-label="Close"]:active {
+  transform: translate(2px, 2px);
+  box-shadow: none;
+}
+
+.toast-item button[aria-label="Close"] svg {
+  @apply w-3 h-3;
+}
+
+/* Toast action buttons */
+.toast-item [data-action] {
+  @apply bg-transparent text-black border-2 border-black rounded-lg px-3 py-1.5 text-xs font-semibold;
+  box-shadow: 2px 2px 0px 0px rgba(0,0,0,0.6);
+  transition: all 0.15s ease;
+}
+
+.toast-item [data-action]:hover {
+  @apply bg-black text-white;
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0px 0px rgba(0,0,0,0.6);
+}
+
+.toast-item [data-action]:active {
+  transform: translate(2px, 2px);
+  box-shadow: none;
+}

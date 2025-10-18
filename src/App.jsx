@@ -9,6 +9,7 @@ import { AnalyticsContent } from './our/AnalyticsContent'
 import { RulesContent } from './our/RulesContent'
 import { ProfileContent } from './our/ProfileContent'
 import { useAuthStore } from './stores/authStore'
+import { Toaster } from './components/ui/sonner'
 
 function Dashboard() {
   return (
@@ -88,6 +89,7 @@ function App() {
           } 
         />
       </Routes>
+      <Toaster />
     </Router>
   )
 }

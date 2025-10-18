@@ -11,4 +11,6 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  // Environment variables are automatically loaded by Vite from .env files
+  // No need to manually define them in the define section
 });

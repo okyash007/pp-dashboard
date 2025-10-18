@@ -13,7 +13,7 @@ import {
 
 // API service function
 const fetchTips = async (creatorId, startDate = null, endDate = null, page = 1, limit = 100) => {
-  const baseUrl = "https://pp-backend.apextip.space";
+  const baseUrl = import.meta.env.VITE_BACKEND_URL;
   let url = `${baseUrl}/tip/${creatorId}?page=${page}&limit=${limit}`;
   
   if (startDate) {
