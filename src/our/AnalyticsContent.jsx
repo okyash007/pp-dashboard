@@ -25,16 +25,12 @@ const readableDateToUnix = (dateString) => {
 const fetchAnalytics = async (
   startDate,
   endDate,
-  token,
-  creatorId,
-  username
+  token
 ) => {
   try {
     const url = new URL(`${import.meta.env.VITE_BACKEND_URL}/analytics`);
     url.searchParams.append("start_date", startDate);
     url.searchParams.append("end_date", endDate);
-    url.searchParams.append("creator_id", creatorId);
-    url.searchParams.append("username", username);
 
     const response = await fetch(url.toString(), {
       method: "GET",

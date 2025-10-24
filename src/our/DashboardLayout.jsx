@@ -45,6 +45,7 @@ import {
   ExternalLink,
   UserCircle,
   TreePine,
+  Heart,
 } from "lucide-react";
 import { useAuthStore } from "@/stores/authStore";
 
@@ -73,6 +74,11 @@ const menuItems = [
     title: "Potato Tree",
     icon: TreePine,
     url: "/dashboard/potato-tree",
+  },
+  {
+    title: "Tip Page",
+    icon: Heart,
+    url: "/dashboard/tip-page",
   },
 ];
 

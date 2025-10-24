@@ -4,18 +4,19 @@ import LoginPage from './pages/LoginPage'
 import SignupPage from './pages/SignupPage'
 import { ProtectedRoute } from './our/ProtectedRoute'
 import { DashboardLayout } from './our/DashboardLayout'
-import { DashboardContent } from './our/DashboardContent'
+import { OverviewContent } from './our/OverviewContent'
 import { AnalyticsContent } from './our/AnalyticsContent'
 import { RulesContent } from './our/RulesContent'
 import { ProfileContent } from './our/ProfileContent'
 import { PotatoTreeContent } from './our/PotatoTreeContent'
+import TipPageContent from './our/TipPageContent'
 import { useAuthStore } from './stores/authStore'
 import { Toaster } from './components/ui/sonner'
 
 function Dashboard() {
   return (
     <DashboardLayout>
-      <DashboardContent />
+      <OverviewContent />
     </DashboardLayout>
   )
 }
@@ -48,6 +49,14 @@ function PotatoTree() {
   return (
     <DashboardLayout>
       <PotatoTreeContent />
+    </DashboardLayout>
+  )
+}
+
+function TipPage() {
+  return (
+    <DashboardLayout>
+      <TipPageContent />
     </DashboardLayout>
   )
 }
@@ -102,6 +111,14 @@ function App() {
           element={
             <ProtectedRoute>
               <PotatoTree />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/dashboard/tip-page" 
+          element={
+            <ProtectedRoute>
+              <TipPage />
             </ProtectedRoute>
           } 
         />
