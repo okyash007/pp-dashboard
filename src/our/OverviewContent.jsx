@@ -49,90 +49,49 @@ async function getOverlay(token) {
     return null;
   }
 }
+async function updateOverlay(token, data) {
+  try {
+    const response = await fetch(
+      `${import.meta.env.VITE_BACKEND_URL}/overlay`,
+      {
+        method: "PUT",
+        headers: {
+          accept: "application/json",
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      }
+    );
+    const responseData = await response.json();
+    if (!responseData.success) {
+      return null;
+    }
+    return responseData.data;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+}
 
 export function OverviewContent() {
   const { token } = useAuthStore();
   const [isLinksEditorOpen, setIsLinksEditorOpen] = useState(false);
-  const [selectedMonitor, setSelectedMonitor] = useState("desktop");
-  const [blocks, setBlocks] = useState([
-    {
-      type: "tip",
-      id: "tip-1",
-      className: "animate-in slide-in-from-right-5 duration-500",
-      display_time: 20000,
-      template: `
-        <div class="p-3 rounded-lg space-y-2 relative bg-cover bg-center bg-no-repeat" style="width: {{ style.width | default: 300 }}px; height: {{ style.height | default: 150 }}px; background-color: {{ data.primary_color | default: '#8b5cf6' }}; {% if data.background_image %}background-image: url('{{ data.background_image }}');{% endif %}">
-          <div class="flex items-center">
-          <div>
-          <img src="https://res.cloudinary.com/dspp405ug/image/upload/v1760471365/cool_zdwwcs.svg" class="w-12 h-12 rounded-full" />
-          </div>
-          <div>
-            <p class="text-xs shadow-ld" style="color: {{ data.text_color | default: '#ffffff' }};">
-              {{ visitor_name }}
-            </p>
-            <p class="text-lg font-bold shadow-lg" style="color: {{ data.text_color | default: '#ffffff' }};">
-              {% if currency == 'INR' %}₹ {% elsif currency == 'USD' %}$ {% elsif currency == 'EUR' %}€ {% elsif currency == 'GBP' %}£ {% else %}{{ currency }}{% endif %}{{ amount | divided_by: 100 | round: 2 }}
-            </p>
-          </div>
-          </div>
-          {% if message and message != '' %}
-          <div>
-          <p class="p-3 rounded-lg shadow-sm" style="color: {{ data.text_color | default: '#ffffff' }}; background-color: {{ data.secondary_color | default: '#10b981' }};"> {{ message }} </p>
-          </div>
-          {% endif %}
-        </div>
-      `,
-      data: {
-        primary_color: "#7337ff",
-        secondary_color: "#9668ff",
-        text_color: "#ffffff",
-        background_image: null,
-      },
-      style: {
-        position: "fixed",
-        top: "20px",
-        left: "20px",
-        width: "300px",
-        height: "150px",
-      },
-    },
-  ]);
+  const [blocks, setBlocks] = useState(null);
 
-  // useEffect(() => {
-  //   getOverlay(token).then((data) => {
-  //     setBlocks(data);
-  //   });
-  // }, [token]);
+  useEffect(() => {
+    getOverlay(token).then((data) => {
+      setBlocks(data);
+    });
+  }, [token]);
 
-  // Get user's actual screen resolution
-  const { width: userWidth, height: userHeight } = getMonitorResolution();
+  useEffect(() => {
+    updateOverlay(token, { blocks });
+  }, [blocks]);
 
   if (!blocks) {
     return <div>Loading...</div>;
   }
-
-  const html = `
-  <!DOCTYPE html>
-  <html>
-  <head>
-    <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-      body {
-        margin: 0;
-        padding: 0;
-        overflow: hidden;
-      }
-    </style>
-  </head>
-  <body>
-    <h1 style="position: fixed; top: 0; left: 0; margin: 0; padding: 0;">hello</h1>
-  </body>
-  </html>
-  `;
 
   return (
     <>

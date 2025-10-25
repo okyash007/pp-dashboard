@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { Liquid } from "liquidjs";
 
-const LiquidRenderer = ({ html, data, className }) => {
+const LiquidRenderer = ({ html, data, className, style = {} }) => {
   const renderedHtml = useMemo(() => {
     if (!html?.trim()) {
       return "";
@@ -21,6 +21,7 @@ const LiquidRenderer = ({ html, data, className }) => {
   return (
     <div
       className={className}
+      style={style}
       dangerouslySetInnerHTML={{ __html: renderedHtml }}
     />
   );
