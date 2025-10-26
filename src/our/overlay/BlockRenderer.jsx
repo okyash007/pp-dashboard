@@ -1,12 +1,65 @@
 import React from "react";
 import { Liquid } from "liquidjs";
 import MonitorDisplay from "./MonitorDisplay";
+import { useAuthStore } from "../../stores/authStore";
 
 const BlockRenderer = ({ blocks }) => {
-
+  const { user } = useAuthStore();
   const renderBlock = (block) => {
-    if (!block.template) {
-      return null;
+    if (block.type === "leaderboard") {
+      try {
+        const engine = new Liquid();
+        const blockData = {
+          rankers: [
+            {
+              rank: 1,
+              name: "John Doe",
+              amount: 100000,
+              currency: "INR",
+            },
+            {
+              rank: 2,
+              name: "Jane Doe",
+              amount: 90000,
+              currency: "INR",
+            },
+            {
+              rank: 3,
+              name: "Jim Doe",
+              amount: 80000,
+              currency: "INR",
+            },
+            {
+              rank: 4,
+              name: "Jill Doe",
+              amount: 70000,
+              currency: "INR",
+            },
+            {
+              rank: 5,
+              name: "Jill Doe",
+              amount: 70000,
+              currency: "INR",
+            },
+          ],
+        };
+
+        const renderedContent = engine.parseAndRenderSync(
+          block.template,
+          blockData
+        );
+        const blockStyles = block.style || {};
+        const styleString = Object.entries(blockStyles)
+          .map(([key, value]) => `${key}: ${value}`)
+          .join("; ");
+
+        console.log(renderedContent);
+
+        return `<div class="${block.className}" style="${styleString}">${renderedContent}</div>`;
+      } catch (err) {
+        console.error("Error rendering block:", err);
+        return `<div class="${block.className}" style="color: red; padding: 10px;">Error rendering block: ${err.message}</div>`;
+      }
     }
 
     try {
@@ -14,23 +67,26 @@ const BlockRenderer = ({ blocks }) => {
       const blockData = {
         data: block.data || {},
         style: block.style || {},
-        // Add default values for common variables
         visitor_name: "Anonymous",
         amount: 50000,
         currency: "INR",
         message: "Hii there",
+        username: user?.username,
       };
 
-      const renderedContent = engine.parseAndRenderSync(block.template, blockData);
+      const renderedContent = engine.parseAndRenderSync(
+        block.template,
+        blockData
+      );
       const blockStyles = block.style || {};
       const styleString = Object.entries(blockStyles)
         .map(([key, value]) => `${key}: ${value}`)
-        .join('; ');
-      
-      return `<div style="${styleString}">${renderedContent}</div>`;
+        .join("; ");
+
+      return `<div class="${block.className}" style="${styleString}">${renderedContent}</div>`;
     } catch (err) {
       console.error("Error rendering block:", err);
-      return `<div style="color: red; padding: 10px;">Error rendering block: ${err.message}</div>`;
+      return `<div class="${block.className}" style="color: red; padding: 10px;">Error rendering block: ${err.message}</div>`;
     }
   };
 
@@ -70,7 +126,11 @@ const BlockRenderer = ({ blocks }) => {
       `;
     }
 
-    const blocksHTML = blocks.map((block) => renderBlock(block)).join("\n");
+    const blocksHTML = blocks
+      .map((block) =>
+        renderBlock(block).replace("<div", `<div data-key="${block.type}"`)
+      )
+      .join("\n");
 
     return `
       <html>

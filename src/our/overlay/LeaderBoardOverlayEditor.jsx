@@ -2,20 +2,15 @@ import React from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
-import ColorPicker from "../../components/ColorPicker";
-import ImageUpload from "../../components/ImageUpload";
-import { MoveRight, PencilIcon } from "lucide-react";
+import { PencilIcon } from "lucide-react";
 
-const TipOverlayEditor = ({ block, setBlock }) => {
-  const setPresetPosition = (blockId, position) => {
+const LeaderBoardOverlayEditor = ({ block, setBlock }) => {
+  const setPresetPosition = (position) => {
     const presets = {
       "top-left": {
         position: "fixed",
@@ -57,114 +52,21 @@ const TipOverlayEditor = ({ block, setBlock }) => {
       });
     }
   };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild className="w-full">
         <Button
           variant="outline"
           size="sm"
-          className="text-xs border-2 border-amber-500 hover:bg-amber-50 hover:border-amber-600 transition-all duration-200 shadow-sm hover:shadow-md bg-gradient-to-r from-amber-50 to-orange-50 rounded-lg px-3 py-2 font-medium text-amber-800 hover:text-amber-900"
+          className="text-xs border-2 border-purple-500 hover:bg-purple-50 hover:border-purple-600 transition-all duration-200 shadow-sm hover:shadow-md bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg px-3 py-2 font-medium text-purple-800 hover:text-purple-900"
         >
           <PencilIcon className="w-4 h-4 mr-1.5" />
-          Customize Tip
+          Customize Leaderboard
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="p-4 border-2 border-black">
         <div className="space-y-3">
-          <div>
-            <Label className="text-sm font-semibold text-gray-800 block">
-              Display Time
-            </Label>
-            <div className="rounded-lg p-4 shadow-sm border-2 border-black">
-              <div className="text-lg font-bold text-gray-800 mb-3">
-                {block.data.displayTime || 20} seconds
-              </div>
-              <div className="space-y-2">
-                <Slider
-                  min={1}
-                  max={60}
-                  step={1}
-                  value={[block.data.displayTime || 20]}
-                  onValueChange={(value) => {
-                    setBlock({
-                      ...block,
-                      data: {
-                        ...block.data,
-                        displayTime: value[0],
-                      },
-                    });
-                  }}
-                  className="w-full"
-                />
-                <div className="flex justify-between text-xs text-gray-500">
-                  <span>1s</span>
-                  <span>60s</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div>
-            <Label className="text-sm font-semibold text-gray-800 block">
-              Background Image
-            </Label>
-            <ImageUpload
-              value={block.data.background_image}
-              onChange={(imageUrl) => {
-                setBlock({
-                  ...block,
-                  data: {
-                    ...block.data,
-                    background_image: imageUrl,
-                  },
-                });
-              }}
-            />
-          </div>
-          <div>
-            <Label className="text-xs text-gray-500">Primary color</Label>
-            <ColorPicker
-              value={block.data.primary_color}
-              onChange={(color) => {
-                setBlock({
-                  ...block,
-                  data: {
-                    ...block.data,
-                    primary_color: color,
-                  },
-                });
-              }}
-            />
-          </div>
-          <div>
-            <Label className="text-xs text-gray-500">Secondary color</Label>
-            <ColorPicker
-              value={block.data.secondary_color}
-              onChange={(color) => {
-                setBlock({
-                  ...block,
-                  data: {
-                    ...block.data,
-                    secondary_color: color,
-                  },
-                });
-              }}
-            />
-          </div>
-          <div>
-            <Label className="text-xs text-gray-500">Text color</Label>
-            <ColorPicker
-              value={block.data.text_color}
-              onChange={(color) => {
-                setBlock({
-                  ...block,
-                  data: {
-                    ...block.data,
-                    text_color: color,
-                  },
-                });
-              }}
-            />
-          </div>
           <div>
             <Label className="text-sm font-semibold text-gray-800 block">
               Position & Size
@@ -185,7 +87,7 @@ const TipOverlayEditor = ({ block, setBlock }) => {
                           ...block.style,
                           top: `${value[0]}px`,
                         },
-                      })
+                      });
                     }}
                     className="w-full"
                   />
@@ -318,7 +220,7 @@ const TipOverlayEditor = ({ block, setBlock }) => {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => setPresetPosition(block.id, "top-left")}
+                onClick={() => setPresetPosition("top-left")}
                 className="text-xs border-2 border-black hover:bg-gray-100"
               >
                 Top Left
@@ -326,7 +228,7 @@ const TipOverlayEditor = ({ block, setBlock }) => {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => setPresetPosition(block.id, "top-right")}
+                onClick={() => setPresetPosition("top-right")}
                 className="text-xs border-2 border-black hover:bg-gray-100"
               >
                 Top Right
@@ -334,7 +236,7 @@ const TipOverlayEditor = ({ block, setBlock }) => {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => setPresetPosition(block.id, "bottom-left")}
+                onClick={() => setPresetPosition("bottom-left")}
                 className="text-xs border-2 border-black hover:bg-gray-100"
               >
                 Bottom Left
@@ -342,7 +244,7 @@ const TipOverlayEditor = ({ block, setBlock }) => {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => setPresetPosition(block.id, "bottom-right")}
+                onClick={() => setPresetPosition("bottom-right")}
                 className="text-xs border-2 border-black hover:bg-gray-100"
               >
                 Bottom Right
@@ -355,4 +257,4 @@ const TipOverlayEditor = ({ block, setBlock }) => {
   );
 };
 
-export default TipOverlayEditor;
+export default LeaderBoardOverlayEditor;

@@ -1,11 +1,11 @@
-import { Navigate, useLocation } from 'react-router-dom'
-import { useAuthStore } from '@/stores/authStore'
+import { Navigate, useLocation } from "react-router-dom";
+import { useAuthStore } from "@/stores/authStore";
 
 export const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated, loading } = useAuthStore()
-  const location = useLocation()
+  const { isAuthenticated, loading, user } = useAuthStore();
+  const location = useLocation();
 
-  if (loading) {
+  if (loading || !user) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center space-y-4">
@@ -13,13 +13,18 @@ export const ProtectedRoute = ({ children }) => {
           <p className="text-muted-foreground">Loading...</p>
         </div>
       </div>
-    )
+    );
+  }
+
+  // Don't redirect to onboarding if already on onboarding page
+  if (user && user.approved === false && location.pathname !== "/onboarding") {
+    return <Navigate to="/onboarding" />;
   }
 
   if (!isAuthenticated()) {
     // Redirect to login page with return url
-    return <Navigate to="/login" state={{ from: location }} replace />
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  return children
-}
+  return children;
+};

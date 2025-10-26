@@ -1,5 +1,7 @@
 import React from "react";
 import TipOverlayEditor from "./TipOverlayEditor";
+import LeaderBoardOverlayEditor from "./LeaderBoardOverlayEditor";
+import QRCodeOverlayEditor from "./QRCodeOverlayEditor";
 
 const BlocksEditor = ({ blocks, setBlocks }) => {
   const setPresetPosition = (blockId, position) => {
@@ -29,8 +31,45 @@ const BlocksEditor = ({ blocks, setBlocks }) => {
     <>
       {blocks.map((block) => {
         if (block.type === "tip") {
-          return <TipOverlayEditor key={block.id} block={block} setBlocks={setBlocks} />;
+          return (
+            <TipOverlayEditor
+              key={block.id}
+              block={block}
+              setBlock={(newBlock) =>
+                setBlocks((prev) =>
+                  prev.map((b) => (b.type === block.type ? newBlock : b))
+                )
+              }
+            />
+          );
         }
+        if (block.type === "leaderboard") {
+          return (
+            <LeaderBoardOverlayEditor
+              key={block.id}
+              block={block}
+              setBlock={(newBlock) =>
+                setBlocks((prev) =>
+                  prev.map((b) => (b.type === block.type ? newBlock : b))
+                )
+              }
+            />
+          );
+        }
+        if (block.type === "qr_code") {
+          return (
+            <QRCodeOverlayEditor
+              key={block.id}
+              block={block}
+              setBlock={(newBlock) =>
+                setBlocks((prev) =>
+                  prev.map((b) => (b.type === block.type ? newBlock : b))
+                )
+              }
+            />
+          );
+        }
+        return null;
       })}
     </>
   );

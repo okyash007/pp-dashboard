@@ -1,24 +1,30 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
-import { useEffect } from 'react'
-import LoginPage from './pages/LoginPage'
-import SignupPage from './pages/SignupPage'
-import { ProtectedRoute } from './our/ProtectedRoute'
-import { DashboardLayout } from './our/DashboardLayout'
-import { OverviewContent } from './our/OverviewContent'
-import { AnalyticsContent } from './our/AnalyticsContent'
-import { RulesContent } from './our/RulesContent'
-import { ProfileContent } from './our/ProfileContent'
-import { PotatoTreeContent } from './our/PotatoTreeContent'
-import TipPageContent from './our/TipPageContent'
-import { useAuthStore } from './stores/authStore'
-import { Toaster } from './components/ui/sonner'
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import { useEffect } from "react";
+import LoginPage from "./pages/LoginPage";
+import SignupPage from "./pages/SignupPage";
+import { ProtectedRoute } from "./our/ProtectedRoute";
+import { DashboardLayout } from "./our/DashboardLayout";
+import { OverviewContent } from "./our/OverviewContent";
+import { AnalyticsContent } from "./our/AnalyticsContent";
+import { RulesContent } from "./our/RulesContent";
+import { ProfileContent } from "./our/ProfileContent";
+import { PotatoTreeContent } from "./our/PotatoTreeContent";
+import TipPageContent from "./our/TipPageContent";
+import { useAuthStore } from "./stores/authStore";
+import { Toaster } from "./components/ui/sonner";
+import OnboardingContent from "./our/OnboardingContent";
 
 function Dashboard() {
   return (
     <DashboardLayout>
       <OverviewContent />
     </DashboardLayout>
-  )
+  );
 }
 
 function Analytics() {
@@ -26,7 +32,7 @@ function Analytics() {
     <DashboardLayout>
       <AnalyticsContent />
     </DashboardLayout>
-  )
+  );
 }
 
 function Rules() {
@@ -34,7 +40,7 @@ function Rules() {
     <DashboardLayout>
       <RulesContent />
     </DashboardLayout>
-  )
+  );
 }
 
 function Profile() {
@@ -42,7 +48,7 @@ function Profile() {
     <DashboardLayout>
       <ProfileContent />
     </DashboardLayout>
-  )
+  );
 }
 
 function PotatoTree() {
@@ -50,7 +56,7 @@ function PotatoTree() {
     <DashboardLayout>
       <PotatoTreeContent />
     </DashboardLayout>
-  )
+  );
 }
 
 function TipPage() {
@@ -58,15 +64,19 @@ function TipPage() {
     <DashboardLayout>
       <TipPageContent />
     </DashboardLayout>
-  )
+  );
+}
+
+function Onboarding() {
+  return <OnboardingContent />;
 }
 
 function App() {
-  const initialize = useAuthStore((state) => state.initialize)
+  const initialize = useAuthStore((state) => state.initialize);
 
   useEffect(() => {
-    initialize()
-  }, [initialize])
+    initialize();
+  }, [initialize]);
 
   return (
     <Router>
@@ -74,58 +84,66 @@ function App() {
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
-        <Route 
-          path="/dashboard" 
+        <Route
+          path="/onboarding"
+          element={
+            <ProtectedRoute>
+              <Onboarding />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard"
           element={
             <ProtectedRoute>
               <Analytics />
             </ProtectedRoute>
-          } 
+          }
         />
-        <Route 
-          path="/dashboard/overview" 
+        <Route
+          path="/dashboard/overview"
           element={
             <ProtectedRoute>
               <Dashboard />
             </ProtectedRoute>
-          } 
+          }
         />
-        <Route 
-          path="/dashboard/rules" 
+        <Route
+          path="/dashboard/rules"
           element={
             <ProtectedRoute>
               <Rules />
             </ProtectedRoute>
-          } 
+          }
         />
-        <Route 
-          path="/dashboard/profile" 
+        <Route
+          path="/dashboard/profile"
           element={
             <ProtectedRoute>
               <Profile />
             </ProtectedRoute>
-          } 
+          }
         />
-        <Route 
-          path="/dashboard/potato-tree" 
+        <Route
+          path="/dashboard/potato-tree"
           element={
             <ProtectedRoute>
               <PotatoTree />
             </ProtectedRoute>
-          } 
+          }
         />
-        <Route 
-          path="/dashboard/tip-page" 
+        <Route
+          path="/dashboard/tip-page"
           element={
             <ProtectedRoute>
               <TipPage />
             </ProtectedRoute>
-          } 
+          }
         />
       </Routes>
       <Toaster />
     </Router>
-  )
+  );
 }
 
-export default App
+export default App;
