@@ -5,6 +5,14 @@ export const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading, user } = useAuthStore();
   const location = useLocation();
 
+  // Check authentication FIRST - check both localStorage and state
+  const hasToken = localStorage.getItem('authToken') || isAuthenticated();
+  
+  if (!hasToken) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  // Only show loading if we're still loading AND we have a token
   if (loading || !user) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -19,11 +27,6 @@ export const ProtectedRoute = ({ children }) => {
   // Don't redirect to onboarding if already on onboarding page
   if (user && user.approved === false && location.pathname !== "/onboarding") {
     return <Navigate to="/onboarding" />;
-  }
-
-  if (!isAuthenticated()) {
-    // Redirect to login page with return url
-    return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
   return children;

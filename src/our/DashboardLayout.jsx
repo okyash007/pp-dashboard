@@ -287,7 +287,10 @@ export function DashboardLayout({ children }) {
                   {/* Logout */}
                   <DropdownMenuItem
                     className="gap-2 bg-red-200 hover:bg-red-300 rounded-lg font-bold text-black border border-black shadow-[1px_1px_0px_0px_rgba(0,0,0,0.6)] p-3"
-                    onClick={logout}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      logout();
+                    }}
                   >
                     <LogOut className="w-4 h-4" />
                     <span>Log out</span>

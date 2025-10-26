@@ -125,7 +125,8 @@ export const useAuthStore = create((set, get) => ({
   // Logout function
   logout: () => {
     localStorage.removeItem('authToken')
-    set({ token: null, user: null })
+    set({ token: null, user: null, loading: false })
+    // ProtectedRoute will automatically redirect to login
   },
 
   // Update user profile
