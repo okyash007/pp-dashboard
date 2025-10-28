@@ -27,8 +27,10 @@ import {
   Settings,
   Palette,
   Share,
+  LogOut,
 } from "lucide-react";
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/stores/authStore";
 
 const getOnboarding = async (token) => {
@@ -80,7 +82,8 @@ const updateOnboarding = async (token, data) => {
 };
 
 const OnboardingContent = () => {
-  const { token, user } = useAuthStore();
+  const { token, user, logout } = useAuthStore();
+  const navigate = useNavigate();
   const [onboardingData, setOnboardingData] = useState(null);
   const [currentStep, setCurrentStep] = useState(0);
   const [identityType, setIdentityType] = useState("");
@@ -680,18 +683,32 @@ const OnboardingContent = () => {
       setCurrentStep(currentStep - 1);
     }
     };
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
  
   return (
     <div className="max-w-6xl mx-auto p-6">
       <Card className="bg-gradient-to-br from-blue-50 to-purple-50 border-2 border-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,0.6)]">
         <CardHeader className="text-center pb-8">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <div className="w-12 h-12 bg-orange-400 rounded-xl flex items-center justify-center border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,0.6)]">
-              <User className="w-6 h-6 text-black" />
+          <div className="flex justify-between items-start mb-4">
+            <div className="flex-1 flex items-center justify-center gap-3">
+              <div className="w-12 h-12 bg-orange-400 rounded-xl flex items-center justify-center border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,0.6)]">
+                <User className="w-6 h-6 text-black" />
+              </div>
+              <CardTitle className="text-3xl font-bold text-black">
+                Welcome to PP Dashboard!
+              </CardTitle>
             </div>
-            <CardTitle className="text-3xl font-bold text-black">
-              Welcome to PP Dashboard!
-            </CardTitle>
+            <Button
+              onClick={handleLogout}
+              className="flex items-center gap-2 bg-red-200 hover:bg-red-300 text-black border-2 border-black rounded-xl shadow-[2px_2px_0px_0px_rgba(0,0,0,0.6)] hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,0.6)] transition-all duration-150 hover:translate-x-0.5 hover:translate-y-0.5 active:translate-x-1 active:translate-y-1 active:shadow-none font-bold"
+            >
+              <LogOut className="h-4 w-4" />
+              Logout
+            </Button>
           </div>
           <CardDescription className="text-lg font-semibold text-gray-700">
             Complete your identity verification and bank details to start
