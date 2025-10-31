@@ -16,24 +16,6 @@ const ImageUpload = ({ value, onChange, className = "" }) => {
   const [preview, setPreview] = useState(value || null);
   const fileInputRef = useRef(null);
 
-  // Helper function to get auth token
-  const getAuthToken = () => {
-    // Try to get from localStorage first
-    const localToken = localStorage.getItem('authToken');
-    if (localToken) return localToken;
-    
-    // Try to get from auth store if available
-    try {
-      const authStore = JSON.parse(localStorage.getItem('authStore') || '{}');
-      return authStore.token || authStore.accessToken;
-    } catch (e) {
-      console.warn('Could not parse auth store:', e);
-    }
-    
-    // If no token found, throw an error
-    throw new Error('No authentication token found. Please log in again.');
-  };
-
   // Log when value changes
   useEffect(() => {
     if (value) {
@@ -65,67 +47,57 @@ const ImageUpload = ({ value, onChange, className = "" }) => {
     setPreview(previewUrl);
 
     try {
-      // Create FormData for the API
+      // Get Cloudinary configuration from environment variables
+      const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+      const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+
+      if (!cloudName || !uploadPreset) {
+        throw new Error('Cloudinary configuration is missing. Please check environment variables.');
+      }
+
+      // Create FormData for Cloudinary
+      // Note: Transformations should be configured in the upload preset settings
+      // Unsigned uploads don't allow transformation parameters in the request
       const formData = new FormData();
-      formData.append('image', file);
+      formData.append('file', file);
+      formData.append('upload_preset', uploadPreset);
+      formData.append('folder', 'pp-uploads');
 
-      // Get auth token
-      const token = getAuthToken();
-
-      // Make API call
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/upload/image`, {
+      // Upload directly to Cloudinary
+      const cloudinaryUrl = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
+      
+      const response = await fetch(cloudinaryUrl, {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'accept': 'application/json',
-        },
-        body: formData,
+        body: formData
       });
 
       if (!response.ok) {
-        let errorMessage = `Upload failed with status: ${response.status}`;
-        try {
-          const errorData = await response.json();
-          errorMessage = errorData.message || errorData.error || errorMessage;
-        } catch (e) {
-          // If response is not JSON, use status text
-          errorMessage = response.statusText || errorMessage;
-        }
-        throw new Error(errorMessage);
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error?.message || `Upload failed: ${response.statusText}`);
       }
 
       const result = await response.json();
-      console.log('Image uploaded successfully:', result);
+      console.log('Image uploaded successfully to Cloudinary:', result);
 
-      // Use the uploaded image URL from the API response
-      // Try different possible response formats
-      const uploadedImageUrl = result.url || 
-                              result.imageUrl || 
-                              result.data?.url || 
-                              result.data?.imageUrl ||
-                              result.image?.url ||
-                              result.image?.secure_url;
-      
+      // Extract the secure URL from Cloudinary response
+      const uploadedImageUrl = result.secure_url;
+
       if (uploadedImageUrl) {
         // Clean up the preview URL
         URL.revokeObjectURL(previewUrl);
         setPreview(uploadedImageUrl);
         onChange(uploadedImageUrl);
       } else {
-        throw new Error('No image URL returned from server');
+        throw new Error('No image URL returned from Cloudinary');
       }
 
     } catch (error) {
       console.error('Upload error:', error);
       
       // Handle specific error types
-      if (error.message.includes('authentication token')) {
-        setError('Authentication required. Please log in again.');
-      } else if (error.message.includes('status: 401')) {
-        setError('Authentication failed. Please log in again.');
-      } else if (error.message.includes('status: 413')) {
+      if (error.message.includes('413') || error.message.includes('too large')) {
         setError('File too large. Please choose a smaller image.');
-      } else if (error.message.includes('status: 415')) {
+      } else if (error.message.includes('415') || error.message.includes('Unsupported')) {
         setError('Unsupported file type. Please choose a valid image.');
       } else {
         setError(error.message || 'Failed to upload image. Please try again.');
