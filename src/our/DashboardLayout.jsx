@@ -166,7 +166,7 @@ export function DashboardLayout({ children }) {
                   <div className="flex items-center gap-2">
                     <ExternalLink className="w-4 h-4 text-black" />
                     <span className="text-xs font-bold text-black">
-                      Live link
+                      Tip Page link
                     </span>
                   </div>
                   <a
@@ -182,16 +182,16 @@ export function DashboardLayout({ children }) {
                   <div className="flex items-center gap-2">
                     <ExternalLink className="w-4 h-4 text-black" />
                     <span className="text-xs font-bold text-black">
-                      Overlay link
+                      Potato Tree page link
                     </span>
                   </div>
                   <a
-                    href={`https://link.apextip.space/vo/${user?.username}`}
+                    href={`https://link.apextip.space/vl/${user?.username}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-xs text-black hover:underline cursor-pointer truncate font-semibold bg-white px-2 py-1 rounded-lg border border-black block"
                   >
-                    {`https://link.apextip.space/overlay/${user?.username}`}
+                    {`https://link.apextip.space/link/${user?.username}`}
                   </a>
                 </Card>
               </SidebarGroupContent>
