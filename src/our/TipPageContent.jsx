@@ -71,6 +71,7 @@ const TipPageContent = () => {
   }, [token]);
 
   useEffect(() => {
+    if (!blocks || blocks.length === 0) return;
     updateTipPage(token, { blocks });
   }, [blocks]);
 

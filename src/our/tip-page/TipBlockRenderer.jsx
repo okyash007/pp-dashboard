@@ -39,6 +39,7 @@ const TipBlockRenderer = ({ block }) => {
                 amount: 20000,
                 currency: "INR",
                 visitor_name: "John Doe",
+                display_name: "John Doe",
                 message: "Thank you for your tip!",
                 created_at: Date.now(),
                 data: block.tip_card.data,

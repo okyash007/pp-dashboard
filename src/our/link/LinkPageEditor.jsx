@@ -73,7 +73,7 @@ const LinkPageEditor = () => {
     }, [token]);
 
     useEffect(() => {
-      if (!blocks) return;
+      if (!blocks || blocks.length === 0) return;
       updateLinkPage(token, { blocks });
     }, [blocks]);
 

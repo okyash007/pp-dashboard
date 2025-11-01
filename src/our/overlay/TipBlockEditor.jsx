@@ -7,6 +7,7 @@ import { Slider } from "@/components/ui/slider";
 
 const dummyTipBata = {
   visitor_name: "John Doe",
+  display_name: "John Doe",
   message: "Thank you for your tip!",
   created_at: Date.now(),
   amount: 20000,
@@ -32,7 +33,7 @@ const dummyTipBlocks = [
           </div>
           <div>
             <p class="text-xs shadow-ld" style="color: {{ data.text_color | default: '#ffffff' }};">
-              {{ visitor_name }}
+              {{ display_name }}
             </p>
             <p class="text-lg font-bold shadow-lg" style="color: {{ data.text_color | default: '#ffffff' }};">
               {% if currency == 'INR' %}₹ {% elsif currency == 'USD' %}$ {% elsif currency == 'EUR' %}€ {% elsif currency == 'GBP' %}£ {% else %}{{ currency }}{% endif %}{{ amount | divided_by: 100 | round: 2 }}
