@@ -94,33 +94,63 @@ export function AnalyticsContent() {
   //   to: readableDateToUnix(dateRange.to),
   // })
 
+  // Handler functions for quick date range selection
+  const handleLast7Days = () => {
+    setDateRange({
+      from: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+      to: new Date(),
+    });
+  };
+
+  const handleLast30Days = () => {
+    setDateRange({
+      from: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+      to: new Date(),
+    });
+  };
+
   return (
     <div className="space-y-6">
       {/* Date Range Selector */}
-      <div className="">
-        <Popover>
+      <div className="flex items-center gap-2 flex-wrap">
+        <Popover >
           <PopoverTrigger asChild>
             <Button
               variant="outline"
-              className="w-[350px] h-12 justify-start text-left text-sm bg-yellow-400 hover:bg-yellow-500 text-black border-2 border-black rounded-xl shadow-[2px_2px_0px_0px_rgba(0,0,0,0.6)] hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,0.6)] transition-all duration-150 transform hover:translate-x-0.5 hover:translate-y-0.5 active:translate-x-1 active:translate-y-1 active:shadow-none"
+              className="h-auto bg-[#FEF18C] hover:bg-[#FEF18C]/80 text-black font-black text-xs px-4 py-3 border-[4px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 transition-all duration-200 group"
               disabled={loading}
             >
-              <CalendarIcon className="mr-2 h-4 w-4" />
-              {dateRange?.from ? (
-                dateRange.to ? (
-                  <>
-                    {dateRange.from.toLocaleDateString()} -{" "}
-                    {dateRange.to.toLocaleDateString()}
-                  </>
+              <CalendarIcon className="mr-2 h-4 w-4 flex-shrink-0" />
+              <span className="whitespace-nowrap">
+                {dateRange?.from ? (
+                  dateRange.to ? (
+                    <>
+                      {dateRange.from.toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      })}{" "}
+                      <span className="mx-1">→</span>{" "}
+                      {dateRange.to.toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      })}
+                    </>
+                  ) : (
+                    dateRange.from.toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    })
+                  )
                 ) : (
-                  dateRange.from.toLocaleDateString()
-                )
-              ) : (
-                <span>Pick a date range</span>
-              )}
+                  "Pick a date range"
+                )}
+              </span>
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="start">
+          <PopoverContent className="w-auto p-0 border-[4px] border-black mt-1" align="start">
             <Calendar
               mode="range"
               selected={dateRange}
@@ -129,6 +159,24 @@ export function AnalyticsContent() {
             />
           </PopoverContent>
         </Popover>
+        
+        <Button
+          variant="outline"
+          onClick={handleLast7Days}
+          disabled={loading}
+          className="h-auto bg-white hover:bg-gray-50 text-black font-black text-xs px-4 py-3 border-[4px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 transition-all duration-200"
+        >
+          Last 7 days
+        </Button>
+        
+        <Button
+          variant="outline"
+          onClick={handleLast30Days}
+          disabled={loading}
+          className="h-auto bg-white hover:bg-gray-50 text-black font-black text-xs px-4 py-3 border-[4px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 transition-all duration-200"
+        >
+          Last 30 days
+        </Button>
       </div>
 
       <AnalyticsUi data={analyticsData} />

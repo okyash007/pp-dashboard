@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -14,11 +13,8 @@ import {
   Save, 
   X, 
   Camera,
-  Shield,
   Globe,
   Link as LinkIcon,
-  Eye,
-  EyeOff,
   MessageSquare,
   Instagram,
   Linkedin,
@@ -37,7 +33,6 @@ import { toast } from 'sonner';
 export function ProfileContent() {
   const { user, token, updateProfile } = useAuthStore();
   const [isEditing, setIsEditing] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
   const [showAddSocialDialog, setShowAddSocialDialog] = useState(false);
   const [newSocialPlatform, setNewSocialPlatform] = useState('');
   const [newSocialUrl, setNewSocialUrl] = useState('');
@@ -205,11 +200,11 @@ export function ProfileContent() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      
+      <div className="flex items-center gap-2 flex-wrap">
         <Button 
           onClick={() => setIsEditing(!isEditing)}
           disabled={isLoading}
-          className="sticky top-24 z-40 bg-yellow-400 hover:bg-yellow-500 text-black border-2 border-black rounded-xl shadow-[2px_2px_0px_0px_rgba(0,0,0,0.6)] hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,0.6)] transition-all duration-150 transform hover:translate-x-0.5 hover:translate-y-0.5 active:translate-x-1 active:translate-y-1 active:shadow-none disabled:opacity-50 disabled:cursor-not-allowed"
+          className="h-auto bg-[#FEF18C] hover:bg-[#FEF18C]/80 text-black font-black text-xs px-4 py-3 border-[4px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isEditing ? (
             <>
@@ -223,176 +218,196 @@ export function ProfileContent() {
             </>
           )}
         </Button>
+      </div>
 
 
       {/* Profile Information */}
       <div className="grid gap-6 md:grid-cols-2">
         {/* Personal Information */}
-        <Card className="bg-blue-100 border-2 border-black rounded-xl shadow-[3px_3px_0px_0px_rgba(0,0,0,0.6)]">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <User className="w-5 h-5" />
-              Personal Information
-            </CardTitle>
-            <CardDescription>
-              Your basic profile information
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="firstName">First Name</Label>
-                <Input
-                  id="firstName"
-                  value={formData.firstName}
-                  onChange={(e) => handleInputChange('firstName', e.target.value)}
-                  disabled={!isEditing}
-                  className="border-2 border-black rounded-lg"
-                />
+        <div className="relative -rotate-1 translate-y-1">
+          <div className="relative h-full bg-[#828BF8] border-[5px] border-black p-5 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:rotate-0 hover:translate-y-0 hover:translate-x-0.5 transition-all duration-200">
+            <div className="relative z-10">
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-[10px] font-black text-white uppercase tracking-widest bg-black px-2 py-1">
+                  👤 PERSONAL INFO
+                </span>
+                <User className="w-5 h-5 text-white" />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="lastName">Last Name</Label>
-                <Input
-                  id="lastName"
-                  value={formData.lastName}
-                  onChange={(e) => handleInputChange('lastName', e.target.value)}
-                  disabled={!isEditing}
-                  className="border-2 border-black rounded-lg"
-                />
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="firstName" className="text-xs font-black text-white">First Name</Label>
+                    <Input
+                      id="firstName"
+                      value={formData.firstName}
+                      onChange={(e) => handleInputChange('firstName', e.target.value)}
+                      disabled={!isEditing}
+                      className="border-[3px] border-black rounded-lg font-medium bg-white"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="lastName" className="text-xs font-black text-white">Last Name</Label>
+                    <Input
+                      id="lastName"
+                      value={formData.lastName}
+                      onChange={(e) => handleInputChange('lastName', e.target.value)}
+                      disabled={!isEditing}
+                      className="border-[3px] border-black rounded-lg font-medium bg-white"
+                    />
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="username" className="text-xs font-black text-white">Username</Label>
+                  <Input
+                    id="username"
+                    value={formData.username}
+                    onChange={(e) => handleInputChange('username', e.target.value)}
+                    disabled={!isEditing}
+                    className="border-[3px] border-black rounded-lg font-medium bg-white"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="email" className="text-xs font-black text-white">Email</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => handleInputChange('email', e.target.value)}
+                    disabled={!isEditing}
+                    className="border-[3px] border-black rounded-lg font-medium bg-white"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="phone" className="text-xs font-black text-white">Phone</Label>
+                  <Input
+                    id="phone"
+                    value={formData.phone}
+                    onChange={(e) => handleInputChange('phone', e.target.value)}
+                    disabled={!isEditing}
+                    className="border-[3px] border-black rounded-lg font-medium bg-white"
+                  />
+                </div>
               </div>
             </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="username">Username</Label>
-              <Input
-                id="username"
-                value={formData.username}
-                onChange={(e) => handleInputChange('username', e.target.value)}
-                disabled={!isEditing}
-                className="border-2 border-black rounded-lg"
-              />
+            {/* Comic action lines */}
+            <div className="absolute top-2 right-2 w-16 h-16 opacity-20">
+              <div className="absolute rotate-45 w-full h-0.5 bg-white top-1/2"></div>
+              <div className="absolute -rotate-45 w-full h-0.5 bg-white top-1/2"></div>
             </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                value={formData.email}
-                onChange={(e) => handleInputChange('email', e.target.value)}
-                disabled={!isEditing}
-                className="border-2 border-black rounded-lg"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="phone">Phone</Label>
-              <Input
-                id="phone"
-                value={formData.phone}
-                onChange={(e) => handleInputChange('phone', e.target.value)}
-                disabled={!isEditing}
-                className="border-2 border-black rounded-lg"
-              />
-            </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {/* Profile Picture & Banner */}
-        <Card className="bg-green-100 border-2 border-black rounded-xl shadow-[3px_3px_0px_0px_rgba(0,0,0,0.6)]">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Camera className="w-5 h-5" />
-              Profile Images
-            </CardTitle>
-            <CardDescription>
-              Your profile and banner images
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="space-y-2">
-              <Label>Profile Picture</Label>
-              <div className="flex items-center gap-4">
-                <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center overflow-hidden border-4 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,0.6)]">
-                  {formData.image ? (
-                    <img
-                      src={formData.image}
-                      alt={user?.username || "User"}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <User className="w-8 h-8 text-black" />
-                  )}
-                </div>
-                <div className="flex-1">
-                  {isEditing ? (
-                    <ImageUpload
-                      value={formData.image}
-                      onChange={handleImageChange}
-                      className="max-w-xs"
-                    />
-                  ) : (
-                    <div className="text-sm text-gray-500">
-                      {formData.image ? 'Profile image set' : 'No profile image'}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
+        <div className="relative rotate-1 -translate-x-0.5">
+          <div className="relative h-full bg-[#AAD6B8] border-[5px] border-black p-5 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:rotate-0 hover:translate-x-0 hover:translate-y-0.5 transition-all duration-200">
+            {/* Halftone effect */}
+            <div
+              className="absolute inset-0 opacity-10"
+              style={{
+                backgroundImage:
+                  "radial-gradient(circle, black 1px, transparent 1px)",
+                backgroundSize: "8px 8px",
+              }}
+            ></div>
 
-            <div className="space-y-2">
-              <Label>Banner Image</Label>
-              <div className="w-full h-24 bg-white rounded-lg flex items-center justify-center overflow-hidden border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,0.6)]">
-                {formData.banner_image ? (
-                  <img
-                    src={formData.banner_image}
-                    alt="Banner"
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="text-gray-500 text-sm">No banner image</div>
-                )}
+            <div className="relative z-10">
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-[10px] font-black text-black uppercase tracking-widest bg-white px-2 py-1 border-[2px] border-black">
+                  📷 PROFILE IMAGES
+                </span>
+                <Camera className="w-5 h-5 text-black" />
               </div>
-              {isEditing && (
-                <ImageUpload
-                  value={formData.banner_image}
-                  onChange={handleBannerImageChange}
-                />
-              )}
+              <div className="space-y-6">
+                <div className="space-y-2">
+                  <Label className="text-xs font-black text-black">Profile Picture</Label>
+                  <div className="flex items-center gap-4">
+                    <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center overflow-hidden border-[4px] border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+                      {formData.image ? (
+                        <img
+                          src={formData.image}
+                          alt={user?.username || "User"}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <User className="w-8 h-8 text-black" />
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      {isEditing ? (
+                        <ImageUpload
+                          value={formData.image}
+                          onChange={handleImageChange}
+                          className="max-w-xs"
+                        />
+                      ) : (
+                        <div className="text-sm text-black/70 font-medium">
+                          {formData.image ? 'Profile image set' : 'No profile image'}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-xs font-black text-black">Banner Image</Label>
+                  <div className="w-full h-24 bg-white rounded-lg flex items-center justify-center overflow-hidden border-[3px] border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+                    {formData.banner_image ? (
+                      <img
+                        src={formData.banner_image}
+                        alt="Banner"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="text-black/70 text-sm font-medium">No banner image</div>
+                    )}
+                  </div>
+                  {isEditing && (
+                    <ImageUpload
+                      value={formData.banner_image}
+                      onChange={handleBannerImageChange}
+                    />
+                  )}
+                </div>
+              </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
 
       {/* Links & Social */}
-      <Card className="bg-purple-100 border-2 border-black rounded-xl shadow-[3px_3px_0px_0px_rgba(0,0,0,0.6)]">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <LinkIcon className="w-5 h-5" />
-            Social Media Profiles
-          </CardTitle>
-          <CardDescription>
-            Connect your social media accounts to showcase your presence
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          {/* Social Media Header with Add Button */}
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-lg font-semibold">Social Media Profiles</h3>
-              <p className="text-sm text-gray-600">
-                {formData.socials.length} platform{formData.socials.length !== 1 ? 's' : ''} connected
-              </p>
+      <div className="relative -rotate-1 translate-x-1 translate-y-0.5">
+        <div className="relative h-full bg-[#FF6B9D] border-[5px] border-black p-5 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:rotate-0 hover:translate-x-0 hover:translate-y-0 transition-all duration-200">
+          <div className="relative z-10">
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-[10px] font-black text-white uppercase tracking-widest bg-black px-2 py-1">
+                🔗 SOCIAL MEDIA
+              </span>
+              <LinkIcon className="w-5 h-5 text-white" />
             </div>
+            {/* Comic "ZAP!" */}
+            <div className="absolute top-2 right-2 bg-[#FEF18C] border-[2px] border-black px-2 py-0.5 -rotate-12">
+              <span className="text-[10px] font-black text-black">ZAP!</span>
+            </div>
+            <div className="space-y-6">
+              {/* Social Media Header with Add Button */}
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <p className="text-sm text-white/80 font-medium">
+                    {formData.socials.length} platform{formData.socials.length !== 1 ? 's' : ''} connected
+                  </p>
+                </div>
             {isEditing && getAvailablePlatforms().length > 0 && (
               <Dialog open={showAddSocialDialog} onOpenChange={setShowAddSocialDialog}>
                 <DialogTrigger asChild>
-                  <Button className="bg-yellow-400 hover:bg-yellow-500 text-black border-2 border-black rounded-xl shadow-[2px_2px_0px_0px_rgba(0,0,0,0.6)] hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,0.6)] transition-all duration-150 transform hover:translate-x-0.5 hover:translate-y-0.5 active:translate-x-1 active:translate-y-1 active:shadow-none">
+                  <Button className="h-auto bg-[#FEF18C] hover:bg-[#FEF18C]/80 text-black font-black text-xs px-4 py-3 border-[4px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 transition-all duration-200">
                     <Plus className="w-4 h-4 mr-2" />
                     Add Platform
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="sm:max-w-md border-2 border-black rounded-xl bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,0.6)]">
+                <DialogContent className="sm:max-w-md border-[4px] border-black rounded-xl bg-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
                   <DialogHeader>
                     <DialogTitle className="text-xl font-bold text-black">Add Social Media Platform</DialogTitle>
                     <DialogDescription className="text-gray-600">
@@ -407,7 +422,7 @@ export function ProfileContent() {
                         <DropdownMenuTrigger asChild>
                           <Button 
                             variant="outline" 
-                            className="w-full justify-between border-2 border-black rounded-lg bg-white hover:bg-gray-50 shadow-[2px_2px_0px_0px_rgba(0,0,0,0.6)] hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,0.6)] transition-all duration-150 transform hover:translate-x-0.5 hover:translate-y-0.5 active:translate-x-1 active:translate-y-1 active:shadow-none"
+                            className="w-full justify-between border-[3px] border-black rounded-lg bg-white hover:bg-gray-50 font-medium shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-0.5 hover:translate-y-0.5 transition-all duration-200"
                           >
                             {newSocialPlatform ? (
                               <div className="flex items-center gap-2">
@@ -435,7 +450,7 @@ export function ProfileContent() {
                             <MoreHorizontal className="w-4 h-4" />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent className="w-full min-w-[180px] border-2 border-black rounded-lg bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,0.6)] p-1">
+                        <DropdownMenuContent className="w-full min-w-[180px] border-[3px] border-black rounded-lg bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-1">
                           {getAvailablePlatforms().map((platform) => (
                             <DropdownMenuItem
                               key={platform.value}
@@ -466,7 +481,7 @@ export function ProfileContent() {
                         value={newSocialUrl}
                         onChange={(e) => setNewSocialUrl(e.target.value)}
                         placeholder="https://platform.com/username"
-                        className="border-2 border-black rounded-lg"
+                        className="border-[3px] border-black rounded-lg font-medium"
                       />
                     </div>
                   </div>
@@ -479,14 +494,14 @@ export function ProfileContent() {
                         setShowAddSocialDialog(false);
                       }}
                       variant="outline"
-                      className="flex-1 border-2 border-black rounded-xl bg-white hover:bg-gray-50 shadow-[2px_2px_0px_0px_rgba(0,0,0,0.6)] hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,0.6)] transition-all duration-150 transform hover:translate-x-0.5 hover:translate-y-0.5 active:translate-x-1 active:translate-y-1 active:shadow-none"
+                      className="flex-1 h-auto bg-white hover:bg-gray-50 text-black font-black text-xs px-4 py-3 border-[4px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 transition-all duration-200"
                     >
                       Cancel
                     </Button>
                     <Button
                       onClick={handleAddSocial}
                       disabled={!newSocialPlatform || !newSocialUrl.trim()}
-                      className="flex-1 bg-green-400 hover:bg-green-500 text-black border-2 border-black rounded-xl shadow-[2px_2px_0px_0px_rgba(0,0,0,0.6)] hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,0.6)] transition-all duration-150 transform hover:translate-x-0.5 hover:translate-y-0.5 active:translate-x-1 active:translate-y-1 active:shadow-none disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="flex-1 h-auto bg-[#AAD6B8] hover:bg-[#AAD6B8]/80 text-black font-black text-xs px-4 py-3 border-[4px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       Add Platform
                     </Button>
@@ -504,7 +519,7 @@ export function ProfileContent() {
                 if (!platform) return null;
 
                 return (
-                  <div key={social.platform} className="bg-white border-2 border-black rounded-xl p-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,0.6)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,0.6)] transition-all duration-150">
+                  <div key={social.platform} className="bg-white border-[3px] border-black rounded-xl p-4 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-0.5 hover:translate-y-0.5 transition-all duration-200 relative z-10">
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-3">
                         <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
@@ -551,21 +566,21 @@ export function ProfileContent() {
                       onChange={(e) => handleSocialChange(social.platform, e.target.value)}
                       disabled={!isEditing}
                       placeholder={`https://${social.platform}.com/username`}
-                      className="border-2 border-black rounded-lg text-sm"
+                      className="border-[3px] border-black rounded-lg text-sm font-medium"
                     />
                   </div>
                 );
               })}
             </div>
           ) : (
-            <div className="text-center py-12 bg-gray-50 rounded-xl border-2 border-dashed border-gray-300">
-              <LinkIcon className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-gray-600 mb-2">No social media connected</h3>
-              <p className="text-gray-500 mb-4">Add your social media profiles to showcase your presence</p>
+            <div className="text-center py-12 bg-white/20 rounded-xl border-[3px] border-dashed border-white/50 relative z-10">
+              <LinkIcon className="w-12 h-12 text-white/60 mx-auto mb-4" />
+              <h3 className="text-lg font-black text-white mb-2">No social media connected</h3>
+              <p className="text-white/80 mb-4 font-medium">Add your social media profiles to showcase your presence</p>
               {isEditing && getAvailablePlatforms().length > 0 && (
                 <Button
                   onClick={() => setShowAddSocialDialog(true)}
-                  className="bg-yellow-400 hover:bg-yellow-500 text-black border-2 border-black rounded-xl shadow-[2px_2px_0px_0px_rgba(0,0,0,0.6)] hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,0.6)] transition-all duration-150 transform hover:translate-x-0.5 hover:translate-y-0.5 active:translate-x-1 active:translate-y-1 active:shadow-none"
+                  className="h-auto bg-[#FEF18C] hover:bg-[#FEF18C]/80 text-black font-black text-xs px-4 py-3 border-[4px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 transition-all duration-200"
                 >
                   <Plus className="w-4 h-4 mr-2" />
                   Add Your First Platform
@@ -574,77 +589,21 @@ export function ProfileContent() {
             </div>
           )}
 
-          {/* Quick Actions */}
-          {isEditing && (
-            <div className="bg-yellow-100 border-2 border-black rounded-xl p-4">
-              <h4 className="font-bold text-sm mb-2">💡 Quick Tips</h4>
-              <ul className="text-xs space-y-1 text-gray-700">
-                <li>• Enter the full URL of your social media profile</li>
-                <li>• Your social links will be displayed on your public profile</li>
-                <li>• Leave fields empty to hide them from your profile</li>
-              </ul>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Security Settings */}
-      <Card className="bg-red-100 border-2 border-black rounded-xl shadow-[3px_3px_0px_0px_rgba(0,0,0,0.6)]">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Shield className="w-5 h-5" />
-            Security Settings
-          </CardTitle>
-          <CardDescription>
-            Manage your account security and privacy
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="password">Change Password</Label>
-            <div className="relative">
-              <Input
-                id="password"
-                type={showPassword ? "text" : "password"}
-                placeholder="Enter new password"
-                disabled={!isEditing}
-                className="border-2 border-black rounded-lg pr-10"
-              />
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                onClick={() => setShowPassword(!showPassword)}
-                disabled={!isEditing}
-              >
-                {showPassword ? (
-                  <EyeOff className="h-4 w-4" />
-                ) : (
-                  <Eye className="h-4 w-4" />
-                )}
-              </Button>
+              {/* Quick Actions */}
+              {isEditing && (
+                <div className="bg-white border-[2px] border-black rounded-xl p-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] relative z-10">
+                  <h4 className="font-black text-sm mb-2 text-black">💡 Quick Tips</h4>
+                  <ul className="text-xs space-y-1 text-black font-medium">
+                    <li>• Enter the full URL of your social media profile</li>
+                    <li>• Your social links will be displayed on your public profile</li>
+                    <li>• Leave fields empty to hide them from your profile</li>
+                  </ul>
+                </div>
+              )}
             </div>
           </div>
-
-          <div className="flex gap-2">
-            <Button 
-              className="bg-green-400 hover:bg-green-500 text-black border-2 border-black rounded-lg shadow-[2px_2px_0px_0px_rgba(0,0,0,0.6)] hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,0.6)] transition-all duration-150 transform hover:translate-x-0.5 hover:translate-y-0.5 active:translate-x-1 active:translate-y-1 active:shadow-none"
-              disabled={!isEditing}
-            >
-              <Shield className="w-4 h-4 mr-2" />
-              Enable 2FA
-            </Button>
-            <Button 
-              variant="outline"
-              className="border-2 border-black rounded-lg"
-              disabled={!isEditing}
-            >
-              Privacy Settings
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* Save/Cancel Buttons */}
       {isEditing && (
@@ -653,7 +612,7 @@ export function ProfileContent() {
             onClick={handleCancel}
             variant="outline"
             disabled={isLoading}
-            className="border-2 border-black rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+            className="h-auto bg-white hover:bg-gray-50 text-black font-black text-xs px-4 py-3 border-[4px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <X className="w-4 h-4 mr-2" />
             Cancel
@@ -661,7 +620,7 @@ export function ProfileContent() {
           <Button 
             onClick={handleSave}
             disabled={isLoading}
-            className="bg-green-400 hover:bg-green-500 text-black border-2 border-black rounded-xl shadow-[2px_2px_0px_0px_rgba(0,0,0,0.6)] hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,0.6)] transition-all duration-150 transform hover:translate-x-0.5 hover:translate-y-0.5 active:translate-x-1 active:translate-y-1 active:shadow-none disabled:opacity-50 disabled:cursor-not-allowed"
+            className="h-auto bg-[#AAD6B8] hover:bg-[#AAD6B8]/80 text-black font-black text-xs px-4 py-3 border-[4px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading ? (
               <>
