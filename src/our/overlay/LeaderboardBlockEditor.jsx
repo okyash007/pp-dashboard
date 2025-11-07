@@ -325,7 +325,7 @@ const LeaderboardBlockEditor = ({ block, setBlock }) => {
             <div
               key={blockh.type}
               className={`p-2 cursor-pointer ${
-                block.name && block.name === blockh.name ? 'rounded-xl bg-gray-400' : ''
+                block.name && block.name === blockh.name ? '' : ''
               }`}
               onClick={() =>
                 setBlock({
