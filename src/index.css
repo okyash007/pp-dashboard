@@ -251,6 +251,20 @@ h6,
   animation: pop-in 0.3s ease-out;
 }
 
+/* Marquee animation */
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 30s linear infinite;
+}
+
 /* Toast hover effects */
 .toast-item:hover {
   transform: translateX(-2px) scale(1.02);

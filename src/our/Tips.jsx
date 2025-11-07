@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
+import React, { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
 import {
-  DollarSign,
+  IndianRupee,
   Calendar,
   User,
   MessageSquare,
@@ -10,18 +10,13 @@ import {
   ChevronRight,
   CheckCircle,
   XCircle,
-} from "lucide-react";
-import { useAuthStore } from "../stores/authStore";
-import TipAmounts from "./TipAmounts";
+} from 'lucide-react';
+import { useAuthStore } from '../stores/authStore';
+import TipAmounts from './TipAmounts';
+import pointyPotato from '../assets/pointy.svg';
 
 // API service function
-const fetchTips = async (
-  token,
-  startDate = null,
-  endDate = null,
-  page = 1,
-  limit = 100
-) => {
+const fetchTips = async (token, startDate = null, endDate = null, page = 1, limit = 100) => {
   const baseUrl = import.meta.env.VITE_BACKEND_URL;
   let url = `${baseUrl}/tip/?page=${page}&limit=${limit}`;
 
@@ -33,9 +28,9 @@ const fetchTips = async (
   }
 
   const response = await fetch(url, {
-    method: "GET",
+    method: 'GET',
     headers: {
-      accept: "application/json",
+      accept: 'application/json',
       Authorization: `Bearer ${token}`,
     },
   });
@@ -85,11 +80,11 @@ const Tips = ({ startDate, endDate }) => {
         setTips(response.data.tips);
         setPagination(response.data.pagination);
       } else {
-        throw new Error(response.message || "Failed to fetch tips");
+        throw new Error(response.message || 'Failed to fetch tips');
       }
     } catch (err) {
       setError(err.message);
-      console.error("Error loading tips:", err);
+      console.error('Error loading tips:', err);
     } finally {
       setLoading(false);
     }
@@ -98,18 +93,18 @@ const Tips = ({ startDate, endDate }) => {
   const formatDate = (dateString) => {
     // Handle Unix timestamp (seconds) by converting to milliseconds
     const date = new Date(parseInt(dateString) * 1000);
-    return date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
     });
   };
 
   const formatAmount = (amount, currency) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
       currency: currency,
     }).format(parseFloat(amount) / 100);
   };
@@ -143,29 +138,25 @@ const Tips = ({ startDate, endDate }) => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className='space-y-6'>
       {/* Tip Amounts */}
       <TipAmounts />
 
       {/* Header with Refresh Button */}
-      <div className="flex items-center justify-between">
+      <div className='flex items-center justify-between pt-12'>
         <div>
-          <h1 className="text-3xl font-black text-black" style={{ textShadow: "3px 3px 0px rgba(0,0,0,0.1)" }}>
-            Tips History
-          </h1>
-          <p className="text-gray-700 mt-2 font-semibold">
-            View and manage all your received tips
-          </p>
+          <h1 className='text-2xl font-bold text-gray-900'>Tips History</h1>
+          <p className='text-gray-600 mt-1 text-sm'>View and manage all your received tips</p>
         </div>
-        <div className="flex gap-2">
+        <div className='flex gap-2'>
           <Button
-            variant="outline"
-            size="sm"
+            variant='outline'
+            size='sm'
             onClick={handleRefresh}
             disabled={loading}
-            className="bg-[#FEF18C] hover:bg-[#FEF18C]/80 text-black font-black text-xs px-4 py-3 border-[4px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+            className='bg-white hover:bg-gray-50 text-gray-700 font-semibold text-xs px-4 py-2 border-[2px] border-gray-300 transition-colors disabled:opacity-40 disabled:cursor-not-allowed'
           >
-            <RefreshCw className={`h-4 w-4 mr-2 ${loading ? "animate-spin" : ""}`} />
+            <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
             Refresh
           </Button>
         </div>
@@ -173,16 +164,16 @@ const Tips = ({ startDate, endDate }) => {
 
       {/* Error Display */}
       {error && (
-        <div className="bg-red-100 border-[4px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-4">
-          <div className="flex items-center justify-between">
-            <div className="text-red-900 font-black">
+        <div className='bg-red-50 border-[2px] border-red-200 p-4'>
+          <div className='flex items-center justify-between'>
+            <div className='text-red-700 font-semibold text-sm'>
               <strong>⚠️ Error:</strong> {error}
             </div>
             <Button
-              variant="outline"
-              size="sm"
+              variant='outline'
+              size='sm'
               onClick={loadTips}
-              className="bg-[#FFF9C4] hover:bg-[#FFF59D] text-black font-black text-xs px-3 py-2 border-[3px] border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-0.5 hover:translate-y-0.5 transition-all duration-150"
+              className='bg-white hover:bg-gray-50 text-gray-700 font-semibold text-xs px-3 py-2 border-[2px] border-gray-300 transition-colors'
             >
               Retry
             </Button>
@@ -191,144 +182,148 @@ const Tips = ({ startDate, endDate }) => {
       )}
 
       {/* Tips Table */}
-      <div className="bg-[#F5F5F5] border-[6px] border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] overflow-hidden">
-        <div className="bg-black px-6 py-4 border-b-[4px] border-black">
-          <div className="flex items-center gap-2">
-            <MessageSquare className="h-5 w-5 text-white" />
-            <h2 className="text-lg font-black text-white uppercase tracking-wider">
-              Recent Tips
-            </h2>
+      <div
+        className='bg-white border-[3px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] overflow-hidden relative group/table transition-all duration-300'
+        style={{
+          backgroundImage: 'radial-gradient(circle, rgba(170, 214, 184, 0.3) 1px, transparent 1px)',
+          backgroundSize: '8px 8px',
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.backgroundImage =
+            'radial-gradient(circle, rgba(170, 214, 184, 0.32) 1.2px, transparent 1.2px)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.backgroundImage =
+            'radial-gradient(circle, rgba(170, 214, 184, 0.3) 1px, transparent 1px)';
+        }}
+      >
+        {/* Pointy Potato */}
+        <div className='absolute -top-13 left-10 w-64 h-64 z-10 pointer-events-none'>
+          <img src={pointyPotato} alt='Pointing' className='w-full h-full object-contain' />
+        </div>
+
+        <div className='bg-gradient-to-r from-[#828BF8] to-[#828BF8]/90 px-6 py-3 border-b-[3px] border-black relative z-0 overflow-hidden'>
+          <div className='flex items-center gap-2'>
+            <MessageSquare className='h-4 w-4 text-white flex-shrink-0' />
+            <div className='flex-1 overflow-hidden'>
+              <div className='flex whitespace-nowrap animate-marquee'>
+                <h2 className='text-sm font-black text-white uppercase tracking-wider inline-block pr-20'>
+                  Recent Tips
+                </h2>
+                <h2 className='text-sm font-black text-white uppercase tracking-wider inline-block pr-20'>
+                  Recent Tips
+                </h2>
+                <h2 className='text-sm font-black text-white uppercase tracking-wider inline-block pr-20'>
+                  Recent Tips
+                </h2>
+                <h2 className='text-sm font-black text-white uppercase tracking-wider inline-block pr-20'>
+                  Recent Tips
+                </h2>
+                <h2 className='text-sm font-black text-white uppercase tracking-wider inline-block pr-20'>
+                  Recent Tips
+                </h2>
+                <h2 className='text-sm font-black text-white uppercase tracking-wider inline-block pr-20'>
+                  Recent Tips
+                </h2>
+              </div>
+            </div>
           </div>
         </div>
-        <div className="p-6">
+        <div className='p-0'>
           {loading ? (
-            <div className="space-y-4">
-              {[...Array(3)].map((_, i) => (
-                <div key={i} className="animate-pulse">
-                  <div className="flex space-x-4">
-                    <div className="h-4 bg-gray-300 rounded w-20 border-2 border-black"></div>
-                    <div className="h-4 bg-gray-300 rounded w-32 border-2 border-black"></div>
-                    <div className="h-4 bg-gray-300 rounded w-24 border-2 border-black"></div>
-                    <div className="h-4 bg-gray-300 rounded w-28 border-2 border-black"></div>
-                    <div className="h-4 bg-gray-300 rounded w-36 border-2 border-black"></div>
+            <div className='space-y-3 p-6'>
+              {[...Array(5)].map((_, i) => (
+                <div
+                  key={i}
+                  className='animate-pulse flex items-center gap-4 p-4 bg-gray-50 border border-gray-200'
+                >
+                  <div className='h-10 w-24 bg-gray-200 rounded'></div>
+                  <div className='flex-1'>
+                    <div className='h-4 bg-gray-200 rounded w-32 mb-2'></div>
+                    <div className='h-3 bg-gray-200 rounded w-48'></div>
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full">
+            <div className='overflow-x-auto'>
+              <table className='w-full'>
                 <thead>
-                  <tr className="border-b-[4px] border-black">
-                    <th className="text-left py-4 px-4 font-black text-black uppercase tracking-wider bg-[#FFF9C4]">
+                  <tr className='border-b-[2px] border-gray-200 bg-[#FEF18C]'>
+                    <th className='text-left py-3 px-6 text-xs font-bold text-gray-600 uppercase tracking-wider'>
                       Amount
                     </th>
-                    <th className="text-left py-4 px-4 font-black text-black uppercase tracking-wider bg-[#C8E6C9]">
+                    <th className='text-left py-3 px-6 text-xs font-bold text-gray-600 uppercase tracking-wider'>
                       From
                     </th>
-                    <th className="text-left py-4 px-4 font-black text-black uppercase tracking-wider bg-[#C5CAE9]">
+                    <th className='text-left py-3 px-6 text-xs font-bold text-gray-600 uppercase tracking-wider'>
                       Message
                     </th>
-                    <th className="text-left py-4 px-4 font-black text-black uppercase tracking-wider bg-[#F8BBD0]">
+                    <th className='text-left py-3 px-6 text-xs font-bold text-gray-600 uppercase tracking-wider'>
                       Date
                     </th>
-                    <th className="text-left py-4 px-4 font-black text-black uppercase tracking-wider bg-[#FFF59D]">
-                      Settled
+                    <th className='text-left py-3 px-6 text-xs font-bold text-gray-600 uppercase tracking-wider'>
+                      Status
                     </th>
-                    <th className="text-left py-4 px-4 font-black text-black uppercase tracking-wider bg-[#E1F5FE]">
+                    <th className='text-left py-3 px-6 text-xs font-bold text-gray-600 uppercase tracking-wider'>
                       Payment ID
                     </th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className='divide-y divide-gray-100'>
                   {tips.map((tip, index) => (
                     <tr
                       key={tip.id}
-                      className={`border-b-[2px] border-black hover:bg-gray-100 transition-colors ${
-                        index % 2 === 0 ? "bg-[#F5F5F5]" : "bg-[#FAFAFA]"
-                      }`}
+                      className='transition-all duration-200 group hover:bg-[#AAD6B8]/10'
                     >
-                      <td className="py-4 px-4">
-                        <div className="flex items-center gap-2">
-                          <div className="bg-green-100 border-[2px] border-black p-1.5 rounded">
-                            <DollarSign className="h-4 w-4 text-green-700" />
+                      <td className='py-4 px-6'>
+                        <div className='flex items-center gap-3'>
+                          <div className='w-10 h-10 bg-green-100 border-[2px] border-green-200 flex items-center justify-center'>
+                            <IndianRupee className='h-4 w-4 text-green-700 -rotate-12 group-hover:rotate-0 group-hover:text-green-600 transition-all duration-200' />
                           </div>
                           <div>
-                            <span className="font-black text-black text-lg">
+                            <div className='font-bold text-gray-900 text-base'>
                               {formatAmount(tip.amount, tip.currency)}
-                            </span>
-                            <div className="text-xs bg-black text-white px-2 py-0.5 border border-black inline-block ml-2 font-bold">
-                              {tip.currency}
                             </div>
+                            <div className='text-xs text-gray-500 font-medium'>{tip.currency}</div>
                           </div>
                         </div>
                       </td>
-                      <td className="py-4 px-4">
-                        <div className="flex items-center gap-2">
-                          <div className="bg-blue-100 border-[2px] border-black p-1.5 rounded">
-                            <User className="h-4 w-4 text-blue-700" />
+                      <td className='py-4 px-6'>
+                        <div>
+                          <div className='font-semibold text-gray-900 text-sm'>
+                            {tip.visitor_name || 'Anonymous'}
                           </div>
-                          <div>
-                            <div className="font-bold text-black">
-                              {tip.visitor_name || "Anonymous"}
-                            </div>
-                            {tip.visitor_email && (
-                              <div className="text-xs text-gray-600 font-semibold">
-                                {tip.visitor_email}
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </td>
-                      <td className="py-4 px-4">
-                        <div className="flex items-center gap-2">
-                          <div className="bg-purple-100 border-[2px] border-black p-1.5 rounded">
-                            <MessageSquare className="h-4 w-4 text-purple-700" />
-                          </div>
-                          <span className="text-black font-semibold">
-                            {tip.message || (
-                              <span className="text-gray-500 italic">No message</span>
-                            )}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="py-4 px-4">
-                        <div className="flex items-center gap-2">
-                          <div className="bg-pink-100 border-[2px] border-black p-1.5 rounded">
-                            <Calendar className="h-4 w-4 text-pink-700" />
-                          </div>
-                          <span className="text-black font-semibold">
-                            {formatDate(tip.created_at)}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="py-4 px-4">
-                        <div className="flex items-center gap-2">
-                          {tip.settled ? (
-                            <div className="bg-green-100 border-[3px] border-black px-3 py-1.5 rounded shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                              <div className="flex items-center gap-1.5">
-                                <CheckCircle className="h-4 w-4 text-green-700" />
-                                <span className="text-xs font-black text-green-700 uppercase">
-                                  Settled
-                                </span>
-                              </div>
-                            </div>
-                          ) : (
-                            <div className="bg-orange-100 border-[3px] border-black px-3 py-1.5 rounded shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                              <div className="flex items-center gap-1.5">
-                                <XCircle className="h-4 w-4 text-orange-700" />
-                                <span className="text-xs font-black text-orange-700 uppercase">
-                                  Pending
-                                </span>
-                              </div>
-                            </div>
+                          {tip.visitor_email && (
+                            <div className='text-xs text-gray-500 mt-0.5'>{tip.visitor_email}</div>
                           )}
                         </div>
                       </td>
-                      <td className="py-4 px-4">
-                        <span className="text-xs bg-[#E1F5FE] border-[2px] border-black px-2 py-1 font-mono font-bold text-black inline-block">
+                      <td className='py-4 px-6'>
+                        <div className='text-sm text-gray-700 max-w-xs truncate'>
+                          {tip.message || <span className='text-gray-400 italic'>No message</span>}
+                        </div>
+                      </td>
+                      <td className='py-4 px-6'>
+                        <div className='text-sm text-gray-600'>{formatDate(tip.created_at)}</div>
+                      </td>
+                      <td className='py-4 px-6'>
+                        {tip.settled ? (
+                          <div className='inline-flex items-center gap-1.5 px-2.5 py-1 bg-green-50 border border-green-200 text-green-700 text-xs font-semibold'>
+                            <CheckCircle className='h-3 w-3' />
+                            Settled
+                          </div>
+                        ) : (
+                          <div className='inline-flex items-center gap-1.5 px-2.5 py-1 bg-pink-50/50 border border-pink-200/60 text-pink-700/80 text-xs font-medium'>
+                            <XCircle className='h-3 w-3' />
+                            Pending
+                          </div>
+                        )}
+                      </td>
+                      <td className='py-4 px-6'>
+                        <code className='text-xs bg-gray-100 text-gray-700 px-2 py-1 font-mono'>
                           {tip.payment_id}
-                        </span>
+                        </code>
                       </td>
                     </tr>
                   ))}
@@ -338,16 +333,12 @@ const Tips = ({ startDate, endDate }) => {
           )}
 
           {!loading && tips.length === 0 && (
-            <div className="text-center py-12 bg-gray-50 border-[4px] border-black p-8">
-              <div className="bg-[#F5F5F5] border-[3px] border-black p-4 inline-block mb-4">
-                <MessageSquare className="h-12 w-12 text-gray-400 mx-auto" />
+            <div className='text-center py-16 bg-gray-50'>
+              <div className='bg-white border-[2px] border-gray-200 p-4 inline-block mb-4'>
+                <MessageSquare className='h-12 w-12 text-gray-300 mx-auto' />
               </div>
-              <h3 className="text-xl font-black text-black mb-2">
-                No tips yet
-              </h3>
-              <p className="text-gray-700 font-semibold">
-                Tips from your supporters will appear here.
-              </p>
+              <h3 className='text-lg font-bold text-gray-900 mb-1'>No tips yet</h3>
+              <p className='text-gray-500 text-sm'>Tips from your supporters will appear here.</p>
             </div>
           )}
         </div>
@@ -355,78 +346,69 @@ const Tips = ({ startDate, endDate }) => {
 
       {/* Pagination */}
       {!loading && pagination.totalPages > 1 && (
-        <div className="bg-[#F5F5F5] border-[6px] border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-6">
-          <div className="flex items-center justify-between flex-wrap gap-4">
-            <div className="text-sm font-black text-black bg-[#FEF18C] border-[3px] border-black px-4 py-2 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-              Showing {(pagination.currentPage - 1) * pagination.limit + 1} to{" "}
-              {Math.min(
-                pagination.currentPage * pagination.limit,
-                pagination.totalCount
-              )}{" "}
-              of {pagination.totalCount} tips
+        <div className='bg-white border-[3px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-4'>
+          <div className='flex items-center justify-between flex-wrap gap-4'>
+            <div className='text-xs text-gray-600 font-medium'>
+              Showing {(pagination.currentPage - 1) * pagination.limit + 1} to{' '}
+              {Math.min(pagination.currentPage * pagination.limit, pagination.totalCount)} of{' '}
+              {pagination.totalCount} tips
             </div>
 
-            <div className="flex items-center space-x-2">
+            <div className='flex items-center space-x-2'>
               <Button
-                variant="outline"
-                size="sm"
+                variant='outline'
+                size='sm'
                 onClick={handlePreviousPage}
                 disabled={!pagination.hasPrevPage || loading}
-                className="bg-[#FFF9C4] hover:bg-[#FFF59D] text-black font-black text-xs px-4 py-2 border-[3px] border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-0.5 hover:translate-y-0.5 transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+                className='bg-white hover:bg-gray-50 text-gray-700 font-semibold text-xs px-3 py-2 border-[2px] border-gray-300 transition-colors disabled:opacity-40 disabled:cursor-not-allowed'
               >
-                <ChevronLeft className="h-4 w-4 mr-1" />
+                <ChevronLeft className='h-4 w-4 mr-1' />
                 Previous
               </Button>
 
-              <div className="flex items-center space-x-1">
-                {Array.from(
-                  { length: Math.min(5, pagination.totalPages) },
-                  (_, i) => {
-                    let pageNum;
-                    if (pagination.totalPages <= 5) {
-                      pageNum = i + 1;
-                    } else if (pagination.currentPage <= 3) {
-                      pageNum = i + 1;
-                    } else if (
-                      pagination.currentPage >=
-                      pagination.totalPages - 2
-                    ) {
-                      pageNum = pagination.totalPages - 4 + i;
-                    } else {
-                      pageNum = pagination.currentPage - 2 + i;
-                    }
-
-                    const isActive = pageNum === pagination.currentPage;
-
-                    return (
-                      <Button
-                        key={pageNum}
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handlePageChange(pageNum)}
-                        disabled={loading}
-                        className={`w-10 h-10 p-0 font-black text-xs border-[3px] border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-0.5 hover:translate-y-0.5 transition-all duration-150 ${
-                          isActive
-                            ? "bg-[#FF6B9D] text-white hover:bg-[#FF6B9D]/90"
-                            : "bg-[#FFF9C4] text-black hover:bg-[#FFF59D]"
-                        }`}
-                      >
-                        {pageNum}
-                      </Button>
-                    );
+              <div className='flex items-center space-x-1'>
+                {Array.from({ length: Math.min(5, pagination.totalPages) }, (_, i) => {
+                  let pageNum;
+                  if (pagination.totalPages <= 5) {
+                    pageNum = i + 1;
+                  } else if (pagination.currentPage <= 3) {
+                    pageNum = i + 1;
+                  } else if (pagination.currentPage >= pagination.totalPages - 2) {
+                    pageNum = pagination.totalPages - 4 + i;
+                  } else {
+                    pageNum = pagination.currentPage - 2 + i;
                   }
-                )}
+
+                  const isActive = pageNum === pagination.currentPage;
+
+                  return (
+                    <Button
+                      key={pageNum}
+                      variant='outline'
+                      size='sm'
+                      onClick={() => handlePageChange(pageNum)}
+                      disabled={loading}
+                      className={`w-9 h-9 p-0 font-semibold text-xs border-[2px] transition-colors ${
+                        isActive
+                          ? 'bg-[#828BF8] text-white border-[#828BF8] hover:bg-[#828BF8]/90'
+                          : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                      }`}
+                    >
+                      {pageNum}
+                    </Button>
+                  );
+                })}
               </div>
 
               <Button
-                variant="outline"
-                size="sm"
+                variant='outline'
+                size='sm'
                 onClick={handleNextPage}
                 disabled={!pagination.hasNextPage || loading}
-                className="bg-[#FFF9C4] hover:bg-[#FFF59D] text-black font-black text-xs px-4 py-2 border-[3px] border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-0.5 hover:translate-y-0.5 transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+                className='bg-white hover:bg-gray-50 text-gray-700 font-semibold text-xs px-3 py-2 border-[2px] border-gray-300 transition-colors disabled:opacity-40 disabled:cursor-not-allowed'
               >
                 Next
-                <ChevronRight className="h-4 w-4 ml-1" />
+                <ChevronRight className='h-4 w-4 ml-1' />
               </Button>
             </div>
           </div>

@@ -1,15 +1,11 @@
-import { useDebugValue, useEffect, useState } from "react";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-} from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
-import { CalendarIcon } from "lucide-react";
-import { useAuthStore } from "@/stores/authStore";
-import AnalyticsUi from "./AnalyticsUi";
-import Tips from "./Tips";
+import { useDebugValue, useEffect, useState } from 'react';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
+import { Button } from '@/components/ui/button';
+import { CalendarIcon } from 'lucide-react';
+import { useAuthStore } from '@/stores/authStore';
+import AnalyticsUi from './AnalyticsUi';
+import Tips from './Tips';
 
 // Utility function to convert Unix timestamp to readable date string
 const unixToReadableDate = (unixTimestamp) => {
@@ -22,20 +18,16 @@ const readableDateToUnix = (dateString) => {
 };
 
 // Function to fetch analytics data
-const fetchAnalytics = async (
-  startDate,
-  endDate,
-  token
-) => {
+const fetchAnalytics = async (startDate, endDate, token) => {
   try {
     const url = new URL(`${import.meta.env.VITE_BACKEND_URL}/analytics`);
-    url.searchParams.append("start_date", startDate);
-    url.searchParams.append("end_date", endDate);
+    url.searchParams.append('start_date', startDate);
+    url.searchParams.append('end_date', endDate);
 
     const response = await fetch(url.toString(), {
-      method: "GET",
+      method: 'GET',
       headers: {
-        accept: "application/json",
+        accept: 'application/json',
         Authorization: `Bearer ${token}`,
       },
     });
@@ -47,7 +39,7 @@ const fetchAnalytics = async (
     const data = await response.json();
     return data.data;
   } catch (error) {
-    console.error("Error fetching analytics:", error);
+    console.error('Error fetching analytics:', error);
     throw error;
   }
 };
@@ -79,7 +71,7 @@ export function AnalyticsContent() {
           setAnalyticsData(data);
         } catch (err) {
           setError(err.message);
-          console.error("Failed to fetch analytics:", err);
+          console.error('Failed to fetch analytics:', err);
         } finally {
           setLoading(false);
         }
@@ -110,70 +102,70 @@ export function AnalyticsContent() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className='space-y-6'>
       {/* Date Range Selector */}
-      <div className="flex items-center gap-2 flex-wrap">
-        <Popover >
+      <div className='flex items-center gap-2 flex-wrap'>
+        <Popover>
           <PopoverTrigger asChild>
             <Button
-              variant="outline"
-              className="h-auto bg-[#FEF18C] hover:bg-[#FEF18C]/80 text-black font-black text-xs px-4 py-3 border-[4px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 transition-all duration-200 group"
+              variant='outline'
+              className='h-auto bg-[#FEF18C] hover:bg-[#FEF18C]/80 text-black font-black text-xs px-4 py-3 border-[4px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 transition-all duration-200 group'
               disabled={loading}
             >
-              <CalendarIcon className="mr-2 h-4 w-4 flex-shrink-0" />
-              <span className="whitespace-nowrap">
+              <CalendarIcon className='mr-2 h-4 w-4 flex-shrink-0' />
+              <span className='whitespace-nowrap'>
                 {dateRange?.from ? (
                   dateRange.to ? (
                     <>
-                      {dateRange.from.toLocaleDateString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                        year: "numeric",
-                      })}{" "}
-                      <span className="mx-1">→</span>{" "}
-                      {dateRange.to.toLocaleDateString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                        year: "numeric",
+                      {dateRange.from.toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric',
+                      })}{' '}
+                      <span className='mx-1'>→</span>{' '}
+                      {dateRange.to.toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric',
                       })}
                     </>
                   ) : (
-                    dateRange.from.toLocaleDateString("en-US", {
-                      month: "short",
-                      day: "numeric",
-                      year: "numeric",
+                    dateRange.from.toLocaleDateString('en-US', {
+                      month: 'short',
+                      day: 'numeric',
+                      year: 'numeric',
                     })
                   )
                 ) : (
-                  "Pick a date range"
+                  'Pick a date range'
                 )}
               </span>
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-auto p-0 border-[4px] border-black mt-1" align="start">
+          <PopoverContent className='w-auto p-0 border-[4px] border-black mt-1' align='start'>
             <Calendar
-              mode="range"
+              mode='range'
               selected={dateRange}
               onSelect={setDateRange}
               numberOfMonths={2}
             />
           </PopoverContent>
         </Popover>
-        
+
         <Button
-          variant="outline"
+          variant='outline'
           onClick={handleLast7Days}
           disabled={loading}
-          className="h-auto bg-white hover:bg-gray-50 text-black font-black text-xs px-4 py-3 border-[4px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 transition-all duration-200"
+          className='h-auto bg-white hover:bg-gray-50 text-black font-black text-xs px-4 py-3 border-[4px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 transition-all duration-200'
         >
           Last 7 days
         </Button>
-        
+
         <Button
-          variant="outline"
+          variant='outline'
           onClick={handleLast30Days}
           disabled={loading}
-          className="h-auto bg-white hover:bg-gray-50 text-black font-black text-xs px-4 py-3 border-[4px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 transition-all duration-200"
+          className='h-auto bg-white hover:bg-gray-50 text-black font-black text-xs px-4 py-3 border-[4px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 transition-all duration-200'
         >
           Last 30 days
         </Button>

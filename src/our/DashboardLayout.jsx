@@ -65,11 +65,11 @@ const menuItems = [
     icon: Home,
     url: '/dashboard/overview',
   },
-  {
-    title: 'Rules',
-    icon: Settings,
-    url: '/dashboard/rules',
-  },
+  // {
+  //   title: 'Rules',
+  //   icon: Settings,
+  //   url: '/dashboard/rules',
+  // },
   {
     title: 'Tip Page',
     icon: Palette,
@@ -124,7 +124,7 @@ export function DashboardLayout({ children }) {
                     className='w-14 h-14 transition-all duration-500'
                   />
                 </div>
-                {/* Stickers/badges on mascot */}
+                {/* badges on mascot */}
                 <div className='absolute -top-2 -right-2 bg-[#AAD6B8] border-[3px] border-black px-2 py-0.5 text-[10px] font-black rotate-12 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]'>
                   FRESH
                 </div>
@@ -182,8 +182,6 @@ export function DashboardLayout({ children }) {
                               }`}
                             />
                           </div>
-
-                          {/* Text Content */}
                           <div className='flex-1 min-w-0'>
                             <div className='flex items-center gap-2'>
                               <span
@@ -195,8 +193,6 @@ export function DashboardLayout({ children }) {
                               </span>
                             </div>
                           </div>
-
-                          {/* Active indicator */}
                           {isActive && (
                             <div className='mt-1.5 flex items-center gap-1'>
                               <div className='w-2 h-2 bg-[#FEF18C] border-[2px] border-white shadow-lg animate-pulse'></div>
@@ -347,7 +343,6 @@ export function DashboardLayout({ children }) {
               </div>
             </div>
 
-            {/* Quick Links with Puns */}
             <div className='flex items-center gap-3'>
               <Button
                 asChild
