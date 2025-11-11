@@ -9,7 +9,7 @@ import famPotato from '@/assets/fam.svg?url';
 import coolPotato from '@/assets/cool.svg?url';
 import joyPotato from '@/assets/joy.svg?url';
 import pissedPotato from '@/assets/pissed.svg?url';
-import moneyPotato from '@/assets/money.svg?url';
+import treePotato from '@/assets/tree.svg?url';
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -154,7 +154,7 @@ export default function LoginPage() {
         </div>
       ) : (
         <div className='relative z-10 w-full flex items-center justify-center p-6 md:p-12'>
-          <div className='relative w-full max-w-5xl flex items-end justify-center'>
+          <div className='relative w-full max-w-5xl flex items-end justify-start ml-36'>
             {/* Brand + Form */}
             <div className='w-full max-w-xl'>
               {/* Brand header - match DashboardLayout */}
@@ -344,11 +344,11 @@ export default function LoginPage() {
               </form>
             </div>
             {/* Mascot next to form */}
-            <div className='hidden md:block pb-2'>
+            <div className='hidden md:block pb-2 absolute left-100 bottom-0'>
               <img
-                src={moneyPotato}
+                src={treePotato}
                 alt='Potato Pay Mascot'
-                className='w-64 h-64 object-contain mascot-enter'
+                className='w-64 h-64 object-contain mascot-enter scale-325'
                 style={{ filter: 'drop-shadow(6px 6px 0 rgba(0,0,0,1))' }}
               />
             </div>

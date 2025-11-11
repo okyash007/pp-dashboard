@@ -18,6 +18,7 @@ import coolPotato from '@/assets/cool.svg?url';
 import joyPotato from '@/assets/joy.svg?url';
 import pissedPotato from '@/assets/pissed.svg?url';
 import treePotato from '@/assets/tree.svg?url';
+import carPotato from '@/assets/car.svg?url';
 
 export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -194,7 +195,15 @@ export default function SignupPage() {
         </div>
       ) : (
         <div className='relative z-10 w-full flex items-center justify-center p-6 md:p-12'>
-          <div className='relative w-full max-w-5xl flex items-end justify-start ml-12'>
+          <div className='relative w-full max-w-5xl flex items-end justify-end mr-36'>
+            <div className='hidden md:block pb-2 absolute right-160'>
+              <img
+                src={carPotato}
+                alt='Potato Pay Mascot'
+                className='w-64 h-64 object-contain mascot-enter scale-150'
+                style={{ filter: 'drop-shadow(6px 6px 0 rgba(0,0,0,1))' }}
+              />
+            </div>
             <div className='w-full max-w-xl'>
               <div className='text-left mb-6'>
                 <div className='relative bg-gradient-to-br from-[#828BF8] via-[#828BF8] to-[#828BF8]/90 border-[5px] border-black p-4 pr-5 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] overflow-hidden'>
@@ -532,14 +541,6 @@ export default function SignupPage() {
                   </p>
                 </div>
               </form>
-            </div>
-            <div className='hidden md:block pb-2 absolute left-100'>
-              <img
-                src={treePotato}
-                alt='Potato Pay Mascot'
-                className='w-64 h-64 object-contain mascot-enter scale-325'
-                style={{ filter: 'drop-shadow(6px 6px 0 rgba(0,0,0,1))' }}
-              />
             </div>
           </div>
         </div>
