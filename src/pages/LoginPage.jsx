@@ -344,7 +344,7 @@ export default function LoginPage() {
               </form>
             </div>
             {/* Mascot next to form */}
-            <div className='hidden md:block pb-2 absolute left-100 bottom-0'>
+            <div className='hidden md:block pb-2 absolute left-100 bottom-0 pointer-events-none'>
               <img
                 src={treePotato}
                 alt='Potato Pay Mascot'
