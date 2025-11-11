@@ -1,82 +1,70 @@
-import React, { useState } from "react";
-import { Stepper } from "@/components/ui/stepper";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import React, { useEffect, useMemo, useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import ImageUpload from "@/components/ImageUpload";
+} from '@/components/ui/select';
+import ImageUpload from '@/components/ImageUpload';
 import {
   ArrowLeft,
   ArrowRight,
   CheckCircle,
   User,
   Settings,
-  Palette,
   Share,
   LogOut,
-} from "lucide-react";
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useAuthStore } from "@/stores/authStore";
+  AlertCircle,
+} from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useAuthStore } from '@/stores/authStore';
+import coolPotato from '@/assets/cool.svg?url';
+import joyPotato from '@/assets/joy.svg?url';
+import famPotato from '@/assets/fam.svg?url';
+import pissedPotato from '@/assets/pissed.svg?url';
 
 const getOnboarding = async (token) => {
   try {
-    const response = await fetch(
-      `${import.meta.env.VITE_BACKEND_URL}/onboarding`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/onboarding`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
     const data = await response.json();
     if (!data.success) {
-      console.error("API returned unsuccessful response:", data);
+      console.error('API returned unsuccessful response:', data);
       return null;
     }
     return data.data;
   } catch (error) {
-    console.error("Error fetching onboarding:", error);
+    console.error('Error fetching onboarding:', error);
     return null;
   }
 };
 
 const updateOnboarding = async (token, data) => {
   try {
-    const response = await fetch(
-      `${import.meta.env.VITE_BACKEND_URL}/onboarding`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(data),
-      }
-    );
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/onboarding`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
     const result = await response.json();
     if (!result.success) {
-      throw new Error(result.message || "Failed to update onboarding");
+      throw new Error(result.message || 'Failed to update onboarding');
     }
     return result.data;
   } catch (error) {
-    console.error("Error updating onboarding:", error);
+    console.error('Error updating onboarding:', error);
     throw error;
   }
 };
@@ -86,23 +74,21 @@ const OnboardingContent = () => {
   const navigate = useNavigate();
   const [onboardingData, setOnboardingData] = useState(null);
   const [currentStep, setCurrentStep] = useState(0);
-  const [identityType, setIdentityType] = useState("");
-
   const [formData, setFormData] = useState({
     identity: {
-      type: "",
-      legal_name: `${user?.firstName || ""} ${user?.lastName || ""}`.trim(),
-      pan_number: "",
-      gst_in: "",
-      pan_image: "",
-      gst_in_image: "",
+      type: '',
+      legal_name: `${user?.firstName || ''} ${user?.lastName || ''}`.trim(),
+      pan_number: '',
+      gst_in: '',
+      pan_image: '',
+      gst_in_image: '',
     },
     bank_account: {
-      name: "",
-      bank_name: "",
-      account_number: "",
-      ifsc_code: "",
-      account_image: "",
+      name: '',
+      bank_name: '',
+      account_number: '',
+      ifsc_code: '',
+      account_image: '',
     },
   });
   const [errors, setErrors] = useState({});
@@ -110,42 +96,44 @@ const OnboardingContent = () => {
 
   useEffect(() => {
     if (token) {
-      getOnboarding(token).then((data) => {
-        // Always set onboardingData
-        setOnboardingData(data || {});
-        if (data) {
-          // Prefill form with existing onboarding data
-          setFormData({
-            identity: {
-              type: data.identity?.type || "",
-              legal_name: data.identity?.legal_name || `${user?.firstName || ""} ${user?.lastName || ""}`.trim(),
-              pan_number: data.identity?.pan_number || "",
-              gst_in: data.identity?.gst_in || "",
-              pan_image: data.identity?.pan_image || "",
-              gst_in_image: data.identity?.gst_in_image || "",
-            },
-            bank_account: {
-              name: data.bank_account?.name || `${user?.firstName || ""} ${user?.lastName || ""}`.trim(),
-              bank_name: data.bank_account?.bank_name || "",
-              account_number: data.bank_account?.account_number || "",
-              ifsc_code: data.bank_account?.ifsc_code || "",
-              account_image: data.bank_account?.account_image || "",
-            },
-          });
-          // Set current step based on saved progress
-          if (data.step) {
-            setCurrentStep(Math.min(data.step - 1, 2)); // Max step is 2 (0-indexed)
+      getOnboarding(token)
+        .then((data) => {
+          // Always set onboardingData
+          setOnboardingData(data || {});
+          if (data && data.identity) {
+            // Prefill form with existing onboarding data
+            setFormData({
+              identity: {
+                type: data.identity?.type || '',
+                legal_name:
+                  data.identity?.legal_name ||
+                  `${user?.firstName || ''} ${user?.lastName || ''}`.trim(),
+                pan_number: data.identity?.pan_number || '',
+                gst_in: data.identity?.gst_in || '',
+                pan_image: data.identity?.pan_image || '',
+                gst_in_image: data.identity?.gst_in_image || '',
+              },
+              bank_account: {
+                name:
+                  data.bank_account?.name ||
+                  `${user?.firstName || ''} ${user?.lastName || ''}`.trim(),
+                bank_name: data.bank_account?.bank_name || '',
+                account_number: data.bank_account?.account_number || '',
+                ifsc_code: data.bank_account?.ifsc_code || '',
+                account_image: data.bank_account?.account_image || '',
+              },
+            });
+            // Set current step based on saved progress
+            if (data.step) {
+              setCurrentStep(Math.min(data.step - 1, 2)); // Max step is 2 (0-indexed)
+            }
           }
-          // Update identity type state for consistency
-          if (data.identity?.type) {
-            setIdentityType(data.identity.type);
-          }
-        }
-      }).catch((error) => {
-        console.error("Error fetching onboarding data:", error);
-        // Set empty onboarding data to allow user to proceed
-        setOnboardingData({});
-      });
+        })
+        .catch((error) => {
+          console.error('Error fetching onboarding data:', error);
+          // Set empty onboarding data to allow user to proceed
+          setOnboardingData({});
+        });
     }
   }, [token, user?.firstName, user?.lastName]);
 
@@ -154,25 +142,25 @@ const OnboardingContent = () => {
 
     // Required fields for all types
     if (!formData.identity.type) {
-      newErrors.identity_type = "Identity type is required";
+      newErrors.identity_type = "Pick how you're signing up";
     }
     if (!formData.identity.legal_name.trim()) {
-      newErrors.legal_name = "Legal name is required";
+      newErrors.legal_name = "Legal name can't be empty";
     }
     if (!formData.identity.pan_number.trim()) {
-      newErrors.pan_number = "PAN number is required";
+      newErrors.pan_number = 'PAN number is required';
     }
     if (!formData.identity.pan_image.trim()) {
-      newErrors.pan_image = "PAN image is required";
+      newErrors.pan_image = 'Upload your PAN proof';
     }
 
     // GST fields required only for organisation
-    if (formData.identity.type === "organisation") {
+    if (formData.identity.type === 'organisation') {
       if (!formData.identity.gst_in.trim()) {
-        newErrors.gst_in = "GST IN is required for organisation";
+        newErrors.gst_in = 'GSTIN is required for organisations';
       }
       if (!formData.identity.gst_in_image.trim()) {
-        newErrors.gst_in_image = "GST image is required for organisation";
+        newErrors.gst_in_image = 'Upload your GST certificate';
       }
     }
 
@@ -184,420 +172,249 @@ const OnboardingContent = () => {
     const newErrors = {};
 
     if (!formData.bank_account.name.trim()) {
-      newErrors.account_name = "Account holder name is required";
+      newErrors.account_name = 'Account holder name is required';
     }
     if (!formData.bank_account.bank_name.trim()) {
-      newErrors.bank_name = "Bank name is required";
+      newErrors.bank_name = 'Bank name is required';
     }
     if (!formData.bank_account.account_number.trim()) {
-      newErrors.account_number = "Account number is required";
+      newErrors.account_number = 'Account number is required';
     }
     if (!formData.bank_account.ifsc_code.trim()) {
-      newErrors.ifsc_code = "IFSC code is required";
+      newErrors.ifsc_code = 'IFSC code is required';
     }
     if (!formData.bank_account.account_image.trim()) {
-      newErrors.account_image = "Bank account image is required";
+      newErrors.account_image = 'Bank account image is required';
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleInputChange = (field, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-    // Clear error when user starts typing
-    if (errors[field]) {
-      setErrors((prev) => ({
-        ...prev,
-        [field]: "",
-      }));
-    }
+  const clearError = (key) => {
+    if (!errors[key]) return;
+    setErrors((prev) => {
+      const next = { ...prev };
+      delete next[key];
+      return next;
+    });
   };
 
-  if (onboardingData === null) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto"></div>
-          <p className="text-muted-foreground">Loading onboarding data...</p>
-        </div>
-      </div>
-    );
-  }
+  const mascots = useMemo(() => [coolPotato, joyPotato, famPotato, pissedPotato], []);
+  const stepMascot = mascots[currentStep % mascots.length];
+
+  const identityLabel = formData.identity.type
+    ? formData.identity.type === 'organisation'
+      ? 'Organisation'
+      : 'Individual'
+    : 'Creator';
+
+  const renderError = (key) =>
+    errors[key] ? (
+      <p className='mt-2 text-[11px] font-black text-red-600 flex items-center gap-1'>
+        <AlertCircle className='h-3.5 w-3.5' />
+        {errors[key]}
+      </p>
+    ) : null;
+
+  const baseInputClass =
+    'h-11 px-3 bg-white border-[3px] border-black rounded-lg font-semibold focus-visible:ring-0 focus-visible:ring-offset-0 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]';
+  const baseSelectTriggerClass =
+    'w-full h-11 px-3 border-[3px] border-black rounded-lg font-semibold bg-white text-left shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:ring-0 focus:ring-offset-0';
+  const fieldWrapperClass =
+    'bg-white/95 border-[3px] border-black rounded-2xl p-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]';
+  const uploadShellClass =
+    'mt-2 border-[3px] border-dashed border-black/40 rounded-lg bg-white/75 max-h-[70%] p-3 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]';
 
   const steps = [
     {
-      id: "identity",
-      title: "Identity Verification",
-      description: "Verify your identity and business details",
+      id: 'identity',
+      title: 'Identity Check',
+      shortTitle: 'Identity',
+      icon: User,
+      tagline: 'Tell us who’s getting paid so we can verify you quickly.',
+      accent: '#FEF18C',
       content: (
-        <div className="space-y-6">
-          <div className="flex items-center gap-3 text-black">
-            <div className="w-8 h-8 bg-pink-200 rounded-lg flex items-center justify-center border-2 border-black shadow-[1px_1px_0px_0px_rgba(0,0,0,0.6)]">
-              <User className="h-4 w-4" />
+        <div className='flex flex-col gap-4 h-full'>
+          <div className={`${fieldWrapperClass}`}>
+            <div className='flex items-center justify-between mb-4'>
+              <span className='text-[11px] font-black uppercase tracking-widest bg-[#FEF18C] border-[2px] border-black px-3 py-1 rounded-full'>
+                Identity Basics
+              </span>
+              <User className='h-4 w-4 text-black' />
             </div>
-            <h3 className="text-xl font-bold">Identity Verification</h3>
-          </div>
-          <div className="space-y-6">
-            <div>
-              <Label
-                htmlFor="identityType"
-                className="text-sm font-bold text-black"
-              >
-                Identity Type <span className="text-red-500">*</span>
-              </Label>
-              <Select
-                value={formData.identity.type}
-                onValueChange={(value) => {
-                  setFormData((prev) => ({
-                    ...prev,
-                    identity: { ...prev.identity, type: value },
-                  }));
-                  setIdentityType(value);
-                  if (errors.identity_type) {
-                    setErrors((prev) => ({ ...prev, identity_type: "" }));
-                  }
-                }}
-              >
-                <SelectTrigger
-                  className={`w-full h-12 px-4 border-2 rounded-lg shadow-[1px_1px_0px_0px_rgba(0,0,0,0.6)] focus:shadow-[2px_2px_0px_0px_rgba(0,0,0,0.6)] transition-all duration-150 font-semibold mt-2 ${
-                    errors.identity_type ? "border-red-500" : "border-black"
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-3'>
+              <div className='flex flex-col'>
+                <Label className='text-[11px] font-black text-black uppercase tracking-wide'>
+                  Identity Type <span className='text-red-500'>*</span>
+                </Label>
+                <Select
+                  value={formData.identity.type}
+                  onValueChange={(value) => {
+                    setFormData((prev) => ({
+                      ...prev,
+                      identity: { ...prev.identity, type: value },
+                    }));
+                    clearError('identity_type');
+                  }}
+                >
+                  <SelectTrigger
+                    className={`${baseSelectTriggerClass} ${
+                      errors.identity_type ? 'border-red-500 bg-red-50' : ''
+                    }`}
+                  >
+                    <SelectValue placeholder='Select identity type' />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value='individual'>Individual</SelectItem>
+                    <SelectItem value='organisation'>Organisation</SelectItem>
+                  </SelectContent>
+                </Select>
+                {renderError('identity_type')}
+              </div>
+              <div className='flex flex-col'>
+                <Label className='text-[11px] font-black text-black uppercase tracking-wide'>
+                  Legal Name <span className='text-red-500'>*</span>
+                </Label>
+                <Input
+                  value={formData.identity.legal_name}
+                  onChange={(e) => {
+                    setFormData((prev) => ({
+                      ...prev,
+                      identity: {
+                        ...prev.identity,
+                        legal_name: e.target.value,
+                      },
+                    }));
+                    clearError('legal_name');
+                  }}
+                  placeholder='As per your PAN'
+                  className={`${baseInputClass} ${
+                    errors.legal_name ? 'border-red-500 bg-red-50' : ''
                   }`}
-                >
-                  <SelectValue placeholder="Select Identity Type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="individual">Individual</SelectItem>
-                  <SelectItem value="organisation">Organisation</SelectItem>
-                </SelectContent>
-              </Select>
-              {errors.identity_type && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.identity_type}
-                </p>
-              )}
-            </div>
-            <div>
-              <Label
-                htmlFor="legalName"
-                className="text-sm font-bold text-black"
-              >
-                Legal Name <span className="text-red-500">*</span>
-              </Label>
-              <Input
-                id="legalName"
-                value={formData.identity.legal_name}
-                onChange={(e) => {
-                  setFormData((prev) => ({
-                    ...prev,
-                    identity: { ...prev.identity, legal_name: e.target.value },
-                  }));
-                  if (errors.legal_name) {
-                    setErrors((prev) => ({ ...prev, legal_name: "" }));
-                  }
-                }}
-                placeholder="Enter your legal name"
-                className={`mt-2 border-2 rounded-lg shadow-[1px_1px_0px_0px_rgba(0,0,0,0.6)] focus:shadow-[2px_2px_0px_0px_rgba(0,0,0,0.6)] transition-all duration-150 ${
-                  errors.legal_name ? "border-red-500" : "border-black"
-                }`}
-              />
-              {errors.legal_name && (
-                <p className="text-red-500 text-sm mt-1">{errors.legal_name}</p>
-              )}
-            </div>
-            <div>
-              <Label
-                htmlFor="panNumber"
-                className="text-sm font-bold text-black"
-              >
-                PAN Number <span className="text-red-500">*</span>
-              </Label>
-              <Input
-                id="panNumber"
-                value={formData.identity.pan_number}
-                onChange={(e) => {
-                  setFormData((prev) => ({
-                    ...prev,
-                    identity: { ...prev.identity, pan_number: e.target.value },
-                  }));
-                  if (errors.pan_number) {
-                    setErrors((prev) => ({ ...prev, pan_number: "" }));
-                  }
-                }}
-                placeholder="Enter your PAN number"
-                className={`mt-2 border-2 rounded-lg shadow-[1px_1px_0px_0px_rgba(0,0,0,0.6)] focus:shadow-[2px_2px_0px_0px_rgba(0,0,0,0.6)] transition-all duration-150 ${
-                  errors.pan_number ? "border-red-500" : "border-black"
-                }`}
-              />
-              {errors.pan_number && (
-                <p className="text-red-500 text-sm mt-1">{errors.pan_number}</p>
-              )}
-            </div>
-            <div>
-              <Label htmlFor="gstIn" className="text-sm font-bold text-black">
-                GST IN{" "}
-                {formData.identity.type === "organisation" ? (
-                  <span className="text-red-500">*</span>
-                ) : (
-                  "(Optional)"
-                )}
-              </Label>
-              <Input
-                id="gstIn"
-                value={formData.identity.gst_in}
-                onChange={(e) => {
-                  setFormData((prev) => ({
-                    ...prev,
-                    identity: { ...prev.identity, gst_in: e.target.value },
-                  }));
-                  if (errors.gst_in) {
-                    setErrors((prev) => ({ ...prev, gst_in: "" }));
-                  }
-                }}
-                placeholder="Enter your GST IN number"
-                className={`mt-2 border-2 rounded-lg shadow-[1px_1px_0px_0px_rgba(0,0,0,0.6)] focus:shadow-[2px_2px_0px_0px_rgba(0,0,0,0.6)] transition-all duration-150 ${
-                  errors.gst_in ? "border-red-500" : "border-black"
-                }`}
-              />
-              {errors.gst_in && (
-                <p className="text-red-500 text-sm mt-1">{errors.gst_in}</p>
-              )}
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label
-                  htmlFor="panImage"
-                  className="text-sm font-bold text-black"
-                >
-                  PAN Image <span className="text-red-500">*</span>
-                </Label>
-                <ImageUpload
-                  value={formData.identity.pan_image}
-                  onChange={(url) => {
-                    setFormData((prev) => ({
-                      ...prev,
-                      identity: { ...prev.identity, pan_image: url || "" },
-                    }));
-                    if (errors.pan_image) {
-                      setErrors((prev) => ({ ...prev, pan_image: "" }));
-                    }
-                  }}
-                  className="mt-2"
                 />
-                {errors.pan_image && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.pan_image}
-                  </p>
-                )}
-              </div>
-              <div>
-                <Label
-                  htmlFor="gstImage"
-                  className="text-sm font-bold text-black"
-                >
-                  GST Image{" "}
-                  {formData.identity.type === "organisation" ? (
-                    <span className="text-red-500">*</span>
-                  ) : (
-                    "(Optional)"
-                  )}
-                </Label>
-                <ImageUpload
-                  value={formData.identity.gst_in_image}
-                  onChange={(url) => {
-                    setFormData((prev) => ({
-                      ...prev,
-                      identity: { ...prev.identity, gst_in_image: url || "" },
-                    }));
-                    if (errors.gst_in_image) {
-                      setErrors((prev) => ({ ...prev, gst_in_image: "" }));
-                    }
-                  }}
-                  className="mt-2"
-                />
-                {errors.gst_in_image && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.gst_in_image}
-                  </p>
-                )}
+                {renderError('legal_name')}
               </div>
             </div>
+
+            <div className='mt-6 pt-4 border-t border-dashed border-black/30 space-y-3'>
+              <div className='flex items-center justify-between'>
+                <span className='text-[11px] font-black uppercase tracking-widest bg-[#AAD6B8] border-[2px] border-black px-3 py-1 rounded-full'>
+                  Government IDs
+                </span>
+                <Settings className='h-4 w-4 text-black' />
+              </div>
+              <div className='grid grid-cols-1 md:grid-cols-2 gap-3'>
+                <div className='flex flex-col'>
+                  <Label className='text-[11px] font-black text-black uppercase tracking-wide'>
+                    PAN Number <span className='text-red-500'>*</span>
+                  </Label>
+                  <Input
+                    value={formData.identity.pan_number}
+                    onChange={(e) => {
+                      setFormData((prev) => ({
+                        ...prev,
+                        identity: {
+                          ...prev.identity,
+                          pan_number: e.target.value,
+                        },
+                      }));
+                      clearError('pan_number');
+                    }}
+                    placeholder='ABCDE1234F'
+                    className={`${baseInputClass} ${
+                      errors.pan_number ? 'border-red-500 bg-red-50' : ''
+                    }`}
+                  />
+                  {renderError('pan_number')}
+                </div>
+                {formData.identity.type === 'organisation' && (
+                  <div className='flex flex-col'>
+                    <Label className='text-[11px] font-black text-black uppercase tracking-wide'>
+                      GSTIN <span className='text-red-500'>*</span>
+                    </Label>
+                    <Input
+                      value={formData.identity.gst_in}
+                      onChange={(e) => {
+                        setFormData((prev) => ({
+                          ...prev,
+                          identity: {
+                            ...prev.identity,
+                            gst_in: e.target.value,
+                          },
+                        }));
+                        clearError('gst_in');
+                      }}
+                      placeholder='22ABCDE1234F1Z5'
+                      className={`${baseInputClass} ${
+                        errors.gst_in ? 'border-red-500 bg-red-50' : ''
+                      }`}
+                    />
+                    {renderError('gst_in')}
+                  </div>
+                )}
+              </div>
+              {formData.identity.type !== 'organisation' && (
+                <p className='text-xs font-semibold text-black/60'>
+                  GSTIN is only needed if you’re registering as an organisation.
+                </p>
+              )}
+            </div>
           </div>
-        </div>
-      ),
-    },
-    {
-      id: "bank",
-      title: "Bank Details",
-      description: "Add your bank account information",
-      content: (
-        <div className="space-y-6">
-          <div className="flex items-center gap-3 text-black">
-            <div className="w-8 h-8 bg-green-200 rounded-lg flex items-center justify-center border-2 border-black shadow-[1px_1px_0px_0px_rgba(0,0,0,0.6)]">
-              <Settings className="h-4 w-4" />
+
+          <div className={`${fieldWrapperClass} flex-1`}>
+            <div className='flex items-center justify-between mb-4'>
+              <span className='text-[11px] font-black uppercase tracking-widest bg-[#FEC4FF] border-[2px] border-black px-3 py-1 rounded-full'>
+                Document Uploads
+              </span>
+              <Share className='h-4 w-4 text-black' />
             </div>
-            <h3 className="text-xl font-bold">Bank Account Details</h3>
-          </div>
-          <div className="space-y-6">
-            <div>
-              <Label
-                htmlFor="accountName"
-                className="text-sm font-bold text-black"
-              >
-                Account Holder Name <span className="text-red-500">*</span>
-              </Label>
-              <Input
-                id="accountName"
-                value={formData.bank_account.name}
-                onChange={(e) => {
-                  setFormData((prev) => ({
-                    ...prev,
-                    bank_account: {
-                      ...prev.bank_account,
-                      name: e.target.value,
-                    },
-                  }));
-                  if (errors.account_name) {
-                    setErrors((prev) => ({ ...prev, account_name: "" }));
-                  }
-                }}
-                placeholder="Enter account holder name"
-                className={`mt-2 border-2 rounded-lg shadow-[1px_1px_0px_0px_rgba(0,0,0,0.6)] focus:shadow-[2px_2px_0px_0px_rgba(0,0,0,0.6)] transition-all duration-150 ${
-                  errors.account_name ? "border-red-500" : "border-black"
-                }`}
-              />
-              {errors.account_name && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.account_name}
-                </p>
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-3 h-full'>
+              <div className='flex flex-col'>
+                <Label className='text-[11px] font-black text-black uppercase tracking-wide'>
+                  PAN Proof <span className='text-red-500'>*</span>
+                </Label>
+                <div className={uploadShellClass}>
+                  <ImageUpload
+                    value={formData.identity.pan_image}
+                    onChange={(url) => {
+                      setFormData((prev) => ({
+                        ...prev,
+                        identity: { ...prev.identity, pan_image: url || '' },
+                      }));
+                      clearError('pan_image');
+                    }}
+                  />
+                </div>
+                {renderError('pan_image')}
+              </div>
+              {formData.identity.type === 'organisation' && (
+                <div className='flex flex-col'>
+                  <Label className='text-[11px] font-black text-black uppercase tracking-wide'>
+                    GST Certificate <span className='text-red-500'>*</span>
+                  </Label>
+                  <div className={uploadShellClass}>
+                    <ImageUpload
+                      value={formData.identity.gst_in_image}
+                      onChange={(url) => {
+                        setFormData((prev) => ({
+                          ...prev,
+                          identity: {
+                            ...prev.identity,
+                            gst_in_image: url || '',
+                          },
+                        }));
+                        clearError('gst_in_image');
+                      }}
+                    />
+                  </div>
+                  {renderError('gst_in_image')}
+                </div>
               )}
-            </div>
-            <div>
-              <Label
-                htmlFor="bankName"
-                className="text-sm font-bold text-black"
-              >
-                Bank Name <span className="text-red-500">*</span>
-              </Label>
-              <Input
-                id="bankName"
-                value={formData.bank_account.bank_name}
-                onChange={(e) => {
-                  setFormData((prev) => ({
-                    ...prev,
-                    bank_account: {
-                      ...prev.bank_account,
-                      bank_name: e.target.value,
-                    },
-                  }));
-                  if (errors.bank_name) {
-                    setErrors((prev) => ({ ...prev, bank_name: "" }));
-                  }
-                }}
-                placeholder="Enter bank name"
-                className={`mt-2 border-2 rounded-lg shadow-[1px_1px_0px_0px_rgba(0,0,0,0.6)] focus:shadow-[2px_2px_0px_0px_rgba(0,0,0,0.6)] transition-all duration-150 ${
-                  errors.bank_name ? "border-red-500" : "border-black"
-                }`}
-              />
-              {errors.bank_name && (
-                <p className="text-red-500 text-sm mt-1">{errors.bank_name}</p>
-              )}
-            </div>
-            <div>
-              <Label
-                htmlFor="accountNumber"
-                className="text-sm font-bold text-black"
-              >
-                Account Number <span className="text-red-500">*</span>
-              </Label>
-              <Input
-                id="accountNumber"
-                value={formData.bank_account.account_number}
-                onChange={(e) => {
-                  setFormData((prev) => ({
-                    ...prev,
-                    bank_account: {
-                      ...prev.bank_account,
-                      account_number: e.target.value,
-                    },
-                  }));
-                  if (errors.account_number) {
-                    setErrors((prev) => ({ ...prev, account_number: "" }));
-                  }
-                }}
-                placeholder="Enter account number"
-                className={`mt-2 border-2 rounded-lg shadow-[1px_1px_0px_0px_rgba(0,0,0,0.6)] focus:shadow-[2px_2px_0px_0px_rgba(0,0,0,0.6)] transition-all duration-150 ${
-                  errors.account_number ? "border-red-500" : "border-black"
-                }`}
-              />
-              {errors.account_number && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.account_number}
-                </p>
-              )}
-            </div>
-            <div>
-              <Label
-                htmlFor="ifscCode"
-                className="text-sm font-bold text-black"
-              >
-                IFSC Code <span className="text-red-500">*</span>
-              </Label>
-              <Input
-                id="ifscCode"
-                value={formData.bank_account.ifsc_code}
-                onChange={(e) => {
-                  setFormData((prev) => ({
-                    ...prev,
-                    bank_account: {
-                      ...prev.bank_account,
-                      ifsc_code: e.target.value,
-                    },
-                  }));
-                  if (errors.ifsc_code) {
-                    setErrors((prev) => ({ ...prev, ifsc_code: "" }));
-                  }
-                }}
-                placeholder="Enter IFSC code"
-                className={`mt-2 border-2 rounded-lg shadow-[1px_1px_0px_0px_rgba(0,0,0,0.6)] focus:shadow-[2px_2px_0px_0px_rgba(0,0,0,0.6)] transition-all duration-150 ${
-                  errors.ifsc_code ? "border-red-500" : "border-black"
-                }`}
-              />
-              {errors.ifsc_code && (
-                <p className="text-red-500 text-sm mt-1">{errors.ifsc_code}</p>
-              )}
-            </div>
-            <div>
-              <Label
-                htmlFor="accountImage"
-                className="text-sm font-bold text-black"
-              >
-                Bank Account Image/Passbook{" "}
-                <span className="text-red-500">*</span>
-              </Label>
-              <ImageUpload
-                value={formData.bank_account.account_image}
-                onChange={(url) => {
-                  setFormData((prev) => ({
-                    ...prev,
-                    bank_account: {
-                      ...prev.bank_account,
-                      account_image: url || "",
-                    },
-                  }));
-                  if (errors.account_image) {
-                    setErrors((prev) => ({ ...prev, account_image: "" }));
-                  }
-                }}
-                className="mt-2"
-              />
-              {errors.account_image && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.account_image}
-                </p>
+              {formData.identity.type !== 'organisation' && (
+                <div className='flex flex-col justify-center bg-white/80 border-[2px] border-dashed border-black/40 rounded-xl p-4 h-[80%] text-center text-sm font-semibold text-black/60'>
+                  Add your GST certificate only if you’re onboarding as a business.
+                </div>
               )}
             </div>
           </div>
@@ -605,161 +422,478 @@ const OnboardingContent = () => {
       ),
     },
     {
-      id: "complete",
-      title: "Complete",
-      description: "You're all set!",
+      id: 'bank',
+      title: 'Bank Details',
+      shortTitle: 'Bank',
+      icon: Settings,
+      tagline: 'Share the bank account where your tips should land.',
+      accent: '#AAD6B8',
       content: (
-        <div className="text-center space-y-6">
-          <div className="flex justify-center">
-            <div className="w-20 h-20 bg-green-200 rounded-xl flex items-center justify-center border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,0.6)]">
-              <CheckCircle className="h-12 w-12 text-black" />
+        <div className='flex flex-col gap-4 h-full'>
+          <div className={`${fieldWrapperClass}`}>
+            <div className='flex items-center justify-between mb-4'>
+              <span className='text-[11px] font-black uppercase tracking-widest bg-white border-[2px] border-black px-3 py-1 rounded-full'>
+                Account Details
+              </span>
+              <Settings className='h-4 w-4 text-black' />
+            </div>
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-3'>
+              <div className='flex flex-col'>
+                <Label className='text-[11px] font-black text-black uppercase tracking-wide'>
+                  Account Holder Name <span className='text-red-500'>*</span>
+                </Label>
+                <Input
+                  value={formData.bank_account.name}
+                  onChange={(e) => {
+                    setFormData((prev) => ({
+                      ...prev,
+                      bank_account: {
+                        ...prev.bank_account,
+                        name: e.target.value,
+                      },
+                    }));
+                    clearError('account_name');
+                  }}
+                  placeholder='Name on bank account'
+                  className={`${baseInputClass} ${
+                    errors.account_name ? 'border-red-500 bg-red-50' : ''
+                  }`}
+                />
+                {renderError('account_name')}
+              </div>
+              <div className='flex flex-col'>
+                <Label className='text-[11px] font-black text-black uppercase tracking-wide'>
+                  Bank Name <span className='text-red-500'>*</span>
+                </Label>
+                <Input
+                  value={formData.bank_account.bank_name}
+                  onChange={(e) => {
+                    setFormData((prev) => ({
+                      ...prev,
+                      bank_account: {
+                        ...prev.bank_account,
+                        bank_name: e.target.value,
+                      },
+                    }));
+                    clearError('bank_name');
+                  }}
+                  placeholder='E.g. HDFC Bank'
+                  className={`${baseInputClass} ${
+                    errors.bank_name ? 'border-red-500 bg-red-50' : ''
+                  }`}
+                />
+                {renderError('bank_name')}
+              </div>
+              <div className='flex flex-col'>
+                <Label className='text-[11px] font-black text-black uppercase tracking-wide'>
+                  Account Number <span className='text-red-500'>*</span>
+                </Label>
+                <Input
+                  value={formData.bank_account.account_number}
+                  onChange={(e) => {
+                    setFormData((prev) => ({
+                      ...prev,
+                      bank_account: {
+                        ...prev.bank_account,
+                        account_number: e.target.value,
+                      },
+                    }));
+                    clearError('account_number');
+                  }}
+                  placeholder='0000 0000 0000'
+                  className={`${baseInputClass} ${
+                    errors.account_number ? 'border-red-500 bg-red-50' : ''
+                  }`}
+                />
+                {renderError('account_number')}
+              </div>
+              <div className='flex flex-col'>
+                <Label className='text-[11px] font-black text-black uppercase tracking-wide'>
+                  IFSC Code <span className='text-red-500'>*</span>
+                </Label>
+                <Input
+                  value={formData.bank_account.ifsc_code}
+                  onChange={(e) => {
+                    setFormData((prev) => ({
+                      ...prev,
+                      bank_account: {
+                        ...prev.bank_account,
+                        ifsc_code: e.target.value,
+                      },
+                    }));
+                    clearError('ifsc_code');
+                  }}
+                  placeholder='HDFC0001234'
+                  className={`${baseInputClass} ${
+                    errors.ifsc_code ? 'border-red-500 bg-red-50' : ''
+                  }`}
+                />
+                {renderError('ifsc_code')}
+              </div>
             </div>
           </div>
-          <div className="flex items-center justify-center gap-3 text-black">
-            <div className="w-8 h-8 bg-orange-200 rounded-lg flex items-center justify-center border-2 border-black shadow-[1px_1px_0px_0px_rgba(0,0,0,0.6)]">
-              <Share className="h-4 w-4" />
+
+          <div className={`${fieldWrapperClass} flex-1`}>
+            <div className='flex items-center justify-between mb-4'>
+              <span className='text-[11px] font-black uppercase tracking-widest bg-[#FEF18C] border-[2px] border-black px-3 py-1 rounded-full'>
+                Proof Of Account
+              </span>
+              <Share className='h-4 w-4 text-black' />
             </div>
-            <h3 className="text-2xl font-bold">Onboarding Complete!</h3>
+            <div className='flex flex-col h-full'>
+              <p className='text-xs font-semibold text-black/70'>
+                Upload a passbook photo or cancelled cheque so we can confirm payouts go to the
+                right place.
+              </p>
+              <div className={`${uploadShellClass} flex-1 mt-4 h-[80%]`}>
+                <ImageUpload
+                  value={formData.bank_account.account_image}
+                  onChange={(url) => {
+                    setFormData((prev) => ({
+                      ...prev,
+                      bank_account: {
+                        ...prev.bank_account,
+                        account_image: url || '',
+                      },
+                    }));
+                    clearError('account_image');
+                  }}
+                />
+              </div>
+              {renderError('account_image')}
+            </div>
           </div>
-          <p className="text-lg font-semibold text-gray-700 max-w-md mx-auto">
-            Your identity and bank details have been submitted successfully. You
-            can now start using the platform and receive payments.
-          </p>
+        </div>
+      ),
+    },
+    {
+      id: 'complete',
+      title: 'Complete',
+      shortTitle: 'Ready',
+      icon: CheckCircle,
+      tagline: 'You’re all set. Time to start collecting tips from your fans!',
+      accent: '#FEC4FF',
+      content: (
+        <div className='h-full flex flex-col items-center justify-center text-center gap-8'>
+          <div className='relative'>
+            <div className='w-28 h-28 bg-[#AAD6B8] border-[6px] border-black rounded-3xl flex items-center justify-center shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]'>
+              <CheckCircle className='h-16 w-16 text-black' />
+            </div>
+            <div className='absolute -top-4 -right-4 bg-[#FEF18C] border-[3px] border-black px-4 py-1 text-xs font-black rotate-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]'>
+              DONE!
+            </div>
+          </div>
+          <div className='space-y-3 max-w-lg'>
+            <h3 className='text-3xl font-black text-black tracking-tight uppercase'>
+              Onboarding Complete
+            </h3>
+            <p className='text-base font-semibold text-black/70'>
+              Your identity and payout details look great. Turn on your tip jar, share your link,
+              and let the love (and fries) roll in.
+            </p>
+          </div>
+          <div className='flex flex-col items-center gap-3'>
+            <div className='flex items-center gap-2 text-sm font-black text-black/60 uppercase tracking-widest'>
+              <Share className='h-4 w-4' />
+              Spread the word
+            </div>
+            <p className='text-sm font-semibold text-black/70'>
+              Share your tip page and start getting recognised by your community.
+            </p>
+          </div>
         </div>
       ),
     },
   ];
 
+  if (onboardingData === null) {
+    return (
+      <div className='min-h-screen w-full relative overflow-hidden flex items-center justify-center bg-[#AAD6B8]'>
+        <style>{`
+          @keyframes stripeMove {
+            0% { background-position: 0 0, 0 0; }
+            100% { background-position: 200px 0, 0 200px; }
+          }
+        `}</style>
+        <div
+          className='pointer-events-none absolute inset-0 opacity-40'
+          style={{
+            backgroundImage:
+              'repeating-linear-gradient(45deg, rgba(254,241,140,0.35) 0px, rgba(254,241,140,0.35) 12px, transparent 12px, transparent 24px), radial-gradient(circle, rgba(46,125,106,0.28) 2.5px, transparent 2.5px)',
+            backgroundSize: 'auto, 20px 20px',
+            animation: 'stripeMove 18s linear infinite',
+          }}
+        />
+        <div className='relative z-10 text-center space-y-4'>
+          <div className='w-12 h-12 border-[6px] border-black border-t-transparent rounded-full animate-spin mx-auto'></div>
+          <p className='text-black font-black tracking-widest uppercase'>
+            Loading your onboarding...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   const nextStep = async () => {
-    if (isSaving) return; // Prevent multiple clicks while saving
-    
+    if (isSaving) return;
+    if (currentStep === 0 && !validateStep1()) return;
+    if (currentStep === 1 && !validateStep2()) return;
+    if (!token) return;
+
     setIsSaving(true);
-    
+
     try {
       if (currentStep === 0) {
-        // Validate step 1 (Identity Verification)
-        if (!validateStep1()) {
-          return;
-        }
-        // Save identity data
         await updateOnboarding(token, {
           step: 2,
           identity: formData.identity,
         });
-        console.log("Identity data saved successfully");
       } else if (currentStep === 1) {
-        // Validate step 2 (Bank Details)
-        if (!validateStep2()) {
-          return;
-        }
-        // Save bank account data and mark as completed
         await updateOnboarding(token, {
           step: 3,
           completed: true,
           bank_account: formData.bank_account,
         });
-        console.log("Bank account data saved successfully and onboarding completed");
       }
 
       if (currentStep < steps.length - 1) {
         setCurrentStep(currentStep + 1);
       }
     } catch (error) {
-      console.error("Failed to save onboarding data:", error);
-      // You might want to show an error message to the user here
+      console.error('Failed to save onboarding data:', error);
     } finally {
       setIsSaving(false);
     }
   };
 
-  const finishOnboarding = async () => {
-    // This function is now handled by nextStep when on step 2
-    // Keeping it for the final step UI but the actual completion happens in nextStep
-    console.log("Onboarding already completed in nextStep");
+  const finishOnboarding = () => {
+    navigate('/dashboard');
   };
 
   const prevStep = () => {
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
     }
-    };
+  };
 
   const handleLogout = () => {
     logout();
-    navigate("/login");
+    navigate('/login');
   };
- 
+
+  const progress = ((currentStep + 1) / steps.length) * 100;
+
   return (
-    <div className="max-w-6xl mx-auto p-6">
-      <Card className="bg-gradient-to-br from-blue-50 to-purple-50 border-2 border-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,0.6)]">
-        <CardHeader className="text-center pb-8">
-          <div className="flex justify-between items-start mb-4">
-            <div className="flex-1 flex items-center justify-center gap-3">
-              <div className="w-12 h-12 bg-orange-400 rounded-xl flex items-center justify-center border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,0.6)]">
-                <User className="w-6 h-6 text-black" />
+    <div className='min-h-screen w-full relative overflow-x-hidden flex items-stretch bg-[#AAD6B8]'>
+      <style>{`
+        @keyframes stripeMove {
+          0% { background-position: 0 0, 0 0; }
+          100% { background-position: 200px 0, 0 200px; }
+        }
+        @keyframes floatY {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-6px); }
+        }
+      `}</style>
+
+      <div
+        className='pointer-events-none absolute inset-0 opacity-40'
+        style={{
+          backgroundImage:
+            'repeating-linear-gradient(45deg, rgba(254,241,140,0.35) 0px, rgba(254,241,140,0.35) 12px, transparent 12px, transparent 24px), radial-gradient(circle, rgba(46,125,106,0.28) 2.5px, transparent 2.5px)',
+          backgroundSize: 'auto, 20px 20px',
+          animation: 'stripeMove 18s linear infinite',
+        }}
+      />
+
+      <div className='relative z-10 flex flex-1 h-screen'>
+        <div className='hidden lg:flex w-[40%] flex-col px-10 py-10 text-black overflow-y-auto'>
+          <div className='space-y-8'>
+            <div className='relative bg-gradient-to-br from-[#828BF8] via-[#828BF8] to-[#828BF8]/90 border-[6px] border-black p-6 pr-7 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] overflow-hidden'>
+              <div className='absolute inset-0 opacity-30 pointer-events-none'>
+                <div className='absolute top-0 left-0 w-32 h-32 bg-[#FEF18C] rounded-full blur-3xl'></div>
+                <div className='absolute bottom-0 right-0 w-32 h-32 bg-[#AAD6B8] rounded-full blur-3xl'></div>
               </div>
-              <CardTitle className="text-3xl font-bold text-black">
-                Welcome to PP Dashboard!
-              </CardTitle>
+              <div className='relative z-10 flex items-center gap-5'>
+                <div className='relative'>
+                  <div className='w-20 h-20 bg-gradient-to-br from-[#FEF18C] via-[#FEF18C] to-[#FEF18C]/80 border-[6px] border-black flex items-center justify-center shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]'>
+                    <img src={stepMascot} alt='Potato Pay Mascot' className='w-14 h-14' />
+                  </div>
+                  <div className='absolute -top-2 -right-2 bg-[#AAD6B8] border-[3px] border-black px-3 py-1 text-[10px] font-black rotate-12 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]'>
+                    STEP {currentStep + 1}
+                  </div>
+                </div>
+                <div className='flex flex-col flex-1'>
+                  <div className='flex items-center gap-2'>
+                    <span className='text-3xl font-black text-white tracking-tighter drop-shadow-[4px_4px_0px_rgba(0,0,0,0.3)] leading-none'>
+                      POTATO
+                    </span>
+                    <span className='text-2xl'>🥔</span>
+                  </div>
+                  <span className='text-2xl font-black text-[#FEF18C] tracking-tighter drop-shadow-[3px_3px_0px_rgba(0,0,0,0.3)] leading-none'>
+                    PAY
+                  </span>
+                  <span className='text-[11px] text-white/90 font-bold tracking-wide mt-1 uppercase'>
+                    The easiest way to tip creators you love
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className='bg-white/85 border-[6px] border-black rounded-3xl p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] space-y-5'>
+              <div className='flex items-center gap-3'>
+                <div className='w-12 h-12 bg-[#FEF18C] border-[3px] border-black rounded-2xl flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]'>
+                  <User className='w-6 h-6 text-black' />
+                </div>
+                <div>
+                  <p className='text-xs font-black text-black/60 uppercase tracking-[0.2em]'>
+                    You’re signing up as
+                  </p>
+                  <h2 className='text-2xl font-black text-black tracking-tight'>{identityLabel}</h2>
+                </div>
+              </div>
+              <p className='text-sm font-semibold text-black/70 leading-relaxed'>
+                Join the platform that turns support into something real. Just verify yourself, add
+                your bank, and you’re all set to start receiving tips.
+              </p>
+              <div className='grid grid-cols-1 gap-3'>
+                {steps.map((step, index) => {
+                  const isActive = index === currentStep;
+                  return (
+                    <div
+                      key={step.id}
+                      className={`flex items-center gap-3 p-3 border-[3px] border-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] ${
+                        isActive ? 'bg-[#FEF18C]' : 'bg-white'
+                      }`}
+                    >
+                      <step.icon className='w-4 h-4 text-black' />
+                      <div className='flex flex-col'>
+                        <span className='text-xs font-black uppercase tracking-widest text-black'>
+                          {step.shortTitle}
+                        </span>
+                        <span className='text-[11px] font-semibold text-black/60 line-clamp-1'>
+                          {step.tagline}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className='flex-1 bg-white/80 backdrop-blur-md border-l-[6px] border-black flex flex-col overflow-hidden'>
+          <header className='flex items-start justify-between gap-4 px-8 py-6 border-b-[3px] border-black bg-white/90'>
+            <div className='space-y-2'>
+              <p className='text-xs font-black text-black/50 uppercase tracking-[0.4em]'>
+                Step {currentStep + 1} of {steps.length}
+              </p>
+              <h1 className='text-3xl font-black text-black tracking-tight uppercase leading-tight'>
+                Let's get you set up
+              </h1>
+              <p className='text-sm font-semibold text-black/60 max-w-xl'>
+                {steps[currentStep].tagline}
+              </p>
             </div>
             <Button
               onClick={handleLogout}
-              className="flex items-center gap-2 bg-red-200 hover:bg-red-300 text-black border-2 border-black rounded-xl shadow-[2px_2px_0px_0px_rgba(0,0,0,0.6)] hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,0.6)] transition-all duration-150 hover:translate-x-0.5 hover:translate-y-0.5 active:translate-x-1 active:translate-y-1 active:shadow-none font-bold"
+              className='flex items-center gap-2 bg-[#FFB4B4] hover:bg-[#FF9B9B] text-black border-[3px] border-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 transition-all duration-150 font-black uppercase tracking-wide'
             >
-              <LogOut className="h-4 w-4" />
+              <LogOut className='h-4 w-4' />
               Logout
             </Button>
-          </div>
-          <CardDescription className="text-lg font-semibold text-gray-700">
-            Complete your identity verification and bank details to start
-            receiving payments on the platform
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="px-8 pb-8">
-          <Stepper
-            steps={steps}
-            currentStep={currentStep}
-            onStepChange={setCurrentStep}
-            orientation="horizontal"
-            showContent={true}
-          />
+          </header>
 
-          {/* Navigation buttons */}
-          <div className="flex justify-between mt-12">
-            <Button
-              variant="outline"
-              onClick={prevStep}
-              disabled={currentStep === 0 || isSaving}
-              className="flex items-center gap-2 bg-red-200 hover:bg-red-300 text-black border-2 border-black rounded-xl shadow-[2px_2px_0px_0px_rgba(0,0,0,0.6)] hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,0.6)] transition-all duration-150 hover:translate-x-0.5 hover:translate-y-0.5 active:translate-x-1 active:translate-y-1 active:shadow-none font-bold disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-x-0 disabled:hover:translate-y-0"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Previous
-            </Button>
+          {/* <div className='px-8 pt-6'>
+            <div className='relative'>
+              <div className='absolute inset-x-0 top-1/2 -translate-y-1/2 h-2 bg-black/10 rounded-full'></div>
+              <div
+                className='absolute inset-y-0 left-0 h-2 bg-black rounded-full transition-all duration-300'
+                style={{ width: `${progress}%` }}
+              ></div>
+              <div className='relative flex justify-between'>
+                {steps.map((step, index) => {
+                  const isActive = index === currentStep;
+                  const isCompleted = index < currentStep;
+                  return (
+                    <button
+                      key={step.id}
+                      type='button'
+                      className='flex flex-col items-center gap-2 w-24'
+                      onClick={() => {
+                        if (!isSaving && index <= currentStep) {
+                          setCurrentStep(index);
+                        }
+                      }}
+                    >
+                      <div
+                        className={`w-12 h-12 border-[3px] border-black rounded-full flex items-center justify-center shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all duration-200 ${
+                          isActive
+                            ? 'bg-black text-white'
+                            : isCompleted
+                            ? 'bg-[#AAD6B8]'
+                            : 'bg-white'
+                        }`}
+                      >
+                        <step.icon className='w-5 h-5' />
+                      </div>
+                      <span
+                        className={`text-[11px] font-black uppercase tracking-widest ${
+                          isActive ? 'text-black' : 'text-black/60'
+                        }`}
+                      >
+                        {step.shortTitle}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div> */}
 
-            <div className="flex gap-3">
-              {currentStep === steps.length - 1 ? (
-                <Button 
-                  onClick={finishOnboarding}
-                  disabled={isSaving}
-                  className="flex items-center gap-2 bg-green-200 hover:bg-green-300 text-black border-2 border-black rounded-xl shadow-[2px_2px_0px_0px_rgba(0,0,0,0.6)] hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,0.6)] transition-all duration-150 hover:translate-x-0.5 hover:translate-y-0.5 active:translate-x-1 active:translate-y-1 active:shadow-none font-bold disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-x-0 disabled:hover:translate-y-0"
-                >
-                  <CheckCircle className="h-4 w-4" />
-                  {isSaving ? "Finishing..." : "Finish Setup"}
-                </Button>
-              ) : (
-                <Button
-                  onClick={nextStep}
-                  disabled={isSaving}
-                  className="flex items-center gap-2 bg-blue-200 hover:bg-blue-300 text-black border-2 border-black rounded-xl shadow-[2px_2px_0px_0px_rgba(0,0,0,0.6)] hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,0.6)] transition-all duration-150 hover:translate-x-0.5 hover:translate-y-0.5 active:translate-x-1 active:translate-y-1 active:shadow-none font-bold disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-x-0 disabled:hover:translate-y-0"
-                >
-                  {isSaving ? "Saving..." : "Next"}
-                  <ArrowRight className="h-4 w-4" />
-                </Button>
-              )}
+          <div className='flex-1 px-6 py-5 overflow-y-auto '>
+            <div className='flex items-center justify-center h-full pr-2 overflow-auto'>
+              <div className='w-full max-w-3xl h-full py-6'>{steps[currentStep].content}</div>
             </div>
           </div>
-        </CardContent>
-      </Card>
+
+          <footer className='px-8 pb-8'>
+            <div className='flex items-center justify-between gap-4'>
+              <Button
+                variant='outline'
+                onClick={prevStep}
+                disabled={currentStep === 0 || isSaving}
+                className='flex items-center gap-2 bg-white hover:bg-[#FEF18C] text-black border-[3px] border-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 transition-all duration-150 font-black uppercase tracking-wide disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-x-0 disabled:hover:translate-y-0'
+              >
+                <ArrowLeft className='h-4 w-4' />
+                Back
+              </Button>
+              <div className='flex items-center gap-3'>
+                {currentStep === steps.length - 1 ? (
+                  <Button
+                    onClick={finishOnboarding}
+                    disabled={isSaving}
+                    className='flex items-center gap-2 bg-[#AAD6B8] hover:bg-[#8cc7a3] text-black border-[3px] border-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 transition-all duration-150 font-black uppercase tracking-wide disabled:opacity-50 disabled:cursor-not-allowed'
+                  >
+                    <CheckCircle className='h-4 w-4' />
+                    View Dashboard
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={nextStep}
+                    disabled={isSaving}
+                    className='flex items-center gap-2 bg-[#FEF18C] hover:bg-[#FEE55A] text-black border-[3px] border-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 transition-all duration-150 font-black uppercase tracking-wide disabled:opacity-50 disabled:cursor-not-allowed'
+                  >
+                    {isSaving ? 'Saving...' : 'Save & Continue'}
+                    <ArrowRight className='h-4 w-4' />
+                  </Button>
+                )}
+              </div>
+            </div>
+          </footer>
+        </div>
+      </div>
     </div>
   );
 };
