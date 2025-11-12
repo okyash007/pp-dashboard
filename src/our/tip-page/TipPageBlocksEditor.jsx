@@ -35,19 +35,19 @@ const TipPageBlocksEditor = ({ blocks, setBlocks }) => {
           );
         }
 
-        if (block.type === "user_form") {
-          return (
-            <UserFormEditor
-              key={block.type}
-              block={block}
-              setBlock={(newBlock) =>
-                setBlocks((prev) =>
-                  prev.map((b) => (b.type === block.type ? newBlock : b))
-                )
-              }
-            />
-          );
-        }
+        // if (block.type === "user_form") {
+        //   return (
+        //     <UserFormEditor
+        //       key={block.type}
+        //       block={block}
+        //       setBlock={(newBlock) =>
+        //         setBlocks((prev) =>
+        //           prev.map((b) => (b.type === block.type ? newBlock : b))
+        //         )
+        //       }
+        //     />
+        //   );
+        // }
 
         return <div key={block.type}></div>;
       })}
