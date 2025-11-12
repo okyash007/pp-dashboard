@@ -7,16 +7,28 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { FileText } from "lucide-react";
+import { FileText, Bell, Smartphone, Play, MessageCircle } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useParams, useSearchParams } from "react-router-dom";
 import { useAuthStore } from "../stores/authStore";
 import { Card } from "@/components/ui/card";
 import { ExternalLink } from "lucide-react";
 import BlocksEditor from "./overlay/BlocksEditor";
 import BlockRenderer from "./overlay/BlockRenderer";
-import TipBlockEditor from "./overlay/TipBlockEditor";
-import LeaderboardBlockEditor from "./overlay/LeaderboardBlockEditor";
-import QrCodeBlockEditor from "./overlay/QrCodeBlockEditor";
+import TipBlockEditor, {
+  dummyTipBata,
+  dummyTipBlocks,
+} from "./overlay/TipBlockEditor";
+
+import LeaderboardBlockEditor, {
+  dummyLeaderboardBlocks,
+  dummyLeaderboardData,
+} from "./overlay/LeaderboardBlockEditor";
+import QrCodeBlockEditor, {
+  dummyQrCodeBlocks,
+  dummyQrCodeData,
+} from "./overlay/QrCodeBlockEditor";
+import LiquidRenderer from "./LiquidRenderer";
 
 // Function to get monitor resolution
 function getMonitorResolution() {
@@ -79,6 +91,7 @@ async function updateOverlay(token, data) {
 
 export function OverviewContent() {
   const { token, user } = useAuthStore();
+  const [searchParams, setSearchParams] = useSearchParams(); // Get query params (e.g., ?key=value)
   const [isLinksEditorOpen, setIsLinksEditorOpen] = useState(false);
   const [blocks, setBlocks] = useState(null);
 
@@ -97,160 +110,171 @@ export function OverviewContent() {
     return <div>Loading...</div>;
   }
 
+  // Get all search params as an object
+  const allSearchParams = Object.fromEntries(searchParams.entries());
+  const blockType = allSearchParams.block_type;
+
+  if (blockType === "tip") {
+    return (
+      <TipBlockEditor
+        block={blocks.find((block) => block.type === "tip")}
+        setBlock={(newBlock) => {
+          setBlocks((prev) =>
+            prev.map((b) => (b.type === "tip" ? newBlock : b))
+          );
+        }}
+      />
+    );
+  }
+  if (blockType === "leaderboard") {
+    return (
+      <LeaderboardBlockEditor
+        block={blocks.find((block) => block.type === "leaderboard")}
+        setBlock={(newBlock) => {
+          setBlocks((prev) =>
+            prev.map((b) => (b.type === "leaderboard" ? newBlock : b))
+          );
+        }}
+      />
+    );
+  }
+  if (blockType === "qr") {
+    return (
+      <QrCodeBlockEditor
+        block={blocks.find((block) => block.type === "qr_code")}
+        setBlock={(newBlock) => {
+          setBlocks((prev) =>
+            prev.map((b) => (b.type === "qr_code" ? newBlock : b))
+          );
+        }}
+      />
+    );
+  }
+
   return (
-    <>
-      <div className="space-y-4">
-        <div className="grid grid-cols-3 gap-4">
-          <Card className="p-3 flex flex-col gap-2 bg-orange-200 border-2 border-black rounded-xl shadow-[3px_3px_0px_0px_rgba(0,0,0,0.6)]">
-            <div className="flex items-center gap-2">
-              <ExternalLink className="w-4 h-4 text-black" />
-              <span className="text-xs font-bold text-black">Tip link</span>
+    <div className="h-[calc(95vh-8rem)] w-full">
+      <div className="flex flex-wrap gap-4 p-4 h-full">
+        {/* Alerts Tile */}
+        <div className="relative group flex flex-col min-h-0 h-fit">
+          <div
+            className="relative h-full bg-white border-[3px] border-black p-1.5 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-0.5 hover:translate-y-0.5 transition-all duration-200 flex flex-col overflow-hidden cursor-pointer"
+            onClick={() => setSearchParams({ block_type: "tip" })}
+          >
+            <div className="flex items-start justify-between mb-1.5">
+              <div className="flex-1 min-w-0">
+                <h3 className="text-base font-black text-black mb-0.5 leading-tight">
+                  Alerts
+                </h3>
+                <p className="text-[9px] text-gray-600 leading-tight">
+                  Customise all alerts settings here!
+                </p>
+              </div>
+              <div className="w-7 h-7 bg-[#AAD6B8] border-[2px] border-black flex items-center justify-center shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] flex-shrink-0 ml-1">
+                <Bell className="w-3.5 h-3.5 text-white" />
+              </div>
             </div>
-            <a
-              href={`https://link.apextip.space/vo/${user?.username}?block_type=tip`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xs text-black hover:underline cursor-pointer truncate font-semibold bg-white px-2 py-1 rounded-lg border border-black block"
-            >
-              {`https://link.apextip.space/overlay/${user?.username}?block_type=tip`}
-            </a>
-          </Card>
-          <Card className="p-3 flex flex-col gap-2 bg-orange-200 border-2 border-black rounded-xl shadow-[3px_3px_0px_0px_rgba(0,0,0,0.6)]">
-            <div className="flex items-center gap-2">
-              <ExternalLink className="w-4 h-4 text-black" />
-              <span className="text-xs font-bold text-black">
-                Leaderboard link
-              </span>
+
+            {/* Example Alert Content */}
+            <div className="scale-75">
+              <LiquidRenderer
+                key={dummyTipBlocks[0].id}
+                html={dummyTipBlocks[0].template}
+                data={{ ...dummyTipBata, data: dummyTipBlocks[0].data }}
+                className={dummyTipBlocks[0].className}
+                style={dummyTipBlocks[0].style}
+              />
             </div>
-            <a
-              href={`https://link.apextip.space/vo/${user?.username}?block_type=leaderboard`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xs text-black hover:underline cursor-pointer truncate font-semibold bg-white px-2 py-1 rounded-lg border border-black block"
-            >
-              {`https://link.apextip.space/overlay/${user?.username}?block_type=leaderboard`}
-            </a>
-          </Card>
-          <Card className="p-3 flex flex-col gap-2 bg-orange-200 border-2 border-black rounded-xl shadow-[3px_3px_0px_0px_rgba(0,0,0,0.6)]">
-            <div className="flex items-center gap-2">
-              <ExternalLink className="w-4 h-4 text-black" />
-              <span className="text-xs font-bold text-black">QR Code link</span>
-            </div>
-            <a
-              href={`https://link.apextip.space/vo/${user?.username}?block_type=qr_code`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xs text-black hover:underline cursor-pointer truncate font-semibold bg-white px-2 py-1 rounded-lg border border-black block"
-            >
-              {`https://link.apextip.space/overlay/${user?.username}?block_type=qr_code`}
-            </a>
-          </Card>
+          </div>
         </div>
-        <div className="grid grid-cols-3 gap-4">
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button
-                variant="outline"
-                className="h-40 flex-grow justify-start text-left bg-blue-200 hover:bg-blue-300 text-black border-2 border-black rounded-xl shadow-[2px_2px_0px_0px_rgba(0,0,0,0.6)] hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,0.6)] transition-all duration-150 transform hover:translate-x-0.5 hover:translate-y-0.5 active:translate-x-1 active:translate-y-1 active:shadow-none"
-              >
-                <div className="flex items-center gap-4">
-                  <FileText className="!w-8 !h-8" />
-                  <div>
-                    <div className="text-lg font-bold">Tip Block Editor</div>
-                    <div className="text-sm opacity-80">
-                      Configure your tip block
-                    </div>
-                  </div>
-                </div>
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="!w-[95vw] !h-[95vh] !max-w-none">
-              <DialogHeader>
-                <DialogTitle>Tip Block Configuration</DialogTitle>
-                <DialogDescription>
-                  Customize your Tip appearance and settings
-                </DialogDescription>
-              </DialogHeader>
-              <TipBlockEditor
-                block={blocks.find((block) => block.type === "tip")}
-                setBlock={(newBlock) =>
-                  setBlocks((prev) =>
-                    prev.map((b) => (b.type === "tip" ? newBlock : b))
-                  )
-                }
+
+        {/* QR Tile */}
+        <div className="relative group flex flex-col min-h-0">
+          <div
+            className="relative h-full bg-white border-[3px] border-black p-1.5 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-0.5 hover:translate-y-0.5 transition-all duration-200 flex flex-col overflow-hidden cursor-pointer"
+            onClick={() => setSearchParams({ block_type: "qr" })}
+          >
+            <div className="flex items-start justify-between mb-1.5">
+              <div className="flex-1 min-w-0">
+                <h3 className="text-base font-black text-black mb-0.5 leading-tight">
+                  QR
+                </h3>
+                <p className="text-[9px] text-gray-600 leading-tight">
+                  Go-to-links instantly via QR scan!
+                </p>
+              </div>
+              <div className="w-7 h-7 bg-[#FEF18C] border-[2px] border-black flex items-center justify-center shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] flex-shrink-0 ml-1">
+                <Smartphone className="w-3.5 h-3.5 text-black" />
+              </div>
+            </div>
+
+            {/* Example QR Code */}
+            <div className="scale-75">
+              <LiquidRenderer
+                html={dummyQrCodeBlocks[0].template}
+                data={{ ...dummyQrCodeData, data: dummyQrCodeBlocks[0].data }}
+                className={dummyQrCodeBlocks[0].className}
+                style={dummyQrCodeBlocks[0].style}
               />
-            </DialogContent>
-          </Dialog>
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button
-                variant="outline"
-                className="h-40 flex-grow justify-start text-left bg-blue-200 hover:bg-blue-300 text-black border-2 border-black rounded-xl shadow-[2px_2px_0px_0px_rgba(0,0,0,0.6)] hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,0.6)] transition-all duration-150 transform hover:translate-x-0.5 hover:translate-y-0.5 active:translate-x-1 active:translate-y-1 active:shadow-none"
-              >
-                <div className="flex items-center gap-4">
-                  <FileText className="!w-8 !h-8" />
-                  <div>
-                    <div className="text-lg font-bold">Leaderboard Block Editor</div>
-                    <div className="text-sm opacity-80">
-                      Configure your leaderboard block
-                    </div>
-                  </div>
-                </div>
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="!w-[95vw] !h-[95vh] !max-w-none">
-              <DialogHeader>
-                <DialogTitle>Leaderboard Block Configuration</DialogTitle>
-                <DialogDescription>
-                  Customize your leaderboard appearance and settings
-                </DialogDescription>
-              </DialogHeader>
-              <LeaderboardBlockEditor
-                block={blocks.find((block) => block.type === "leaderboard")}
-                setBlock={(newBlock) =>
-                  setBlocks((prev) =>
-                    prev.map((b) => (b.type === "leaderboard" ? newBlock : b))
-                  )
-                }
-              />
-            </DialogContent>
-          </Dialog>
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button
-                variant="outline"
-                className="h-40 flex-grow justify-start text-left bg-blue-200 hover:bg-blue-300 text-black border-2 border-black rounded-xl shadow-[2px_2px_0px_0px_rgba(0,0,0,0.6)] hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,0.6)] transition-all duration-150 transform hover:translate-x-0.5 hover:translate-y-0.5 active:translate-x-1 active:translate-y-1 active:shadow-none"
-              >
-                <div className="flex items-center gap-4">
-                  <FileText className="!w-8 !h-8" />
-                  <div>
-                    <div className="text-lg font-bold">QR Code Block Editor</div>
-                    <div className="text-sm opacity-80">
-                      Configure your QR Code block
-                    </div>
-                  </div>
-                </div>
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="!w-[95vw] !h-[95vh] !max-w-none">
-              <DialogHeader>
-                <DialogTitle>QR Code Block Configuration</DialogTitle>
-                <DialogDescription>
-                  Customize your QR Code appearance and settings
-                </DialogDescription>
-              </DialogHeader>
-              <QrCodeBlockEditor
-                block={blocks.find((block) => block.type === "qr_code")}
-                setBlock={(newBlock) =>
-                  setBlocks((prev) =>
-                    prev.map((b) => (b.type === "qr_code" ? newBlock : b))
-                  )
-                }
-              />
-            </DialogContent>
-          </Dialog>
+            </div>
+          </div>
         </div>
+
+        {/* Media Share Tile */}
+        <div className="relative group flex flex-col min-h-0">
+          <div
+            onClick={() => setSearchParams({ block_type: "leaderboard" })}
+            className="relative h-full bg-white border-[3px] border-black p-1.5 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-0.5 hover:translate-y-0.5 transition-all duration-200 flex flex-col overflow-hidden"
+          >
+            <div className="flex items-start justify-between mb-1.5">
+              <div className="flex-1 min-w-0">
+                <h3 className="text-base font-black text-black mb-0.5 leading-tight">
+                  Leaderboard
+                </h3>
+                <p className="text-[9px] text-gray-600 leading-tight">
+                  Show your top supporters with a leaderboard!
+                </p>
+              </div>
+              <div className="w-7 h-7 bg-black border-[2px] border-black flex items-center justify-center shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] flex-shrink-0 ml-1">
+                <Play className="w-3.5 h-3.5 text-white fill-white" />
+              </div>
+            </div>
+
+            {/* Example Media Content */}
+            <div className="scale-75">
+              <LiquidRenderer
+                html={dummyLeaderboardBlocks[0].template}
+                data={{
+                  ...dummyLeaderboardData,
+                  data: dummyLeaderboardBlocks[0].data,
+                }}
+                className={dummyLeaderboardBlocks[0].className}
+                style={dummyLeaderboardBlocks[0].style}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Tip's Reply Tile */}
+        {/* <div className="relative group flex flex-col min-h-0">
+          <div className="relative h-full bg-white border-[3px] border-black p-1.5 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-0.5 hover:translate-y-0.5 transition-all duration-200 flex flex-col overflow-hidden">
+            <div className="flex items-start justify-between mb-1.5">
+              <div className="flex-1 min-w-0">
+                <h3 className="text-base font-black text-black mb-0.5 leading-tight">
+                  Tip's reply
+                </h3>
+                <p className="text-[9px] text-gray-600 leading-tight">
+                  Now! your fans can reply to each other's tips by tipping.
+                </p>
+              </div>
+              <div className="w-7 h-7 bg-[#828BF8] border-[2px] border-black flex items-center justify-center shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] flex-shrink-0 ml-1">
+                <MessageCircle className="w-3.5 h-3.5 text-white" />
+              </div>
+            </div>
+
+            <div className=""></div>
+          </div>
+        </div> */}
       </div>
-    </>
+    </div>
   );
 }
