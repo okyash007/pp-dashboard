@@ -12,7 +12,7 @@ import { useAuthStore } from "../../stores/authStore";
 export const dummyLeaderboardBlocks = [
   {
     type: "leaderboard",
-    className: "",
+    className: "p-4",
     name: "leaderboard-card-1",
     data: {
       title: "TOP SUPPORTERS",
@@ -52,7 +52,7 @@ export const dummyLeaderboardBlocks = [
       "    animation: amountShine 3s infinite;",
       "  }",
       "</style>",
-      '<div class="relative inline-block w-full max-w-[550px]">',
+      '<div class="relative inline-block w-full">',
       "  <div class=\"relative border-[6px] border-black shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] overflow-hidden backdrop-blur-sm\" style=\"background-color: {{ data.primary_color | default: '#FEF18C' }}; {% if data.background_image %}background-image: url('{{ data.background_image }}'); background-size: cover; background-position: center; background-repeat: no-repeat;{% endif %}\">",
       "    ",
       '    <div class="absolute inset-0 opacity-70" style="background: repeating-linear-gradient(45deg, rgba(130,139,248,0.12) 0px, rgba(130,139,248,0.12) 8px, rgba(170,214,184,0.12) 8px, rgba(170,214,184,0.12) 16px), radial-gradient(circle, rgba(0,0,0,0.15) 2.5px, transparent 2.5px); background-size: auto, 20px 20px;"></div>',

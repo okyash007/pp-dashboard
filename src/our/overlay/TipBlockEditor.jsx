@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import ColorPicker from "../../components/ColorPicker";
 import ImageUpload from "../../components/ImageUpload";
 import { Slider } from "@/components/ui/slider";
+import { Switch } from "@/components/ui/switch";
 import { useAuthStore } from "../../stores/authStore";
 
 export const dummyTipBata = {
@@ -30,6 +31,7 @@ export const dummyTipBlocks = [
       message_text_color: "#fff",
       background_image: null,
     },
+    className: "p-4",
     template: [
       "<style>",
       "  @keyframes slideInBounce {",
@@ -60,7 +62,7 @@ export const dummyTipBlocks = [
       "  .message-fade { animation: fadeInUp 0.6s ease-out 0.4s both; }",
       "  .amount-shimmer { background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); background-size: 200% 100%; animation: shimmer 2s infinite; }",
       "</style>",
-      '<div class="relative inline-block w-[400px]">',
+      '<div class="relative inline-block w-full">',
       "  <div class=\"tip-card relative border-[6px] border-black shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] overflow-hidden backdrop-blur-sm\" style=\"background-color: {{ data.primary_color | default: '#FEF18C' }}; {% if data.background_image %}background-image: url('{{ data.background_image }}'); background-size: cover; background-position: center; background-repeat: no-repeat;{% endif %}\">",
       '    <div class="absolute inset-0 opacity-25" style="background-image: radial-gradient(circle, rgba(0, 0, 0, 0.3) 1.5px, transparent 1.5px); background-size: 10px 10px;"></div>',
       '    <div class="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-black/10 pointer-events-none"></div>',
@@ -303,6 +305,22 @@ const TipBlockEditor = ({ block, setBlock }) => {
               <div className="flex justify-between text-[10px] text-gray-400 px-1">
                 <span>1s</span>
                 <span>60s</span>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label className="text-xs font-bold text-gray-500">
+                  Test
+                </Label>
+                <Switch
+                  checked={block.test || false}
+                  onCheckedChange={(checked) => {
+                    setBlock({
+                      ...block,
+                      test: checked,
+                    });
+                  }}
+                />
               </div>
             </div>
           </div>
