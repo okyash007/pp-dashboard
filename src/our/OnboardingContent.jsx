@@ -805,7 +805,7 @@ const OnboardingContent = () => {
             </Button>
           </header>
 
-          {/* <div className='px-8 pt-6'>
+          <div className='px-8 pt-6'>
             <div className='relative'>
               <div className='absolute inset-x-0 top-1/2 -translate-y-1/2 h-2 bg-black/10 rounded-full'></div>
               <div
@@ -850,7 +850,7 @@ const OnboardingContent = () => {
                 })}
               </div>
             </div>
-          </div> */}
+          </div>
 
           <div className='flex-1 px-6 py-5 overflow-y-auto '>
             <div className='flex items-center justify-center h-full pr-2 overflow-auto'>
