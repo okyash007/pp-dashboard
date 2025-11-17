@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,12 +12,12 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
-import ColorPicker from "@/components/ColorPicker";
-import { Label } from "@/components/ui/label";
-import ImageUpload from "@/components/ImageUpload";
-import { Palette, Image, Type, Settings, Sparkles, Wand2 } from "lucide-react";
+} from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button';
+import ColorPicker from '@/components/ColorPicker';
+import { Label } from '@/components/ui/label';
+import ImageUpload from '@/components/ImageUpload';
+import { Palette, Image, Type, Settings, Sparkles, Wand2 } from 'lucide-react';
 
 const TipsEditor = ({ block, setBlock }) => {
   const handleButtonBackgroundChange = (color) => {
@@ -82,13 +82,13 @@ const TipsEditor = ({ block, setBlock }) => {
 
   return (
     <>
-      <div className="space-y-1">
-        <p className="text-lg font-bold text-gray-600">Tips Configuration</p>
-        <div className="bg-gray-200 rounded-xl">
-          <div className="p-3 space-y-3">
+      <div className='space-y-1'>
+        <p className='text-lg font-bold text-gray-600 text-center'>Tips Configuration</p>
+        <div className='rounded-xl'>
+          <div className='p-3 space-y-3'>
             <div>
-              <Label className="text-xs font-bold text-gray-600 flex items-center gap-1 mb-1">
-                <Palette className="w-3 h-3" />
+              <Label className='text-xs font-bold text-gray-600 flex items-center gap-1 mb-1'>
+                <Palette className='w-3 h-3' />
                 Background Color
               </Label>
               <ColorPicker
@@ -97,21 +97,18 @@ const TipsEditor = ({ block, setBlock }) => {
               />
             </div>
             <div>
-              <Label className="text-xs font-bold text-gray-600 flex items-center gap-1 mb-1">
-                <Type className="w-3 h-3" />
+              <Label className='text-xs font-bold text-gray-600 flex items-center gap-1 mb-1'>
+                <Type className='w-3 h-3' />
                 Text Color
               </Label>
-              <ColorPicker
-                value={block.tip_btn.style?.color}
-                onChange={handleButtonTextChange}
-              />
+              <ColorPicker value={block.tip_btn.style?.color} onChange={handleButtonTextChange} />
             </div>
           </div>
 
-          <div className="p-3 space-y-3">
+          <div className='p-3 space-y-3'>
             <div>
-              <Label className="text-xs font-bold text-gray-600 flex items-center gap-1 mb-1">
-                <Image className="w-3 h-3" />
+              <Label className='text-xs font-bold text-gray-600 flex items-center gap-1 mb-1'>
+                <Image className='w-3 h-3' />
                 Background Image
               </Label>
               <ImageUpload
@@ -120,8 +117,8 @@ const TipsEditor = ({ block, setBlock }) => {
               />
             </div>
             <div>
-              <Label className="text-xs font-bold text-gray-600 flex items-center gap-1 mb-1">
-                <Palette className="w-3 h-3" />
+              <Label className='text-xs font-bold text-gray-600 flex items-center gap-1 mb-1'>
+                <Palette className='w-3 h-3' />
                 Primary Color
               </Label>
               <ColorPicker
@@ -130,8 +127,8 @@ const TipsEditor = ({ block, setBlock }) => {
               />
             </div>
             <div>
-              <Label className="text-xs font-bold text-gray-600 flex items-center gap-1 mb-1">
-                <Palette className="w-3 h-3" />
+              <Label className='text-xs font-bold text-gray-600 flex items-center gap-1 mb-1'>
+                <Palette className='w-3 h-3' />
                 Secondary Color
               </Label>
               <ColorPicker
@@ -140,8 +137,8 @@ const TipsEditor = ({ block, setBlock }) => {
               />
             </div>
             <div>
-              <Label className="text-xs font-bold text-gray-600 flex items-center gap-1 mb-1">
-                <Palette className="w-3 h-3" />
+              <Label className='text-xs font-bold text-gray-600 flex items-center gap-1 mb-1'>
+                <Palette className='w-3 h-3' />
                 Tertiary Color
               </Label>
               <ColorPicker

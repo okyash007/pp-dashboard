@@ -15,6 +15,8 @@ import { RulesContent } from "./our/RulesContent";
 import { ProfileContent } from "./our/ProfileContent";
 import { PotatoTreeContent } from "./our/PotatoTreeContent";
 import TipPageContent from "./our/TipPageContent";
+import { FAQContent } from "./our/FAQContent";
+import { TnCContent } from "./our/TnCContent";
 import { useAuthStore } from "./stores/authStore";
 import { Toaster } from "./components/ui/sonner";
 import OnboardingContent from "./our/OnboardingContent";
@@ -63,6 +65,22 @@ function TipPage() {
   return (
     <DashboardLayout>
       <TipPageContent />
+    </DashboardLayout>
+  );
+}
+
+function FAQ() {
+  return (
+    <DashboardLayout>
+      <FAQContent />
+    </DashboardLayout>
+  );
+}
+
+function TnC() {
+  return (
+    <DashboardLayout>
+      <TnCContent />
     </DashboardLayout>
   );
 }
@@ -137,6 +155,22 @@ function App() {
           element={
             <ProtectedRoute>
               <TipPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/faq"
+          element={
+            <ProtectedRoute>
+              <FAQ />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/tnc"
+          element={
+            <ProtectedRoute>
+              <TnC />
             </ProtectedRoute>
           }
         />

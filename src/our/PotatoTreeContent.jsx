@@ -1,54 +1,58 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { TreePine } from "lucide-react";
-import { useState } from "react";
-import UpdateSocials from "./link/UpdateSocials";
-import LinkPageEditor from "./link/LinkPageEditor";
+import { useEffect, useState } from 'react';
+import { useAuthStore } from '../stores/authStore';
+import UpdateSocials from './link/UpdateSocials';
+import LinkPageRenderer from './link/LinkPageRenderer';
+import laptopPotato from '@/assets/laptop.svg?url';
+
+async function getLinkPage(token) {
+  try {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/link-tree`, {
+      method: 'GET',
+      headers: {
+        accept: 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const data = await response.json();
+    if (!data.success) {
+      return null;
+    }
+    return data.data;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+}
 
 export function PotatoTreeContent() {
-  const [isLinksEditorOpen, setIsLinksEditorOpen] = useState(false);
+  const { token } = useAuthStore();
+  const [blocks, setBlocks] = useState();
+
+  useEffect(() => {
+    getLinkPage(token).then((data) => {
+      setBlocks(data);
+    });
+  }, [token]);
+
+  if (!blocks) {
+    return <div>Loading...</div>;
+  }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center gap-3">
-        <div className="w-12 h-12 bg-green-200 rounded-xl flex items-center justify-center border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,0.6)]">
-          <TreePine className="w-6 h-6 text-green-800" />
-        </div>
-        <div>
-          <h1 className="text-3xl font-bold text-black">
-            Social Media Manager
-          </h1>
-          <p className="text-gray-600 font-semibold">
-            Manage your social media profiles
-          </p>
-        </div>
+    <div className='rounded-xl h-[calc(95vh-9rem)] flex overflow-hidden relative'>
+      <div className='hidden md:block absolute left-10 bottom-10 pointer-events-none'>
+        <img
+          src={laptopPotato}
+          alt='Potato Pay Mascot'
+          className='w-18 h-18 object-contain mascot-enter scale-250'
+          style={{ filter: 'drop-shadow(6px 6px 0 rgba(0,0,0,1))' }}
+        />
       </div>
-
-      {/* Social Media Editor and Links Page Editor */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* Social Media Editor - Takes 3/4 of the space */}
-        <Card className="bg-purple-100 border-2 border-black rounded-xl shadow-[3px_3px_0px_0px_rgba(0,0,0,0.6)] lg:col-span-3">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-purple-800">
-              <TreePine className="w-5 h-5" />
-              Social Media Manager
-            </CardTitle>
-            <CardDescription className="text-purple-700">
-              Manage your social media links for your link tree
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <UpdateSocials />
-          </CardContent>
-        </Card>
-
-        <LinkPageEditor />
+      <div className='flex-1 overflow-y-auto'>
+        <LinkPageRenderer blocks={blocks} />
+      </div>
+      <div className='w-[300px] overflow-y-auto'>
+        <UpdateSocials />
       </div>
     </div>
   );

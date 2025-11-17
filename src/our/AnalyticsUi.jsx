@@ -202,7 +202,7 @@ const AnalyticsUi = ({ data }) => {
 
         {/* CLICKS PANEL */}
         <div className='col-span-6 md:col-span-4 relative'>
-          <div className='relative h-full bg-[#AAD6B8] border-[5px] border-black p-5 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:translate-x-0.5 hover:translate-y-0.5 transition-all duration-200'>
+          <div className='relative h-full bg-[#FEC4FF] border-[5px] border-black p-5 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:translate-x-0.5 hover:translate-y-0.5 transition-all duration-200'>
             {/* Halftone effect */}
             <div
               className='absolute inset-0 opacity-10'
@@ -264,7 +264,7 @@ const AnalyticsUi = ({ data }) => {
 
         {/* CONVERSION RATE PANEL */}
         <div className='col-span-6 md:col-span-4 relative rotate-1'>
-          <div className='relative h-full bg-[#FF6B9D] border-[5px] border-black p-5 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:rotate-0 transition-all duration-200'>
+          <div className='relative h-full bg-[#828BF8] border-[5px] border-black p-5 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:rotate-0 transition-all duration-200'>
             <div className='relative z-10'>
               <div className='flex items-center justify-between mb-2'>
                 <span className='text-[10px] font-black text-white uppercase tracking-widest bg-black px-2 py-1'>
@@ -295,7 +295,7 @@ const AnalyticsUi = ({ data }) => {
 
         {/* CLICK THROUGH RATE PANEL */}
         <div className='col-span-6 md:col-span-3 relative'>
-          <div className='relative h-full bg-white border-[5px] border-black p-5 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:translate-x-0.5 hover:translate-y-0.5 transition-all duration-200'>
+          <div className='relative h-full bg-[#AAD6B8] border-[5px] border-black p-5 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:translate-x-0.5 hover:translate-y-0.5 transition-all duration-200'>
             {/* Diagonal stripes pattern */}
             <div
               className='absolute inset-0 opacity-5'
