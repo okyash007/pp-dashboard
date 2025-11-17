@@ -154,10 +154,9 @@ const Tips = ({ startDate, endDate }) => {
             size='sm'
             onClick={handleRefresh}
             disabled={loading}
-            className='bg-white hover:bg-gray-50 text-gray-700 font-semibold text-xs px-4 py-2 border-[2px] border-gray-300 transition-colors disabled:opacity-40 disabled:cursor-not-allowed'
+            className='h-auto hover:bg-[#FEF18C] cursor-pointer text-black font-black text-xs px-4 py-3 border-[4px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 transition-all duration-200'
           >
-            <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-            Refresh
+            <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
           </Button>
         </div>
       </div>
@@ -198,34 +197,15 @@ const Tips = ({ startDate, endDate }) => {
         }}
       >
         {/* Pointy Potato */}
-        <div className='absolute -top-13 left-10 w-64 h-64 z-10 pointer-events-none'>
+        <div className='absolute -top-14 left-10 w-72 h-72 z-10 pointer-events-none'>
           <img src={pointyPotato} alt='Pointing' className='w-full h-full object-contain' />
         </div>
 
         <div className='bg-gradient-to-r from-[#828BF8] to-[#828BF8]/90 px-6 py-3 border-b-[3px] border-black relative z-0 overflow-hidden'>
           <div className='flex items-center gap-2'>
-            <MessageSquare className='h-4 w-4 text-white flex-shrink-0' />
-            <div className='flex-1 overflow-hidden'>
-              <div className='flex whitespace-nowrap animate-marquee'>
-                <h2 className='text-sm font-black text-white uppercase tracking-wider inline-block pr-20'>
-                  Recent Tips
-                </h2>
-                <h2 className='text-sm font-black text-white uppercase tracking-wider inline-block pr-20'>
-                  Recent Tips
-                </h2>
-                <h2 className='text-sm font-black text-white uppercase tracking-wider inline-block pr-20'>
-                  Recent Tips
-                </h2>
-                <h2 className='text-sm font-black text-white uppercase tracking-wider inline-block pr-20'>
-                  Recent Tips
-                </h2>
-                <h2 className='text-sm font-black text-white uppercase tracking-wider inline-block pr-20'>
-                  Recent Tips
-                </h2>
-                <h2 className='text-sm font-black text-white uppercase tracking-wider inline-block pr-20'>
-                  Recent Tips
-                </h2>
-              </div>
+            {/* <MessageSquare className='h-4 w-4 text-white flex-shrink-0' /> */}
+            <div className='flex-1 flex text-white font-bold text-xl justify-end overflow-hidden'>
+              YOUR RECENT TIPS
             </div>
           </div>
         </div>
