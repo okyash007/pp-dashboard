@@ -1,26 +1,27 @@
 import React from "react";
 import { useSearchParams } from "react-router-dom";
+import { useAuthStore } from "../../stores/authStore";
 import { ArrowLeft, RotateCcw, ExternalLink } from "lucide-react";
-import LiquidRenderer from "../LiquidRenderer";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 import ColorPicker from "../../components/ColorPicker";
 import ImageUpload from "../../components/ImageUpload";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
-import { useAuthStore } from "../../stores/authStore";
+import LiquidRenderer from "../LiquidRenderer";
 
-export const dummyTipBata = {
+export const dummyMediaShareData = {
   visitor_name: "John Doe",
   display_name: "John Doe",
   message:
-    "Hey! Just wanted to say your content really lifts my mood after long days. You’ve got such a genuine vibe and it shows in everything you do. Keep shining and doing what you love — this small tip is my way of saying thanks for the constant joy you bring 💛",
+    "Hey! Just wanted to say your content really lifts my mood after long days.",
   created_at: Date.now(),
   amount: 20000,
   currency: "INR",
+  youtube_video_key: "DNBRdPornn4",
 };
 
-export const dummyTipBlocks = [
+export const dummyMediaShareBlocks = [
   {
     type: "tip",
     name: "tip-card-1",
@@ -114,7 +115,7 @@ export const dummyTipBlocks = [
   },
 ];
 
-const TipBlockEditor = ({ block, setBlock }) => {
+const MediaShareBlockEditor = ({ block, setBlock }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const { user } = useAuthStore();
 
@@ -126,9 +127,9 @@ const TipBlockEditor = ({ block, setBlock }) => {
   const resetBlock = () => {
     setBlock({
       ...block,
-      template: dummyTipBlocks[0].template,
-      name: dummyTipBlocks[0].name,
-      data: { ...dummyTipBlocks[0].data },
+      template: dummyMediaShareBlocks[0].template,
+      name: dummyMediaShareBlocks[0].name,
+      data: { ...dummyMediaShareBlocks[0].data },
     });
   };
 
@@ -142,30 +143,30 @@ const TipBlockEditor = ({ block, setBlock }) => {
   return (
     <div className="h-[calc(95vh-11rem)] w-full">
       {/* <div className=' w-fit overflow-y-auto p-2 border-r-2 border-black'>
-        {dummyTipBlocks.map((blockh) => {
-          return (
-            <div
-              key={blockh.type}
-              className={`p-2 ${block.name && block.name === blockh.name ? '' : ''}`}
-              onClick={() =>
-                setBlock({
-                  ...block,
-                  template: blockh.template,
-                  name: blockh.name,
-                })
-              }
-            >
-              <LiquidRenderer
-                key={blockh.id}
-                html={blockh.template}
-                data={{ ...dummyTipBata, data: blockh.data }}
-                className={blockh.className}
-                style={blockh.style}
-              />
-            </div>
-          );
-        })}
-      </div> */}
+    {dummyTipBlocks.map((blockh) => {
+      return (
+        <div
+          key={blockh.type}
+          className={`p-2 ${block.name && block.name === blockh.name ? '' : ''}`}
+          onClick={() =>
+            setBlock({
+              ...block,
+              template: blockh.template,
+              name: blockh.name,
+            })
+          }
+        >
+          <LiquidRenderer
+            key={blockh.id}
+            html={blockh.template}
+            data={{ ...dummyTipBata, data: blockh.data }}
+            className={blockh.className}
+            style={blockh.style}
+          />
+        </div>
+      );
+    })}
+  </div> */}
 
       <div className="flex h-full">
         <div className="flex-1 flex justify-center items-center relative">
@@ -208,7 +209,7 @@ const TipBlockEditor = ({ block, setBlock }) => {
           <div className="w-[400px]">
             <LiquidRenderer
               html={block.template}
-              data={{ ...dummyTipBata, data: block.data }}
+              data={{ ...dummyMediaShareData, data: block.data }}
               className={block.className}
               style={block.style}
             />
@@ -216,84 +217,14 @@ const TipBlockEditor = ({ block, setBlock }) => {
         </div>
         <div className="w-[300px] p-2">
           <div className="space-y-4">
-            <div className="space-y-2">
-              <Label className="text-xs font-bold text-gray-500">
-                Primary Color
-              </Label>
-              <ColorPicker
-                value={block.data.primary_color}
-                onChange={(color) => {
-                  setBlock({
-                    ...block,
-                    data: { ...block.data, primary_color: color },
-                  });
-                }}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label className="text-xs font-bold text-gray-500">
-                Secondary Color
-              </Label>
-              <ColorPicker
-                value={block.data.secondary_color}
-                onChange={(color) => {
-                  setBlock({
-                    ...block,
-                    data: { ...block.data, secondary_color: color },
-                  });
-                }}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label className="text-xs font-bold text-gray-500">
-                Text Color
-              </Label>
-              <ColorPicker
-                value={block.data.text_color}
-                onChange={(color) => {
-                  setBlock({
-                    ...block,
-                    data: { ...block.data, text_color: color },
-                  });
-                }}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label className="text-xs font-bold text-gray-500">
-                Message Text Color
-              </Label>
-              <ColorPicker
-                value={block.data.message_text_color}
-                onChange={(color) => {
-                  setBlock({
-                    ...block,
-                    data: { ...block.data, message_text_color: color },
-                  });
-                }}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label className="text-xs font-bold text-gray-500">
-                Background Image
-              </Label>
-              <ImageUpload
-                value={block.data.background_image}
-                onChange={(imageUrl) => {
-                  setBlock({
-                    ...block,
-                    data: { ...block.data, background_image: imageUrl },
-                  });
-                }}
-              />
-            </div>
             <div className="space-y-3 pt-2 bg-white rounded-lg p-2 border-2 border-black">
               <div className="flex items-center justify-between">
                 <Label className="text-xs font-bold text-gray-500">
-                  Display Time
+                  Media Share Time
                 </Label>
                 <div className="flex items-center gap-1.5 px-2.5 py-1 bg-gray-200 rounded-md border border-gray-300">
                   <span className="text-sm font-semibold text-gray-700">
-                    {block.data.display_time || 20}
+                    {block.data.media_share_time || 10}
                   </span>
                   <span className="text-xs text-gray-500 font-medium">sec</span>
                 </div>
@@ -303,11 +234,11 @@ const TipBlockEditor = ({ block, setBlock }) => {
                   min={1}
                   max={60}
                   step={1}
-                  value={[block.data.display_time || 20]}
+                  value={[block.data.media_share_time || 10]}
                   onValueChange={(value) => {
                     setBlock({
                       ...block,
-                      data: { ...block.data, display_time: value[0] },
+                      data: { ...block.data, media_share_time: value[0] },
                     });
                   }}
                   className="w-full"
@@ -318,19 +249,13 @@ const TipBlockEditor = ({ block, setBlock }) => {
                 <span>60s</span>
               </div>
             </div>
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label className="text-xs font-bold text-gray-500">Test</Label>
-                <Switch
-                  checked={block.test || false}
-                  onCheckedChange={(checked) => {
-                    setBlock({
-                      ...block,
-                      test: checked,
-                    });
-                  }}
-                />
-              </div>
+            <div className="mt-4 p-3 bg-yellow-50 border-2 border-yellow-300 rounded-lg">
+              <p className="text-xs font-semibold text-yellow-800 mb-1">
+                ⚠️ Copyright Notice
+              </p>
+              <p className="text-[10px] text-yellow-700 leading-relaxed">
+                Please avoid increasing media share time by 14 seconds for copyright reasons.
+              </p>
             </div>
           </div>
         </div>
@@ -339,4 +264,4 @@ const TipBlockEditor = ({ block, setBlock }) => {
   );
 };
 
-export default TipBlockEditor;
+export default MediaShareBlockEditor;

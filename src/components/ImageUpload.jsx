@@ -27,9 +27,9 @@ const ImageUpload = ({ value, onChange, className = "" }) => {
     if (!file) return;
 
     // Validate file type - support common image formats
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml'];
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'image/avif', 'image/svg+xml'];
     if (!allowedTypes.includes(file.type)) {
-      setError('Please select a valid image file (JPEG, PNG, GIF, WebP, or SVG)');
+      setError('Please select a valid image file (JPEG, PNG, GIF, WebP, AVIF, or SVG)');
       return;
     }
 
@@ -231,7 +231,7 @@ const ImageUpload = ({ value, onChange, className = "" }) => {
                 {isDragging ? 'Drop image here' : 'Click to upload or drag & drop'}
               </p>
               <p className="text-xs text-gray-600 mt-1">
-                PNG, JPG, GIF, WebP, SVG up to 10MB
+                PNG, JPG, GIF, WebP, AVIF, SVG up to 10MB
               </p>
             </div>
           </div>
