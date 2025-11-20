@@ -13,11 +13,7 @@ import {
   validateTerms,
 } from '@/lib/validation';
 import { useAuthStore } from '@/stores/authStore';
-import famPotato from '@/assets/fam.svg?url';
 import coolPotato from '@/assets/cool.svg?url';
-import joyPotato from '@/assets/joy.svg?url';
-import pissedPotato from '@/assets/pissed.svg?url';
-import treePotato from '@/assets/tree.svg?url';
 import carPotato from '@/assets/car.svg?url';
 
 export default function SignupPage() {
@@ -40,7 +36,7 @@ export default function SignupPage() {
   const { signup, isAuthenticated, loading } = useAuthStore();
   const navigate = useNavigate();
 
-  const potatoMascots = [coolPotato, joyPotato, pissedPotato, famPotato];
+  const potatoMascots = [coolPotato];
   const [currentPotato, setCurrentPotato] = useState(0);
   useEffect(() => {
     const interval = setInterval(() => {
@@ -208,27 +204,27 @@ export default function SignupPage() {
               <div className='text-left mb-6'>
                 <div className='relative bg-gradient-to-br from-[#828BF8] via-[#828BF8] to-[#828BF8]/90 border-[5px] border-black p-4 pr-5 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] overflow-hidden'>
                   <div className='flex items-center gap-4 relative z-10'>
-                    <div className='relative'>
-                      <div className='w-20 h-20 bg-gradient-to-br from-[#FEF18C] via-[#FEF18C] to-[#FEF18C]/80 border-[5px] border-black flex items-center justify-center shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all duration-300 hover:scale-105 cursor-pointer rotate-3 hover:rotate-0'>
-                        <img
-                          src={potatoMascots[currentPotato]}
-                          alt='Potato Pay Mascot'
-                          className='w-12 h-12 md:w-14 md:h-14'
-                        />
-                      </div>
+                    <div className='relative flex items-center'>
+                      {/* <div className='w-20 h-20 bg-gradient-to-br from-[#FEF18C] via-[#FEF18C] to-[#FEF18C]/80 border-[5px] border-black flex items-center justify-center shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all duration-300 hover:scale-105 cursor-pointer rotate-3 hover:rotate-0'> */}
+                      <img
+                        src={potatoMascots[currentPotato]}
+                        alt='Potato Pay Mascot'
+                        className='w-24 h-24'
+                      />
+                      {/* </div> */}
                       {/* <div className='absolute -top-2 -right-2 bg-[#AAD6B8] border-[3px] border-black px-2 py-0.5 text-[10px] font-black rotate-12 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]'>
                         FRESH
                       </div> */}
                     </div>
 
-                    <div className='flex flex-col flex-1'>
+                    <div className='flex flex-col flex-1 -ml-5'>
                       <div className='flex items-center gap-2'>
                         <span className='text-3xl font-black text-white tracking-tight drop-shadow-[4px_4px_0px_rgba(0,0,0,0.3)] leading-none uppercase'>
-                          POTATO<span className='text-[#FEF18C]'>PAY</span>
+                          POTATO<span className='text-[#FEF18C]'>PAY</span>.CO
                         </span>
                       </div>
-                      <span className='text-[11px] text-white/90 font-bold tracking-wide mt-1 uppercase'>
-                        The easiest way to tip creators you love
+                      <span className='text-[11px] text-white/90 font-bold tracking-wide mt-1 uppercase leading-3.5'>
+                        The Future of Digital Payments & Fun Fan Funding
                       </span>
                     </div>
                   </div>

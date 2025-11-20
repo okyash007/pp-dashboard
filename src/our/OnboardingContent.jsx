@@ -218,7 +218,7 @@ const OnboardingContent = () => {
   const uploadShellClass =
     'mt-2 border border-dashed border-black/15 rounded-2xl bg-white/80 max-h-[70%] p-4';
   const buttonBaseClass =
-    'h-auto font-black text-xs px-4 py-3 border-[4px] border-black rounded-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-150 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-x-0 disabled:hover:translate-y-0';
+    'h-auto font-black text-xs px-4 py-3 border-[4px] border-black rounded-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-150 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-x-0 disabled:hover:translate-y-0';
   const buttonPrimaryClass = `${buttonBaseClass} bg-[#FEF18C] hover:bg-[#FEE55A] text-black`;
   const buttonAccentClass = `${buttonBaseClass} bg-[#AAD6B8] hover:bg-[#8cc7a3] text-black`;
   const buttonSecondaryClass = `${buttonBaseClass} bg-white hover:bg-[#FEF18C]/60 text-black`;
@@ -569,38 +569,9 @@ const OnboardingContent = () => {
       title: 'Complete',
       shortTitle: 'Ready',
       icon: CheckCircle,
-      tagline: 'You’re all set. Time to start collecting tips from your fans!',
+      tagline: "You're all set. Time to start collecting tips from your fans!",
       accent: '#FEC4FF',
-      content: (
-        <div className='h-full flex flex-col items-center justify-center text-center gap-8'>
-          <div className='relative'>
-            <div className='w-28 h-28 bg-[#AAD6B8] border-[6px] border-black rounded-3xl flex items-center justify-center shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]'>
-              <CheckCircle className='h-16 w-16 text-black' />
-            </div>
-            <div className='absolute -top-4 -right-4 bg-[#FEF18C] border-[3px] border-black px-4 py-1 text-xs font-black rotate-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]'>
-              DONE!
-            </div>
-          </div>
-          <div className='space-y-3 max-w-lg'>
-            <h3 className='text-3xl font-black text-black tracking-tight uppercase'>
-              Onboarding Complete
-            </h3>
-            <p className='text-base font-semibold text-black/70'>
-              Your identity and payout details look great. Turn on your tip jar, share your link,
-              and let the love (and fries) roll in.
-            </p>
-          </div>
-          <div className='flex flex-col items-center gap-3'>
-            <div className='flex items-center gap-2 text-sm font-black text-black/60 uppercase tracking-widest'>
-              <Share className='h-4 w-4' />
-              Spread the word
-            </div>
-            <p className='text-sm font-semibold text-black/70'>
-              Share your tip page and start getting recognised by your community.
-            </p>
-          </div>
-        </div>
-      ),
+      content: null, // Will be set after finishOnboarding is defined
     },
   ];
 
@@ -667,6 +638,37 @@ const OnboardingContent = () => {
   const finishOnboarding = () => {
     navigate('/dashboard');
   };
+
+  // Set the complete step content after finishOnboarding is defined
+  steps[steps.length - 1].content = (
+    <div className='h-full flex flex-col items-center justify-center text-center gap-8'>
+      <div className='relative'>
+        <div className='w-28 h-28 bg-[#AAD6B8] border-[6px] border-black rounded-3xl flex items-center justify-center shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]'>
+          <CheckCircle className='h-16 w-16 text-black' />
+        </div>
+        <div className='absolute -top-4 -right-4 bg-[#FEF18C] border-[3px] border-black px-4 py-1 text-xs font-black rotate-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]'>
+          DONE!
+        </div>
+      </div>
+      <div className='space-y-3 max-w-lg'>
+        <h3 className='text-3xl font-black text-black tracking-tight uppercase'>
+          Onboarding Complete
+        </h3>
+        <p className='text-base font-semibold text-black/70'>
+          Your identity and payout details look great. Turn on your tip jar, share your link,
+          and let the love (and fries) roll in.
+        </p>
+      </div>
+      <Button
+        onClick={finishOnboarding}
+        disabled={isSaving}
+        className={`${buttonAccentClass} flex items-center gap-2`}
+      >
+        <CheckCircle className='h-4 w-4' />
+        View dashboard
+      </Button>
+    </div>
+  );
 
   const prevStep = () => {
     if (currentStep > 0) {
@@ -760,21 +762,21 @@ const OnboardingContent = () => {
                           setCurrentStep(index);
                         }
                       }}
-                      className={`flex min-w-[150px] flex-1 items-center gap-3 rounded-2xl border px-4 py-3 text-left transition ${
+                      className={`flex min-w-[150px] flex-1 items-center gap-3 rounded-2xl border-4 px-4 py-3 text-left transition-all duration-300 ease-in-out cursor-pointer ${
                         isActive
-                          ? 'border-black bg-black text-white'
+                          ? 'border-black bg-[#828BF8] text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]'
                           : isCompleted
-                          ? 'border-black/10 bg-black/5 text-black'
+                          ? 'border-black/30 bg-[#AAD6B8] text-black'
                           : 'border-black/10 bg-white text-black/70'
                       }`}
                     >
                       <div
-                        className={`flex h-10 w-10 items-center justify-center rounded-full border text-sm font-black ${
+                        className={`flex h-10 w-10 items-center justify-center rounded-full border-2 text-sm font-black transition-all duration-300 ease-in-out ${
                           isActive
                             ? 'border-white/50 bg-white/10 text-white'
                             : isCompleted
-                            ? 'border-black/10 bg-white text-black'
-                            : 'border-black/10 bg-white text-black'
+                            ? 'border-black/20 bg-white text-black'
+                            : 'border-black/10 bg-white text-black/70'
                         }`}
                       >
                         {index + 1}
@@ -783,8 +785,12 @@ const OnboardingContent = () => {
                         <span className='text-xs font-black uppercase tracking-widest'>
                           {step.shortTitle}
                         </span>
-                        <span className='text-[11px] font-semibold text-white/80'>
-                          {isActive ? step.tagline : ''}
+                        <span className={`text-[11px] font-semibold transition-all duration-300 ease-in-out overflow-hidden ${
+                          isActive 
+                            ? 'text-white/80 opacity-100 max-h-20' 
+                            : 'opacity-0 max-h-0'
+                        }`}>
+                          {step.tagline}
                         </span>
                       </div>
                     </button>
@@ -804,33 +810,28 @@ const OnboardingContent = () => {
         </main>
 
         <footer className='fixed bottom-0 inset-x-0 z-30 px-6 py-6'>
-          <div className='mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-4 rounded-[32px]'>
-            <Button
-              onClick={prevStep}
-              disabled={currentStep === 0 || isSaving}
-              className={`${buttonSecondaryClass} flex items-center gap-2`}
-            >
-              <ArrowLeft className='h-4 w-4' />
-              Back
-            </Button>
-            {currentStep === steps.length - 1 ? (
+          <div className='mx-auto flex w-full max-w-5xl flex-wrap items-center gap-4 rounded-[32px]'>
+            {currentStep > 0 && (
               <Button
-                onClick={finishOnboarding}
+                onClick={prevStep}
                 disabled={isSaving}
-                className={`${buttonAccentClass} flex items-center gap-2`}
+                className={`${buttonSecondaryClass} flex items-center gap-2`}
               >
-                <CheckCircle className='h-4 w-4' />
-                View dashboard
+                <ArrowLeft className='h-4 w-4' />
+                Back
               </Button>
-            ) : (
-              <Button
-                onClick={nextStep}
-                disabled={isSaving}
-                className={`${buttonPrimaryClass} flex items-center gap-2`}
-              >
-                {isSaving ? 'Saving...' : 'Save & continue'}
-                <ArrowRight className='h-4 w-4' />
-              </Button>
+            )}
+            {currentStep < steps.length - 1 && (
+              <div className='ml-auto'>
+                <Button
+                  onClick={nextStep}
+                  disabled={isSaving}
+                  className={`${buttonPrimaryClass} flex items-center gap-2`}
+                >
+                  {isSaving ? 'Saving...' : 'Save & continue'}
+                  <ArrowRight className='h-4 w-4' />
+                </Button>
+              </div>
             )}
           </div>
         </footer>

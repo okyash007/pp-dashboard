@@ -124,7 +124,7 @@ const AnalyticsUi = ({ data }) => {
       <div className='grid grid-cols-12 gap-4'>
         {/* HERO PANEL - Total Tips (Takes 2 rows, 5 cols) */}
         <div className='col-span-12 md:col-span-5 md:row-span-2 relative group'>
-          <div className='relative h-full bg-[#FEF18C] border-[6px] border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] overflow-hidden hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 transition-all duration-200'>
+          <div className='relative h-full bg-[#FEF18C] border-[6px] border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] overflow-hidden hover:shadow-[7px_7px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 transition-all duration-200'>
             {/* Comic lines in corners */}
             <div className='absolute top-0 left-0 w-8 h-8 border-t-[3px] border-l-[3px] border-black/30'></div>
             <div className='absolute top-0 right-0 w-8 h-8 border-t-[3px] border-r-[3px] border-black/30'></div>

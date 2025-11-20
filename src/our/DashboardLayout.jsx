@@ -7,52 +7,63 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
   SidebarProvider,
   SidebarTrigger,
+  useSidebar,
 } from '@/components/ui/sidebar';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import {
   Home,
-  BarChart3,
-  Settings,
   LogOut,
   User,
   ChevronDown,
   Star,
   CreditCard,
   Bell,
-  Check,
-  ChevronsUpDown,
-  ExternalLink,
   UserCircle,
   TreePine,
   Heart,
-  Shield,
   Sparkles,
   IndianRupee,
   Palette,
-  Zap,
   HelpCircle,
   FileText,
+  ArrowBigLeft,
+  ArrowBigRight,
 } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
 import coolPotato from '@/assets/cool.svg?url';
-import joyPotato from '@/assets/joy.svg?url';
-import pissedPotato from '@/assets/pissed.svg?url';
-import famPotato from '@/assets/fam.svg?url';
 import { Copy, ExternalLinkIcon } from 'lucide-react';
+import { toast } from 'sonner';
+
+// Custom Sidebar Trigger with Arrow Icons
+function CustomSidebarTrigger() {
+  const { toggleSidebar, state } = useSidebar();
+  const isOpen = state === 'expanded';
+
+  return (
+    <button
+      onClick={toggleSidebar}
+      className='p-0 bg-transparent border-0 cursor-pointer flex items-center justify-center hover:scale-110 transition-all duration-200'
+      aria-label='Toggle Sidebar'
+    >
+      {isOpen ? (
+        <ArrowBigLeft className='h-6 w-6 fill-[#FEF18C] stroke-black stroke-2 drop-shadow-[3px_3px_0px_rgba(0,0,0,1)] hover:drop-shadow-[4px_4px_0px_rgba(0,0,0,1)] transition-all duration-200' />
+      ) : (
+        <ArrowBigRight className='h-6 w-6 fill-[#FEF18C] stroke-black stroke-2 drop-shadow-[3px_3px_0px_rgba(0,0,0,1)] hover:drop-shadow-[4px_4px_0px_rgba(0,0,0,1)] transition-all duration-200' />
+      )}
+      <span className='sr-only'>Toggle Sidebar</span>
+    </button>
+  );
+}
 
 const menuItems = [
   {
@@ -70,11 +81,6 @@ const menuItems = [
     url: '/dashboard/overview',
     type: 'tab',
   },
-  // {
-  //   title: 'Rules',
-  //   icon: Settings,
-  //   url: '/dashboard/rules',
-  // },
   {
     title: 'Tip Page',
     subtitle: 'Set up and design your tip page exactly the way you want',
@@ -113,8 +119,7 @@ export function DashboardLayout({ children }) {
   const { user, logout, loading } = useAuthStore();
   const location = useLocation();
 
-  // Rotating potato mascots for Gen Z vibes
-  const potatoMascots = [coolPotato, joyPotato, pissedPotato, famPotato];
+  const potatoMascots = [coolPotato];
   const [currentPotato, setCurrentPotato] = useState(0);
 
   useEffect(() => {
@@ -128,15 +133,15 @@ export function DashboardLayout({ children }) {
     () => [
       {
         id: 'tip',
-        label: 'Tip Page',
-        title: 'My Tip Jar',
+        label: 'My Tip Jar',
+        title: 'Tip Page',
         href: `https://link.apextip.space/vt/${user?.username}`,
         subtitle: 'A little tip goes a long fry',
       },
       {
         id: 'tree',
-        label: 'Potato Tree',
-        title: 'Branch Out',
+        label: 'Branch Out',
+        title: 'Potato Tree',
         href: `https://link.apextip.space/vl/${user?.username}`,
         subtitle: 'Because even potatoes have branches',
       },
@@ -146,7 +151,20 @@ export function DashboardLayout({ children }) {
 
   const copyLink = (href) => {
     if (typeof navigator !== 'undefined' && navigator?.clipboard) {
-      navigator.clipboard.writeText(href).catch(() => {});
+      navigator.clipboard
+        .writeText(href)
+        .then(() => {
+          toast.success('Copied!', {
+            description: 'Link copied to clipboard',
+            duration: 2000,
+          });
+        })
+        .catch(() => {
+          toast.error('Failed to copy', {
+            description: 'Please try again',
+            duration: 2000,
+          });
+        });
     }
   };
 
@@ -161,27 +179,26 @@ export function DashboardLayout({ children }) {
               <div className='absolute bottom-0 right-0 w-32 h-32 bg-[#FEF18C]/70 rounded-full blur-3xl animate-pulse delay-1000'></div>
             </div>
 
-            <div className='flex items-center gap-4 relative z-10'>
+            <div className='flex items-center relative z-10 -ml-5'>
               {/* Rotating Potato Mascot */}
               <div className='relative'>
-                <div className='w-20 h-20 bg-gradient-to-br from-[#FEF18C] via-[#FEF18C] to-[#FEF18C]/80 border-[5px] border-black flex items-center justify-center shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all duration-300 hover:scale-105 cursor-pointer rotate-3 hover:rotate-0'>
-                  <img
-                    src={potatoMascots[currentPotato]}
-                    alt='Potato Pay Mascot'
-                    className='h-20 w-20 transition-all duration-500'
-                  />
-                </div>
+                {/* <div className='w-20 h-20 bg-gradient-to-br from-[#FEF18C] via-[#FEF18C] to-[#FEF18C]/80 border-[5px] border-black flex items-center justify-center shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all duration-300 hover:scale-105 cursor-pointer rotate-3 hover:rotate-0'> */}
+                <img
+                  src={potatoMascots[currentPotato]}
+                  alt='Potato Pay Mascot'
+                  className='h-24 w-24 transition-all duration-500'
+                />
+                {/* </div> */}
               </div>
 
-              {/* Brand Name */}
               <div className='flex flex-col flex-1'>
                 <div className='flex items-center gap-2'>
                   <span className='text-3xl font-black text-white tracking-tight drop-shadow-[4px_4px_0px_rgba(0,0,0,0.3)] leading-none uppercase'>
-                    POTATO<span className='text-[#FEF18C]'>PAY</span>
+                    POTATO<span className='text-[#FEF18C]'>PAY</span>.CO
                   </span>
                 </div>
-                <span className='text-[11px] text-white/90 font-bold tracking-wide mt-1 uppercase'>
-                  The easiest way to tip creators you love{' '}
+                <span className='text-[11px] text-white/90 font-bold tracking-wide mt-1 uppercase leading-3.5'>
+                  The Future of Digital Payments & Fun Fan Funding
                 </span>
               </div>
             </div>
@@ -208,31 +225,33 @@ export function DashboardLayout({ children }) {
                             to={item.url}
                             className={`group flex items-center gap-3 w-full px-4 py-2 transition-all duration-200 border-[2px] border-black ${
                               isActive
-                                ? `bg-gradient-to-r from-[#828BF8] to-[#828BF8]/90 text-white shadow-[4px_3px_0px_0px_rgba(0,0,0,1)] translate-x-1 translate-y-1`
+                                ? `bg-gradient-to-r from-[#828BF8] to-[#828BF8]/90 text-white shadow-[4px_3px_0px_0px_rgba(0,0,0,1)]`
                                 : `bg-white text-slate-800 hover:bg-[#FEF18C] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]`
                             }`}
                           >
-                            {/* Icon */}
-                            <div
-                              className={`mt-1 transition-all duration-300 ${
-                                isActive ? 'rotate-12' : 'group-hover:rotate-12'
+                            <item.icon
+                              className={`w-5 h-5 ${
+                                isActive ? 'text-white' : 'text-[#828BF8] group-hover:text-black'
                               }`}
-                            >
-                              <item.icon
-                                className={`w-5 h-5 ${
-                                  isActive ? 'text-white' : 'text-[#828BF8] group-hover:text-black'
-                                }`}
-                              />
-                            </div>
+                            />
                             <div className='flex-1 min-w-0'>
                               <div className='flex items-center gap-2'>
                                 <span
                                   className={`text-sm font-black leading-tight ${
                                     isActive ? 'text-white' : 'text-black'
                                   }`}
-                                >
-                                  {item.title}
-                                </span>
+                                />
+                              </div>
+                              <div className='flex-1 min-w-0'>
+                                <div className='flex items-center gap-2'>
+                                  <span
+                                    className={`text-sm font-black leading-tight ${
+                                      isActive ? 'text-white' : 'text-black'
+                                    }`}
+                                  >
+                                    {item.title}
+                                  </span>
+                                </div>
                               </div>
                             </div>
                             {isActive && (
@@ -356,13 +375,17 @@ export function DashboardLayout({ children }) {
                 </Link>
               </Button>
             </div>
+
+            <div className='text-xs font-semibold text-[#FEF18C] mt-3 text-center'>
+              © 2025 PotatoPay. GSTIN 09ABFFP5606F1Z8.
+            </div>
           </SidebarFooter>
         </Sidebar>
 
         <main className='flex-1 flex flex-col '>
           <header className='h-34 flex items-center justify-between gap-4 px-6 py-6 border-b-[3px] border-black sticky top-0 bg-white/60 z-20  backdrop-blur'>
             <div className='flex items-center gap-4'>
-              <SidebarTrigger className='bg-[#828BF8] hover:bg-[#828BF8]/80 p-4 border-[2px] border-black  hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 transition-all duration-200 text-white font-bold' />
+              <CustomSidebarTrigger />
               <div className='relative'>
                 <h1 className='text-2xl font-black text-black tracking-tight uppercase leading-none'>
                   {menuItems.find((item) => item.url === location.pathname)?.title || 'Dashboard'}
@@ -427,7 +450,7 @@ export function DashboardLayout({ children }) {
                     Because even potatoes have branches
                   </span>
                 </a>
-              </Button> */}
+              </Button>
 
               {/* Notification Button */}
               <DropdownMenu>
@@ -474,7 +497,7 @@ export function DashboardLayout({ children }) {
                         )}
                       </div>
                       <div className='flex flex-col items-start text-left min-w-0 lg:block'>
-                        <div className='text-[9px]'>PotatoPay</div>
+                        <div className='text-[9px]'>{user?.username}</div>
                         <span className='text-[11px] font-black text-black truncate max-w-[120px] uppercase tracking-tight leading-tight'>
                           {user?.firstName && user?.lastName
                             ? `${user.firstName}`
@@ -496,38 +519,27 @@ export function DashboardLayout({ children }) {
                 >
                   {/* User Header */}
                   <div
-                    className='flex items-center gap-3 p-3 border-[2px] border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] relative overflow-hidden'
+                    className='flex items-center justify-end gap-3 p-3 border-[2px] border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] relative overflow-hidden'
                     style={{
-                      backgroundImage: user?.image?.src ? `url(${user.image.src})` : 'none',
+                      backgroundImage: user?.banner_image?.src
+                        ? `url(${user.banner_image.src})`
+                        : 'none',
                       backgroundSize: 'cover',
                       backgroundPosition: 'center',
-                      backgroundColor: user?.image?.src ? 'transparent' : '#6E77F6',
+                      backgroundColor: user?.banner_image?.src ? 'transparent' : '#6E77F6',
                     }}
                   >
-                    {/* Overlay for better text readability */}
                     <div className='absolute inset-0 bg-[#6E77F6]/20'></div>
-
-                    {/* <div className='relative z-10 w-10 h-10 bg-[#FEF18C] border-[2px] border-black flex items-center justify-center overflow-hidden flex-shrink-0'>
-                      {user?.image?.src ? (
-                        <img
-                          src={user.image.src}
-                          alt={user?.username || 'User'}
-                          className='w-full h-full object-cover'
-                        />
-                      ) : (
-                        <User className='w-5 h-5 text-black' />
-                      )}
-                    </div> */}
-
-                    <div className='relative z-10 flex flex-col text-left overflow-hidden flex-1 mt-10 bg-amber-100/80 rounded-sm p-2 '>
+                    <div className='px-4 py-2 bg-gradient-to-br from-[#FEF18C] via-[#FEF18C] to-[#FEF18C]/80 border-[5px] border-black flex items-center justify-center shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all duration-300 hover:scale-105 cursor-pointer rotate-3 hover:rotate-0'>
                       <span className='text-xs font-black text-black uppercase truncate'>
+                        Hey!{' '}
                         {user?.firstName && user?.lastName
-                          ? `${user.firstName} ${user.lastName}`
+                          ? `${user.firstName}`
                           : user?.username || 'User'}
                       </span>
-                      <span className='text-[10px] text-black/80 truncate font-semibold'>
+                      {/* <span className='text-[10px] text-black/80 truncate font-semibold'>
                         {user?.email}
-                      </span>
+                      </span> */}
                     </div>
                   </div>
 
@@ -547,13 +559,8 @@ export function DashboardLayout({ children }) {
                       className='flex items-center gap-3 w-full px-3 py-2 bg-white hover:bg-white/90 border-[2px] border-black font-bold text-black text-xs cursor-pointer transition-all duration-150 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-0.5 hover:translate-y-0.5'
                     >
                       <UserCircle className='w-4 h-4' />
-                      <span>My Space</span>
+                      <span>Settings</span>
                     </Link>
-                  </DropdownMenuItem>
-
-                  <DropdownMenuItem className='gap-3 bg-white hover:bg-white/90 border-[2px] border-black font-bold text-black p-2 text-xs cursor-pointer transition-all duration-150 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-0.5 hover:translate-y-0.5'>
-                    <Settings className='w-4 h-4' />
-                    <span>Settings</span>
                   </DropdownMenuItem>
 
                   <DropdownMenuItem className='gap-3 bg-white hover:bg-white/90 border-[2px] border-black font-bold text-black p-2 text-xs cursor-pointer transition-all duration-150 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-0.5 hover:translate-y-0.5'>
@@ -563,7 +570,7 @@ export function DashboardLayout({ children }) {
 
                   {/* Logout */}
                   <DropdownMenuItem
-                    className='gap-3 bg-[#FEC4FF] hover:bg-[#FDB8FF] border-[2px] border-black font-black text-black p-2 text-xs uppercase cursor-pointer shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all duration-150 hover:translate-x-0.5 hover:translate-y-0.5'
+                    className='gap-3 bg-[#FEC4FF] hover:bg-[#FDB8FF]! border-[2px] border-black font-black text-black p-2 text-xs uppercase cursor-pointer shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all duration-150 hover:translate-x-0.5 hover:translate-y-0.5'
                     onClick={(e) => {
                       e.preventDefault();
                       logout();
@@ -593,7 +600,7 @@ export function DashboardLayout({ children }) {
                 animation: 'dashboardStripeMove 25s linear infinite',
               }}
             ></div>
-            <div className='relative z-10'>{children}</div>
+            <div className='relative z-10 max-md:hidden'>{children}</div>
           </div>
         </main>
       </div>
