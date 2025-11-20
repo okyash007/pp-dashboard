@@ -1,6 +1,6 @@
 import React from "react";
 import { useSearchParams } from "react-router-dom";
-import { ArrowLeft, RotateCcw, ExternalLink, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, RotateCcw, ExternalLink, CheckCircle2, Info } from "lucide-react";
 import LiquidRenderer from "../LiquidRenderer";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -311,7 +311,7 @@ const TipBlockEditor = ({ block, setBlock }) => {
             />
           </div>
         </div>
-        <div className="w-[300px] p-2">
+        <div className="w-[300px] p-2 overflow-y-auto">
           <div className="space-y-4">
             <div className="space-y-2">
               <Label className="text-xs font-bold text-gray-500">
@@ -383,7 +383,7 @@ const TipBlockEditor = ({ block, setBlock }) => {
                 }}
               />
             </div>
-            <div className="space-y-3 pt-2 bg-white rounded-lg p-2 border-2 border-black">
+            <div className="space-y-3 pt-2 bg-white rounded-lg p-2 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
               <div className="flex items-center justify-between">
                 <Label className="text-xs font-bold text-gray-500">
                   Display Time
@@ -415,18 +415,56 @@ const TipBlockEditor = ({ block, setBlock }) => {
                 <span>60s</span>
               </div>
             </div>
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label className="text-xs font-bold text-gray-500">Test</Label>
-                <Switch
-                  checked={block.test || false}
-                  onCheckedChange={(checked) => {
-                    setBlock({
-                      ...block,
-                      test: checked,
-                    });
-                  }}
-                />
+            <div className="space-y-3">
+              <div className="bg-white rounded-lg p-3 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <div className={`w-2 h-2 rounded-full ${block.test ? 'bg-green-500 animate-pulse' : 'bg-gray-300'}`}></div>
+                    <Label className="text-xs font-bold text-gray-700">Test Mode</Label>
+                  </div>
+                  <Switch
+                    checked={block.test || false}
+                    onCheckedChange={(checked) => {
+                      setBlock({
+                        ...block,
+                        test: checked,
+                      });
+                    }}
+                  />
+                </div>
+                <div className={`text-[10px] font-medium px-2 py-1 rounded-md border mb-3 ${
+                  block.test 
+                    ? 'bg-green-50 text-green-700 border-green-200' 
+                    : 'bg-gray-50 text-gray-500 border-gray-200'
+                }`}>
+                  {block.test ? 'Test mode is active' : 'Test mode is inactive'}
+                </div>
+                <div className="relative bg-gradient-to-br from-yellow-50 to-amber-50 border-2 border-yellow-300 rounded-md p-2.5">
+                  <div className="flex items-start gap-2">
+                    <div className="flex-shrink-0 mt-0.5">
+                      <Info className="h-3.5 w-3.5 text-amber-600" strokeWidth={2.5} />
+                    </div>
+                    <div className="flex-1 space-y-1.5">
+                      <p className="text-[10px] font-semibold text-amber-900 leading-tight">
+                        Quick Notes
+                      </p>
+                      <ul className="text-[9px] text-amber-800 leading-relaxed space-y-1 list-none">
+                        <li className="flex items-start gap-1.5">
+                          <span className="text-amber-600 mt-0.5">•</span>
+                          <span>Test mode enables a <span className="font-semibold">Dummy UI</span> in your overlay</span>
+                        </li>
+                        <li className="flex items-start gap-1.5">
+                          <span className="text-amber-600 mt-0.5">•</span>
+                          <span>Use this to <span className="font-semibold">adjust the UI</span> on your OBS</span>
+                        </li>
+                        <li className="flex items-start gap-1.5">
+                          <span className="text-amber-600 mt-0.5">•</span>
+                          <span><span className="font-semibold">Refresh</span> the browser tab in OBS after toggling test mode</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
