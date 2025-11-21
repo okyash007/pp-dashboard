@@ -53,6 +53,27 @@ export function AnalyticsContent() {
   const [analyticsData, setAnalyticsData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [selectedTab, setSelectedTab] = useState('7days'); // Track selected tab: '7days', '30days', or 'custom'
+
+  // Check if current date range matches 7 or 30 days (only when dateRange changes externally)
+  useEffect(() => {
+    if (dateRange.from && dateRange.to) {
+      const now = new Date();
+      const diffTime = now.getTime() - dateRange.from.getTime();
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+      const isToday = dateRange.to.toDateString() === now.toDateString();
+      
+      // Check if the range matches 7 or 30 days ending today
+      if (diffDays === 7 && isToday) {
+        setSelectedTab('7days');
+      } else if (diffDays === 30 && isToday) {
+        setSelectedTab('30days');
+      } else {
+        // It's a custom range
+        setSelectedTab('custom');
+      }
+    }
+  }, [dateRange.from, dateRange.to]);
 
   useEffect(() => {
     if (token && user && dateRange.from && dateRange.to) {
@@ -86,12 +107,13 @@ export function AnalyticsContent() {
   //   to: readableDateToUnix(dateRange.to),
   // })
 
-  // Handler functions for quick date range selection
+  // Handler functions for tab selection
   const handleLast7Days = () => {
     setDateRange({
       from: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
       to: new Date(),
     });
+    setSelectedTab('7days');
   };
 
   const handleLast30Days = () => {
@@ -99,18 +121,56 @@ export function AnalyticsContent() {
       from: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
       to: new Date(),
     });
+    setSelectedTab('30days');
+  };
+
+  // Handler for custom date range selection
+  const handleCustomDateRange = (range) => {
+    setDateRange(range);
+    setSelectedTab('custom');
   };
 
   return (
     <div className='space-y-6'>
-      {/* Date Range Selector */}
+      {/* Date Range Selector - Tabs */}
       <div className='flex items-center gap-2 flex-wrap'>
+        <Button
+          variant='outline'
+          onClick={handleLast7Days}
+          disabled={loading}
+          className={`h-auto font-black text-xs px-4 py-3 border-[4px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-200 ${
+            selectedTab === '7days'
+              ? 'bg-[#FEF18C] hover:bg-[#FEF18C]/80 text-black'
+              : 'bg-white hover:bg-gray-50 text-black hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1'
+          }`}
+        >
+          7 days
+        </Button>
+
+        <Button
+          variant='outline'
+          onClick={handleLast30Days}
+          disabled={loading}
+          className={`h-auto font-black text-xs px-4 py-3 border-[4px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-200 ${
+            selectedTab === '30days'
+              ? 'bg-[#FEF18C] hover:bg-[#FEF18C]/80 text-black'
+              : 'bg-white hover:bg-gray-50 text-black hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1'
+          }`}
+        >
+          30 days
+        </Button>
+
         <Popover>
           <PopoverTrigger asChild>
             <Button
               variant='outline'
-              className='h-auto bg-[#FEF18C] hover:bg-[#FEF18C]/80 text-black font-black text-xs px-4 py-3 border-[4px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 transition-all duration-200 group'
+              className={`h-auto font-black text-xs px-4 py-3 border-[4px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-200 ${
+                selectedTab === 'custom'
+                  ? 'bg-[#FEF18C] hover:bg-[#FEF18C]/80 text-black'
+                  : 'bg-white hover:bg-gray-50 text-black hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1'
+              }`}
               disabled={loading}
+              onClick={() => setSelectedTab('custom')}
             >
               <CalendarIcon className='mr-2 h-4 w-4 flex-shrink-0' />
               <span className='whitespace-nowrap'>
@@ -137,7 +197,7 @@ export function AnalyticsContent() {
                     })
                   )
                 ) : (
-                  'Pick a date range'
+                  'Custom'
                 )}
               </span>
             </Button>
@@ -146,29 +206,11 @@ export function AnalyticsContent() {
             <Calendar
               mode='range'
               selected={dateRange}
-              onSelect={setDateRange}
+              onSelect={handleCustomDateRange}
               numberOfMonths={2}
             />
           </PopoverContent>
         </Popover>
-
-        <Button
-          variant='outline'
-          onClick={handleLast7Days}
-          disabled={loading}
-          className='h-auto bg-white hover:bg-gray-50 text-black font-black text-xs px-4 py-3 border-[4px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 transition-all duration-200'
-        >
-          Last 7 days
-        </Button>
-
-        <Button
-          variant='outline'
-          onClick={handleLast30Days}
-          disabled={loading}
-          className='h-auto bg-white hover:bg-gray-50 text-black font-black text-xs px-4 py-3 border-[4px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 transition-all duration-200'
-        >
-          Last 30 days
-        </Button>
       </div>
 
       <AnalyticsUi data={analyticsData} />

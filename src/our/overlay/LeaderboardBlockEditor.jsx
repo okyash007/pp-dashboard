@@ -344,7 +344,7 @@ const LeaderboardBlockEditor = ({ block, setBlock }) => {
   };
 
   return (
-    <div className="h-[calc(95vh-8rem)] w-full rounded-xl flex">
+    <div className="h-[calc(95vh-9rem)] w-full rounded-xl flex">
       {/* <div className=' w-[400px] overflow-y-auto p-2 border-r-2 border-black'>
         {dummyLeaderboardBlocks.map((blockh) => {
           return (
@@ -415,7 +415,7 @@ const LeaderboardBlockEditor = ({ block, setBlock }) => {
           style={block.style}
         />
       </div>
-      <div className="w-[300px] overflow-y-auto p-4 bg-gray-50">
+      <div className="w-[300px] overflow-y-auto p-4 bg-[#F5F5F55a] border-4 border-white rounded-xl">
         <div className="space-y-4">
           <div className="space-y-2">
             <Label className="text-xs font-bold text-gray-700 uppercase tracking-wide">

@@ -84,7 +84,7 @@ const TipPageContent = () => {
       <div className="flex-1 overflow-y-auto">
         <TipPageRenderer blocks={blocks} />
       </div>
-      <div className="w-[300px] overflow-y-auto">
+      <div className="w-[300px] overflow-y-auto bg-[#F5F5F55a] border-4 border-white rounded-xl">
         <TipPageBlocksEditor blocks={blocks} setBlocks={setBlocks} />
       </div>
     </div>
