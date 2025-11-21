@@ -1,4 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
 import { HelpCircle, Mail, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -106,29 +107,33 @@ export function FAQContent() {
               </CardTitle>
             </CardHeader>
             <CardContent className='p-0'>
-              <div className='divide-y divide-black/10'>
-                {section.questions.map((item, index) => (
-                  <div
-                    key={index}
-                    className='p-5 hover:bg-gradient-to-r hover:from-[#FEF18C]/15 hover:to-transparent transition-all duration-200 group'
-                  >
-                    <div className='flex items-start gap-3'>
-                      <div className='mt-1 flex-shrink-0 w-6 h-6 bg-[#828BF8]/20 border-[2px] border-black rounded-sm flex items-center justify-center group-hover:bg-[#828BF8]/30 transition-colors'>
-                        <span className='text-[10px] font-black text-[#828BF8]'>Q</span>
-                      </div>
-                      <div className='flex-1 min-w-0'>
-                        <h3 className='text-base font-black text-black mb-2.5 leading-snug'>{item.q}</h3>
+              <Accordion type="multiple" className='space-y-0 divide-y divide-black/10'>
+                {section.questions.map((item, index) => {
+                  const itemId = `${sectionIndex}-${index}`;
+                  return (
+                    <AccordionItem key={index} value={itemId} className='border-0 shadow-none bg-transparent hover:shadow-none'>
+                      <AccordionTrigger value={itemId} className='p-5'>
+                        <div className='flex items-start gap-3 w-full'>
+                          <div className='mt-1 flex-shrink-0 w-6 h-6 bg-[#828BF8]/20 border-[2px] border-black rounded-sm flex items-center justify-center group-hover:bg-[#828BF8]/30 transition-colors'>
+                            <span className='text-[10px] font-black text-[#828BF8]'>Q</span>
+                          </div>
+                          <div className='flex-1 min-w-0 text-left'>
+                            <h3 className='text-base font-black text-black leading-snug'>{item.q}</h3>
+                          </div>
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent value={itemId}>
                         <div className='flex items-start gap-2.5'>
                           <div className='mt-1 flex-shrink-0 w-5 h-5 bg-[#FEF18C]/40 border-[2px] border-black rounded-sm flex items-center justify-center'>
                             <span className='text-[9px] font-black text-black'>A</span>
                           </div>
                           <p className='text-sm text-black/75 font-medium leading-relaxed flex-1'>{item.a}</p>
                         </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+                      </AccordionContent>
+                    </AccordionItem>
+                  );
+                })}
+              </Accordion>
             </CardContent>
           </Card>
         ))}

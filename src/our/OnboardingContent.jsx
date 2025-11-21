@@ -218,7 +218,7 @@ const OnboardingContent = () => {
   const uploadShellClass =
     'mt-2 border border-dashed border-black/15 rounded-2xl bg-white/80 max-h-[70%] p-4';
   const buttonBaseClass =
-    'h-auto font-black text-xs px-4 py-3 border-[4px] border-black rounded-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-150 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-x-0 disabled:hover:translate-y-0';
+    'h-auto font-black text-xs px-4 py-3 border-[4px] border-black rounded-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-150 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-x-0 disabled:hover:translate-y-0';
   const buttonPrimaryClass = `${buttonBaseClass} bg-[#FEF18C] hover:bg-[#FEE55A] text-black`;
   const buttonAccentClass = `${buttonBaseClass} bg-[#AAD6B8] hover:bg-[#8cc7a3] text-black`;
   const buttonSecondaryClass = `${buttonBaseClass} bg-white hover:bg-[#FEF18C]/60 text-black`;
