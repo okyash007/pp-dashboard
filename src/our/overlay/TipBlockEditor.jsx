@@ -1,6 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { ArrowLeft, RotateCcw, ExternalLink, CheckCircle2, Info } from "lucide-react";
+import {
+  ArrowLeft,
+  RotateCcw,
+  ExternalLink,
+  CheckCircle2,
+  Info,
+  Volume2,
+  Play,
+} from "lucide-react";
 import LiquidRenderer from "../LiquidRenderer";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -9,6 +17,13 @@ import ImageUpload from "../../components/ImageUpload";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { useAuthStore } from "../../stores/authStore";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export const dummyTipBata = {
   visitor_name: "Rachit Yadav",
@@ -19,6 +34,38 @@ export const dummyTipBata = {
   amount: 20000,
   currency: "INR",
 };
+
+const sounds = [
+  {
+    name: "chime",
+    url: "https://res.cloudinary.com/dspp405ug/video/upload/v1763683666/chime_lohiq2.mp3",
+  },
+  {
+    name: "bell",
+    url: "https://res.cloudinary.com/dspp405ug/video/upload/v1763683773/bell_f59aqu.mp3",
+  },
+  {
+    name: "ding",
+    url: "https://res.cloudinary.com/dspp405ug/video/upload/v1763683822/ding_hl2tnr.mp3",
+  },
+  {
+    name: "ping",
+    url: "https://res.cloudinary.com/dspp405ug/video/upload/v1763683892/ping_itd0uh.mp3",
+  },
+];
+
+const textToSpeechTemplates = [
+  "alloy",
+  "ash",
+  "ballad",
+  "coral",
+  "echo",
+  "nova",
+  "fable",
+  "onyx",
+  "shimmer",
+  "sage",
+];
 
 export const dummyTipBlocks = [
   {
@@ -158,7 +205,7 @@ export const dummyTipBlocks = [
       "  .name-slide { animation: nameSlide 0.6s ease-out 0.2s both; }",
       "  .amount-gradient { background: linear-gradient(90deg, rgba(130, 139, 248, 0.1), rgba(130, 139, 248, 0.3), rgba(130, 139, 248, 0.1)); background-size: 200% 100%; animation: gradientShift 3s ease infinite; }",
       "</style>",
-      '<div class="tip-card-2 bg-white p-4 rounded-lg border-2 border-black w-full shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" style="{% if data.background_image %}background-image: url(\'{{ data.background_image }}\'); background-size: cover; background-position: center; background-repeat: no-repeat;{% else %}background-color: {{ data.primary_color | default: \'#FFFFFF\' }};{% endif %}">',
+      "<div class=\"tip-card-2 bg-white p-4 rounded-lg border-2 border-black w-full shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]\" style=\"{% if data.background_image %}background-image: url('{{ data.background_image }}'); background-size: cover; background-position: center; background-repeat: no-repeat;{% else %}background-color: {{ data.primary_color | default: '#FFFFFF' }};{% endif %}\">",
       '  <div class="flex items-center gap-3 mb-3">',
       '    <div class="flex-shrink-0 border-2 border-black rounded-full p-2 bg-[#828BF8] avatar-float">',
       '      <img src="{{ avatar_url | default: data.tipper_image | default: \'https://res.cloudinary.com/dspp405ug/image/upload/v1763575358/download_woag77.png\' }}" alt="{{ display_name | default: \'Tipper\' }}" class="w-12 h-12 rounded-full object-contain" />',
@@ -196,7 +243,8 @@ const TEMPLATE_PREVIEW_SCALE = 0.45;
 
 const TipBlockEditor = ({ block, setBlock }) => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const { user } = useAuthStore();
+  const { user, token } = useAuthStore();
+  const [isPlayingTTS, setIsPlayingTTS] = useState(false);
 
   const handleGoBack = () => {
     // Remove all URL parameters by navigating to the current pathname
@@ -216,6 +264,57 @@ const TipBlockEditor = ({ block, setBlock }) => {
     if (user?.username) {
       const overlayUrl = `https://link.apextip.space/overlay/${user.username}?block_type=tip`;
       window.open(overlayUrl, "_blank", "noopener,noreferrer");
+    }
+  };
+
+  const handleTestTTS = async () => {
+    if (!token) {
+      alert("Please login to test text-to-speech");
+      return;
+    }
+
+    setIsPlayingTTS(true);
+    try {
+      const testText = dummyTipBata.message || "This is a test of the text to speech feature.";
+      const voice = block.data.textToSpeechTemplate || "coral";
+
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/tts/speech`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          text: testText,
+          voice: voice,
+          instructions: "Speak naturally and clearly.",
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`TTS request failed: ${response.statusText}`);
+      }
+
+      // Get the audio blob
+      const audioBlob = await response.blob();
+      const audioUrl = URL.createObjectURL(audioBlob);
+      
+      // Create and play audio
+      const audio = new Audio(audioUrl);
+      audio.onended = () => {
+        setIsPlayingTTS(false);
+        URL.revokeObjectURL(audioUrl);
+      };
+      audio.onerror = () => {
+        setIsPlayingTTS(false);
+        URL.revokeObjectURL(audioUrl);
+        alert("Failed to play audio");
+      };
+      await audio.play();
+    } catch (error) {
+      console.error("TTS Error:", error);
+      setIsPlayingTTS(false);
+      alert(`Failed to generate speech: ${error.message}`);
     }
   };
 
@@ -415,12 +514,131 @@ const TipBlockEditor = ({ block, setBlock }) => {
                 <span>60s</span>
               </div>
             </div>
+            <div className="space-y-3 pt-2 bg-white rounded-lg p-3 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 bg-gradient-to-br from-purple-400 to-pink-400 rounded-lg flex items-center justify-center border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                    <Volume2 className="h-4 w-4 text-white" strokeWidth={2.5} />
+                  </div>
+                  <Label className="text-xs font-bold text-gray-700">
+                    Alert Sound
+                  </Label>
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    const currentSound = block.data.sound || sounds[0];
+                    const audio = new Audio(currentSound.url);
+                    audio.play().catch(() => {});
+                  }}
+                  className="h-7 px-2.5 bg-gradient-to-br from-blue-400 to-purple-400 hover:from-blue-500 hover:to-purple-500 text-white border-2 border-black rounded-md shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-0.5 hover:translate-y-0.5 transition-all duration-150"
+                >
+                  <Play className="h-3 w-3" strokeWidth={2.5} />
+                </Button>
+              </div>
+              <Select
+                value={block.data.sound?.name || "chime"}
+                onValueChange={(value) => {
+                  const selectedSound = sounds.find(
+                    (sound) => sound.name === value
+                  );
+                  setBlock({
+                    ...block,
+                    data: {
+                      ...block.data,
+                      sound: {
+                        name: value,
+                        url: selectedSound.url,
+                      },
+                    },
+                  });
+                  // Play the sound automatically when changed
+                  const audio = new Audio(selectedSound.url);
+                  audio.play().catch(() => {});
+                }}
+              >
+                <SelectTrigger className="w-full h-9 bg-white border-2 border-black rounded-md shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-0.5 hover:translate-y-0.5 transition-all duration-150 font-semibold text-sm">
+                  <SelectValue placeholder="Select a sound" />
+                </SelectTrigger>
+                <SelectContent className="bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                  {sounds.map((sound) => (
+                    <SelectItem
+                      key={sound.name}
+                      value={sound.name}
+                      className="font-medium cursor-pointer hover:bg-purple-50 focus:bg-purple-50"
+                    >
+                      <span className="capitalize">{sound.name}</span>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-3 pt-2 bg-white rounded-lg p-3 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-teal-400 rounded-lg flex items-center justify-center border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                    <Volume2 className="h-4 w-4 text-white" strokeWidth={2.5} />
+                  </div>
+                  <Label className="text-xs font-bold text-gray-700">
+                    Text to Speech Voice
+                  </Label>
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleTestTTS}
+                  disabled={isPlayingTTS}
+                  className="h-7 px-2.5 bg-gradient-to-br from-green-400 to-teal-400 hover:from-green-500 hover:to-teal-500 text-white border-2 border-black rounded-md shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-0.5 hover:translate-y-0.5 transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Play className="h-3 w-3" strokeWidth={2.5} />
+                </Button>
+              </div>
+              <Select
+                value={block.data.textToSpeechTemplate || "shimmer"}
+                onValueChange={(value) => {
+                  setBlock({
+                    ...block,
+                    data: {
+                      ...block.data,
+                      textToSpeechTemplate: value,
+                    },
+                  });
+                }}
+              >
+                <SelectTrigger className="w-full h-9 bg-white border-2 border-black rounded-md shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-0.5 hover:translate-y-0.5 transition-all duration-150 font-semibold text-sm">
+                  <SelectValue placeholder="Select a voice" />
+                </SelectTrigger>
+                <SelectContent className="bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                  {textToSpeechTemplates.map((template) => (
+                    <SelectItem
+                      key={template}
+                      value={template}
+                      className="font-medium cursor-pointer hover:bg-green-50 focus:bg-green-50"
+                    >
+                      <span className="capitalize">{template}</span>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
             <div className="space-y-3">
               <div className="bg-white rounded-lg p-3 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2">
-                    <div className={`w-2 h-2 rounded-full ${block.test ? 'bg-green-500 animate-pulse' : 'bg-gray-300'}`}></div>
-                    <Label className="text-xs font-bold text-gray-700">Test Mode</Label>
+                    <div
+                      className={`w-2 h-2 rounded-full ${
+                        block.test
+                          ? "bg-green-500 animate-pulse"
+                          : "bg-gray-300"
+                      }`}
+                    ></div>
+                    <Label className="text-xs font-bold text-gray-700">
+                      Test Mode
+                    </Label>
                   </div>
                   <Switch
                     checked={block.test || false}
@@ -432,17 +650,22 @@ const TipBlockEditor = ({ block, setBlock }) => {
                     }}
                   />
                 </div>
-                <div className={`text-[10px] font-medium px-2 py-1 rounded-md border mb-3 ${
-                  block.test 
-                    ? 'bg-green-50 text-green-700 border-green-200' 
-                    : 'bg-gray-50 text-gray-500 border-gray-200'
-                }`}>
-                  {block.test ? 'Test mode is active' : 'Test mode is inactive'}
+                <div
+                  className={`text-[10px] font-medium px-2 py-1 rounded-md border mb-3 ${
+                    block.test
+                      ? "bg-green-50 text-green-700 border-green-200"
+                      : "bg-gray-50 text-gray-500 border-gray-200"
+                  }`}
+                >
+                  {block.test ? "Test mode is active" : "Test mode is inactive"}
                 </div>
                 <div className="relative bg-gradient-to-br from-yellow-50 to-amber-50 border-2 border-yellow-300 rounded-md p-2.5">
                   <div className="flex items-start gap-2">
                     <div className="flex-shrink-0 mt-0.5">
-                      <Info className="h-3.5 w-3.5 text-amber-600" strokeWidth={2.5} />
+                      <Info
+                        className="h-3.5 w-3.5 text-amber-600"
+                        strokeWidth={2.5}
+                      />
                     </div>
                     <div className="flex-1 space-y-1.5">
                       <p className="text-[10px] font-semibold text-amber-900 leading-tight">
@@ -451,15 +674,26 @@ const TipBlockEditor = ({ block, setBlock }) => {
                       <ul className="text-[9px] text-amber-800 leading-relaxed space-y-1 list-none">
                         <li className="flex items-start gap-1.5">
                           <span className="text-amber-600 mt-0.5">•</span>
-                          <span>Test mode enables a <span className="font-semibold">Dummy UI</span> in your overlay</span>
+                          <span>
+                            Test mode enables a{" "}
+                            <span className="font-semibold">Dummy UI</span> in
+                            your overlay
+                          </span>
                         </li>
                         <li className="flex items-start gap-1.5">
                           <span className="text-amber-600 mt-0.5">•</span>
-                          <span>Use this to <span className="font-semibold">adjust the UI</span> on your OBS</span>
+                          <span>
+                            Use this to{" "}
+                            <span className="font-semibold">adjust the UI</span>{" "}
+                            on your OBS
+                          </span>
                         </li>
                         <li className="flex items-start gap-1.5">
                           <span className="text-amber-600 mt-0.5">•</span>
-                          <span><span className="font-semibold">Refresh</span> the browser tab in OBS after toggling test mode</span>
+                          <span>
+                            <span className="font-semibold">Refresh</span> the
+                            browser tab in OBS after toggling test mode
+                          </span>
                         </li>
                       </ul>
                     </div>
