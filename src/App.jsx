@@ -17,9 +17,11 @@ import { PotatoTreeContent } from "./our/PotatoTreeContent";
 import TipPageContent from "./our/TipPageContent";
 import { FAQContent } from "./our/FAQContent";
 import { TnCContent } from "./our/TnCContent";
+import { OutboundSupportContent } from "./our/OutboundSupportContent";
 import { useAuthStore } from "./stores/authStore";
 import { Toaster } from "./components/ui/sonner";
 import OnboardingContent from "./our/OnboardingContent";
+import PayoutsContent from "./our/PayoutsContent";
 
 function Dashboard() {
   return (
@@ -87,6 +89,22 @@ function TnC() {
 
 function Onboarding() {
   return <OnboardingContent />;
+}
+
+function OutboundSupport() {
+  return (
+    <DashboardLayout>
+      <OutboundSupportContent />
+    </DashboardLayout>
+  );
+}
+
+function Payouts() {
+  return (
+    <DashboardLayout>
+      <PayoutsContent />
+    </DashboardLayout>
+  );
 }
 
 function App() {
@@ -171,6 +189,22 @@ function App() {
           element={
             <ProtectedRoute>
               <TnC />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/support"
+          element={
+            <ProtectedRoute>
+              <OutboundSupport />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/payouts"
+          element={
+            <ProtectedRoute>
+              <Payouts />
             </ProtectedRoute>
           }
         />

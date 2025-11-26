@@ -214,7 +214,7 @@ export function AnalyticsContent() {
       </div>
 
       <AnalyticsUi data={analyticsData} />
-      <Tips startDate={dateRange.from} endDate={dateRange.to} />
+      <Tips startDate={dateRange.from} endDate={dateRange.to} showTipAmounts={false} showFilter={false} />
     </div>
   );
 }

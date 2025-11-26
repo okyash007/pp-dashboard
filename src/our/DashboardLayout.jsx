@@ -38,6 +38,7 @@ import {
   FileText,
   ArrowBigLeft,
   ArrowBigRight,
+  MessageSquare,
 } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
 import coolPotato from '@/assets/cool.svg?url';
@@ -112,6 +113,20 @@ const menuItems = [
     subtitle: 'Edit your personal information and customize your profile',
     url: '/dashboard/profile',
     type: 'all',
+  },
+  {
+    title: 'Outbound Support',
+    subtitle: 'Create and manage your support tickets',
+    icon: MessageSquare,
+    url: '/dashboard/support',
+    type: 'tab',
+  },
+  {
+    title: 'Payouts',
+    subtitle: 'View your tip amounts and download payout reports',
+    icon: CreditCard,
+    url: '/dashboard/payouts',
+    type: 'tab',
   },
 ];
 
@@ -554,9 +569,14 @@ export function DashboardLayout({ children }) {
                     </Link>
                   </DropdownMenuItem>
 
-                  <DropdownMenuItem className='gap-3 bg-white hover:bg-white/90 border-[2px] border-black font-bold text-black p-2 text-xs cursor-pointer transition-all duration-150 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-0.5 hover:translate-y-0.5'>
-                    <CreditCard className='w-4 h-4' />
-                    <span>Payouts</span>
+                  <DropdownMenuItem asChild className='p-0'>
+                    <Link
+                      to='/dashboard/payouts'
+                      className='flex items-center gap-3 w-full px-3 py-2 bg-white hover:bg-white/90 border-[2px] border-black font-bold text-black text-xs cursor-pointer transition-all duration-150 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-0.5 hover:translate-y-0.5'
+                    >
+                      <CreditCard className='w-4 h-4' />
+                      <span>Payouts</span>
+                    </Link>
                   </DropdownMenuItem>
 
                   {/* Logout */}

@@ -41,12 +41,14 @@ const fetchTips = async (token, startDate = null, endDate = null, page = 1, limi
   return await response.json();
 };
 
-const Tips = ({ startDate, endDate }) => {
+const Tips = ({ startDate, endDate, showTipAmounts = true, showFilter = true }) => {
   const { token } = useAuthStore();
   // State management
   const [tips, setTips] = useState([]);
+  const [allTips, setAllTips] = useState([]); // Store all tips for filtering
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [settlementFilter, setSettlementFilter] = useState('unsettled'); // 'all', 'settled', 'unsettled'
   const [pagination, setPagination] = useState({
     currentPage: 1,
     totalPages: 1,
@@ -58,6 +60,25 @@ const Tips = ({ startDate, endDate }) => {
 
   // Creator ID - this should come from auth context or props
   // Replace with actual creator ID from auth
+
+  // Filter function
+  const applyFilter = (tipsToFilter, filter) => {
+    let filtered = tipsToFilter;
+    if (filter === 'settled') {
+      filtered = tipsToFilter.filter((tip) => tip.settled === true);
+    } else if (filter === 'unsettled') {
+      filtered = tipsToFilter.filter((tip) => tip.settled === false);
+    }
+    setTips(filtered);
+  };
+
+  // Apply filter when settlementFilter or allTips changes
+  useEffect(() => {
+    if (allTips.length > 0) {
+      applyFilter(allTips, settlementFilter);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [settlementFilter, allTips]);
 
   // Load tips on component mount and when page changes
   useEffect(() => {
@@ -77,8 +98,10 @@ const Tips = ({ startDate, endDate }) => {
       );
 
       if (response.success) {
-        setTips(response.data.tips);
+        setAllTips(response.data.tips);
         setPagination(response.data.pagination);
+        // Apply filter to the fetched tips
+        applyFilter(response.data.tips, settlementFilter);
       } else {
         throw new Error(response.message || 'Failed to fetch tips');
       }
@@ -140,15 +163,55 @@ const Tips = ({ startDate, endDate }) => {
   return (
     <div className='space-y-6'>
       {/* Tip Amounts */}
-      <TipAmounts />
+      {showTipAmounts && <TipAmounts />}
 
-      {/* Header with Refresh Button */}
+      {/* Header with Refresh Button and Filters */}
       <div className='flex items-center justify-between pt-12'>
         <div>
           <h1 className='text-2xl font-bold text-gray-900'>Tips History</h1>
           <p className='text-gray-600 mt-1 text-sm'>View and manage all your received tips</p>
         </div>
         <div className='flex gap-2'>
+          {/* Settlement Filter Tabs */}
+          {showFilter && (
+            <div className='flex gap-2'>
+              <button
+                onClick={() => setSettlementFilter('all')}
+                disabled={loading}
+                className={`h-auto font-black text-xs px-4 py-2.5 rounded-md border-[3px] border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all duration-200 flex items-center gap-1.5 ${
+                  settlementFilter === 'all'
+                    ? 'bg-[#828BF8] text-white hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-0.5 hover:translate-y-0.5'
+                    : 'bg-white text-black hover:bg-[#FEF18C] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-0.5 hover:translate-y-0.5'
+                }`}
+              >
+                All
+              </button>
+              <button
+                onClick={() => setSettlementFilter('settled')}
+                disabled={loading}
+                className={`h-auto font-black text-xs px-4 py-2.5 rounded-md border-[3px] border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all duration-200 flex items-center gap-1.5 ${
+                  settlementFilter === 'settled'
+                    ? 'bg-[#AAD6B8] text-black hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-0.5 hover:translate-y-0.5'
+                    : 'bg-white text-black hover:bg-[#AAD6B8]/50 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-0.5 hover:translate-y-0.5'
+                }`}
+              >
+                <CheckCircle className='h-3 w-3' />
+                Settled
+              </button>
+              <button
+                onClick={() => setSettlementFilter('unsettled')}
+                disabled={loading}
+                className={`h-auto font-black text-xs px-4 py-2.5 rounded-md border-[3px] border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all duration-200 flex items-center gap-1.5 ${
+                  settlementFilter === 'unsettled'
+                    ? 'bg-[#FEC4FF] text-black hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-0.5 hover:translate-y-0.5'
+                    : 'bg-white text-black hover:bg-[#FEC4FF]/50 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-0.5 hover:translate-y-0.5'
+                }`}
+              >
+                <XCircle className='h-3 w-3' />
+                Unsettled
+              </button>
+            </div>
+          )}
           <Button
             variant='outline'
             size='sm'

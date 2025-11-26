@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuthStore } from '../stores/authStore';
-import { CheckCircle, Clock } from 'lucide-react';
+import { CheckCircle, Clock, IndianRupee } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const TipAmounts = () => {
@@ -100,10 +100,41 @@ const TipAmounts = () => {
     );
   }
 
+  // Use collected_amount from API (sum of all tip amounts)
+  const totalRevenue = amounts.collected_amount || 0;
+
   return (
     <div>
       {/* Cards */}
-      <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+      <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+        {/* Total Revenue Card */}
+        <div className='relative group rotate-1'>
+          <div className='relative h-full bg-gradient-to-br from-[#FEF18C] via-[#FFD700] to-[#FEF18C] border-[5px] border-black p-5 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:translate-x-0.5 hover:translate-y-0.5 transition-all duration-200'>
+            {/* Halftone effect */}
+            <div
+              className='absolute inset-0 opacity-10'
+              style={{
+                backgroundImage: 'radial-gradient(circle, black 1px, transparent 1px)',
+                backgroundSize: '8px 8px',
+              }}
+            ></div>
+            <div className='relative z-10'>
+              <div className='flex items-center justify-between mb-2'>
+                <span className='text-[10px] font-black text-black uppercase tracking-widest bg-white px-2 py-1 border-[2px] border-black'>
+                  💰 TOTAL REVENUE GENERATED
+                </span>
+                <IndianRupee className='w-5 h-5 text-black' />
+              </div>
+              <div
+                className='text-4xl font-black text-black mb-2'
+                style={{ textShadow: '3px 3px 0px rgba(255,255,255,0.5)' }}
+              >
+                {formatAmount(totalRevenue, 'INR')}
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Settled Amount Card */}
         <div className='relative group'>
           <div className='relative h-full bg-[#AAD6B8] border-[5px] border-black p-5 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:translate-x-0.5 hover:translate-y-0.5 transition-all duration-200'>
@@ -126,7 +157,7 @@ const TipAmounts = () => {
                 className='text-4xl font-black text-black mb-2'
                 style={{ textShadow: '3px 3px 0px rgba(255,255,255,0.5)' }}
               >
-                {formatAmount(amounts.settled_amount || 0)}
+                {formatAmount(amounts.settled_amount || 0, 'INR')}
               </div>
             </div>
           </div>
@@ -146,7 +177,7 @@ const TipAmounts = () => {
                 className='text-4xl font-black text-white mb-2'
                 style={{ textShadow: '3px 3px 0px rgba(0,0,0,0.3)' }}
               >
-                {formatAmount(amounts.unsettled_amount || 0)}
+                {formatAmount(amounts.unsettled_amount || 0, 'INR')}
               </div>
             </div>
             {/* Comic action lines */}
