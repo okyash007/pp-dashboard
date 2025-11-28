@@ -39,6 +39,11 @@ import {
   ArrowBigLeft,
   ArrowBigRight,
   MessageSquare,
+  CheckCircle2,
+  AlertCircle,
+  Info,
+  XCircle,
+  Loader2,
 } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
 import coolPotato from '@/assets/cool.svg?url';
@@ -131,11 +136,14 @@ const menuItems = [
 ];
 
 export function DashboardLayout({ children }) {
-  const { user, logout, loading } = useAuthStore();
+  const { user, logout, loading, token } = useAuthStore();
   const location = useLocation();
 
   const potatoMascots = [coolPotato];
   const [currentPotato, setCurrentPotato] = useState(0);
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [loadingNotifications, setLoadingNotifications] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -143,6 +151,146 @@ export function DashboardLayout({ children }) {
     }, 3000); // Change potato every 3 seconds
     return () => clearInterval(interval);
   }, []);
+
+  // Fetch notifications
+  const fetchNotifications = async () => {
+    if (!token) return;
+    
+    try {
+      setLoadingNotifications(true);
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/notification/my?limit=10`,
+        {
+          method: 'GET',
+          headers: {
+            accept: 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        console.error('Failed to fetch notifications:', response.status, errorData);
+        throw new Error(errorData.message || 'Failed to fetch notifications');
+      }
+
+      const data = await response.json();
+      console.log('Notifications response:', data);
+      
+      if (data.success) {
+        setNotifications(data.data.notifications || []);
+        setUnreadCount(data.data.unreadCount || 0);
+      } else {
+        console.error('Notification fetch unsuccessful:', data);
+      }
+    } catch (error) {
+      console.error('Error fetching notifications:', error);
+      toast.error('Failed to load notifications', {
+        description: error.message || 'Please try again later',
+      });
+    } finally {
+      setLoadingNotifications(false);
+    }
+  };
+
+  // Fetch unread count
+  const fetchUnreadCount = async () => {
+    if (!token) return;
+    
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/notification/unread-count`,
+        {
+          method: 'GET',
+          headers: {
+            accept: 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success) {
+          setUnreadCount(data.data.unreadCount || 0);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching unread count:', error);
+    }
+  };
+
+  // Mark notification as read
+  const markAsRead = async (notificationId) => {
+    if (!token) return;
+    
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/notification/${notificationId}/read`,
+        {
+          method: 'PATCH',
+          headers: {
+            accept: 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.ok) {
+        // Update local state
+        setNotifications((prev) =>
+          prev.map((notif) =>
+            notif._id === notificationId
+              ? { ...notif, read: true, readAt: new Date() }
+              : notif
+          )
+        );
+        setUnreadCount((prev) => Math.max(0, prev - 1));
+      }
+    } catch (error) {
+      console.error('Error marking notification as read:', error);
+    }
+  };
+
+  // Mark all as read
+  const markAllAsRead = async () => {
+    if (!token) return;
+    
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/notification/read-all`,
+        {
+          method: 'PATCH',
+          headers: {
+            accept: 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.ok) {
+        setNotifications((prev) =>
+          prev.map((notif) => ({ ...notif, read: true, readAt: new Date() }))
+        );
+        setUnreadCount(0);
+        toast.success('All notifications marked as read');
+      }
+    } catch (error) {
+      console.error('Error marking all as read:', error);
+      toast.error('Failed to mark all as read');
+    }
+  };
+
+  // Fetch notifications on mount and when token changes
+  useEffect(() => {
+    if (token) {
+      fetchNotifications();
+      // Poll for unread count every 30 seconds
+      const interval = setInterval(fetchUnreadCount, 30000);
+      return () => clearInterval(interval);
+    }
+  }, [token]);
 
   const shareLinks = useMemo(
     () => [
@@ -465,20 +613,122 @@ export function DashboardLayout({ children }) {
                     variant='ghost'
                     size='icon'
                     className='h-12 w-12 bg-white hover:bg-[#FEF18C] border-[3px] border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-0.5 hover:translate-y-0.5 transition-all duration-200 relative cursor-pointer'
+                    onClick={fetchNotifications}
                   >
                     <Bell className='w-5 h-5 text-black' />
                     {/* Notification Badge */}
-                    <span className='absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 border-[2px] border-black rounded-full'></span>
+                    {unreadCount > 0 && (
+                      <span className='absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 border-[2px] border-black rounded-full'></span>
+                    )}
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
-                  className='w-80 bg-white border-[4px] border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] p-3'
+                  className='w-96 bg-white border-[4px] border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] p-0 max-h-[500px] overflow-hidden flex flex-col'
                   align='end'
                   side='bottom'
                 >
-                  <div className='p-2'>
-                    <p className='text-sm font-black text-black uppercase'>Notifications 🔔</p>
-                    <p className='text-xs text-black/60 mt-1'>No new notifications</p>
+                  {/* Header */}
+                  <div className='p-3 border-b-[2px] border-black flex items-center justify-between'>
+                    <div className='flex items-center gap-2'>
+                      <Bell className='w-4 h-4 text-black' />
+                      <p className='text-sm font-black text-black uppercase'>Notifications</p>
+                      {unreadCount > 0 && (
+                        <span className='text-xs font-black bg-red-500 text-white px-2 py-0.5 rounded-full border-[2px] border-black'>
+                          {unreadCount}
+                        </span>
+                      )}
+                    </div>
+                    {unreadCount > 0 && (
+                      <Button
+                        variant='ghost'
+                        size='sm'
+                        onClick={markAllAsRead}
+                        className='h-6 px-2 text-xs font-bold hover:bg-[#FEF18C] border-[2px] border-black'
+                      >
+                        Mark all read
+                      </Button>
+                    )}
+                  </div>
+
+                  {/* Notifications List */}
+                  <div className='overflow-y-auto flex-1'>
+                    {loadingNotifications ? (
+                      <div className='p-6 flex items-center justify-center'>
+                        <Loader2 className='w-5 h-5 animate-spin text-black' />
+                      </div>
+                    ) : notifications.length === 0 ? (
+                      <div className='p-6 text-center'>
+                        <Bell className='w-8 h-8 mx-auto mb-2 text-black/40' />
+                        <p className='text-xs text-black/60 font-bold'>No new notifications</p>
+                      </div>
+                    ) : (
+                      <div className='divide-y-[2px] divide-black'>
+                        {notifications.map((notification) => {
+                          const getTypeIcon = () => {
+                            switch (notification.type) {
+                              case 'success':
+                                return <CheckCircle2 className='w-4 h-4 text-green-600' />;
+                              case 'warning':
+                                return <AlertCircle className='w-4 h-4 text-yellow-600' />;
+                              case 'error':
+                                return <XCircle className='w-4 h-4 text-red-600' />;
+                              default:
+                                return <Info className='w-4 h-4 text-blue-600' />;
+                            }
+                          };
+
+                          const getTypeColor = () => {
+                            switch (notification.type) {
+                              case 'success':
+                                return 'bg-green-50 border-green-200';
+                              case 'warning':
+                                return 'bg-yellow-50 border-yellow-200';
+                              case 'error':
+                                return 'bg-red-50 border-red-200';
+                              default:
+                                return 'bg-blue-50 border-blue-200';
+                            }
+                          };
+
+                          return (
+                            <div
+                              key={notification._id}
+                              className={`p-3 hover:bg-[#FEF18C]/30 transition-colors cursor-pointer ${
+                                !notification.read ? 'bg-[#FEF18C]/20' : ''
+                              }`}
+                              onClick={() => !notification.read && markAsRead(notification._id)}
+                            >
+                              <div className='flex items-start gap-2'>
+                                <div className={`mt-0.5 p-1 border-[2px] border-black rounded-sm ${getTypeColor()}`}>
+                                  {getTypeIcon()}
+                                </div>
+                                <div className='flex-1 min-w-0'>
+                                  <div className='flex items-start justify-between gap-2'>
+                                    <p className='text-xs font-black text-black leading-tight'>
+                                      {notification.title}
+                                    </p>
+                                    {!notification.read && (
+                                      <div className='w-2 h-2 bg-red-500 border border-black rounded-full flex-shrink-0 mt-1'></div>
+                                    )}
+                                  </div>
+                                  <p className='text-xs text-black/70 mt-1 leading-tight'>
+                                    {notification.message}
+                                  </p>
+                                  <p className='text-[10px] text-black/50 mt-1'>
+                                    {new Date(notification.createdAt).toLocaleDateString('en-US', {
+                                      month: 'short',
+                                      day: 'numeric',
+                                      hour: '2-digit',
+                                      minute: '2-digit',
+                                    })}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
                   </div>
                 </DropdownMenuContent>
               </DropdownMenu>
