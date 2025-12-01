@@ -25,7 +25,11 @@ import {
   Plus,
   MoreHorizontal,
   Settings,
-  Loader2
+  Loader2,
+  Crown,
+  Star,
+  Sparkles,
+  Lock
 } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
 import { toast } from 'sonner';
@@ -37,6 +41,7 @@ export function ProfileContent() {
   const [newSocialPlatform, setNewSocialPlatform] = useState('');
   const [newSocialUrl, setNewSocialUrl] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const isPro = user?.subscription_status === 'pro';
   const [formData, setFormData] = useState({
     firstName: user?.firstName || '',
     lastName: user?.lastName || '',
@@ -151,9 +156,21 @@ export function ProfileContent() {
         email: formData.email,
         phone: formData.phone,
         socials: formData.socials.filter(social => social.url.trim() !== ''), // Only include socials with URLs
-        image: formData.image ? { src: formData.image } : undefined,
-        banner_image: formData.banner_image ? { src: formData.banner_image } : undefined,
       };
+
+      // Only allow image/banner updates for pro users
+      if (isPro) {
+        updateData.image = formData.image ? { src: formData.image } : undefined;
+        updateData.banner_image = formData.banner_image ? { src: formData.banner_image } : undefined;
+      } else {
+        // For non-pro users, keep existing images or don't update
+        if (user?.image?.src) {
+          updateData.image = { src: user.image.src };
+        }
+        if (user?.banner_image?.src) {
+          updateData.banner_image = { src: user.banner_image.src };
+        }
+      }
 
       console.log('Saving profile:', updateData);
       
@@ -315,14 +332,30 @@ export function ProfileContent() {
 
             <div className="relative z-10">
               <div className="flex items-center justify-between mb-4">
-                <span className="text-[10px] font-black text-black uppercase tracking-widest bg-white px-2 py-1 border-[2px] border-black">
-                  📷 PROFILE IMAGES
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-black text-black uppercase tracking-widest bg-white px-2 py-1 border-[2px] border-black">
+                    📷 PROFILE IMAGES
+                  </span>
+                  {isPro && (
+                    <div className="flex items-center gap-1 bg-gradient-to-br from-[#FFD700] via-[#FFA500] to-[#FFD700] border-[2px] border-black px-2 py-1 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                      <Crown className="w-3 h-3 text-black" />
+                      <span className="text-[8px] font-black text-black uppercase">PRO</span>
+                    </div>
+                  )}
+                </div>
                 <Camera className="w-5 h-5 text-black" />
               </div>
               <div className="space-y-6">
                 <div className="space-y-2">
-                  <Label className="text-xs font-black text-black">Profile Picture</Label>
+                  <div className="flex items-center gap-2">
+                    <Label className="text-xs font-black text-black">Profile Picture</Label>
+                    {!isPro && (
+                      <div className="flex items-center gap-1 bg-gray-200 border-[2px] border-black px-1.5 py-0.5 rounded">
+                        <Lock className="w-3 h-3 text-black" />
+                        <span className="text-[8px] font-black text-black uppercase">PRO</span>
+                      </div>
+                    )}
+                  </div>
                   <div className="flex items-center gap-4">
                     <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center overflow-hidden border-[4px] border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
                       {formData.image ? (
@@ -336,12 +369,40 @@ export function ProfileContent() {
                       )}
                     </div>
                     <div className="flex-1">
-                      {isEditing ? (
+                      {isEditing && isPro ? (
                         <ImageUpload
                           value={formData.image}
                           onChange={handleImageChange}
                           className="max-w-xs"
                         />
+                      ) : isEditing && !isPro ? (
+                        <div className="space-y-2">
+                          <div className="text-sm text-black/70 font-medium">
+                            {formData.image ? 'Profile image set' : 'No profile image'}
+                          </div>
+                          <div className="bg-[#FEF18C] border-[3px] border-black p-3 rounded-lg shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+                            <div className="flex items-center gap-2 mb-2">
+                              <Lock className="w-4 h-4 text-black" />
+                              <span className="text-xs font-black text-black">Pro Feature</span>
+                            </div>
+                            <p className="text-xs text-black/80 font-medium mb-2">
+                              Upgrade to Pro to customize your profile picture and banner!
+                            </p>
+                            <Button
+                              onClick={() => {
+                                // Scroll to top or trigger pro dialog if available
+                                toast.info('💎 Upgrade to Pro', {
+                                  description: 'Go to your account settings to upgrade to Pro.',
+                                  duration: 4000,
+                                });
+                              }}
+                              className="h-auto bg-black hover:bg-black/80 text-white font-black text-xs px-3 py-2 border-[2px] border-black shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] hover:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] hover:translate-x-0.5 hover:translate-y-0.5 transition-all duration-200"
+                            >
+                              <Star className="w-3 h-3 mr-1" />
+                              Upgrade to Pro
+                            </Button>
+                          </div>
+                        </div>
                       ) : (
                         <div className="text-sm text-black/70 font-medium">
                           {formData.image ? 'Profile image set' : 'No profile image'}
@@ -352,7 +413,15 @@ export function ProfileContent() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-xs font-black text-black">Banner Image</Label>
+                  <div className="flex items-center gap-2">
+                    <Label className="text-xs font-black text-black">Banner Image</Label>
+                    {!isPro && (
+                      <div className="flex items-center gap-1 bg-gray-200 border-[2px] border-black px-1.5 py-0.5 rounded">
+                        <Lock className="w-3 h-3 text-black" />
+                        <span className="text-[8px] font-black text-black uppercase">PRO</span>
+                      </div>
+                    )}
+                  </div>
                   <div className="w-full h-24 bg-white rounded-lg flex items-center justify-center overflow-hidden border-[3px] border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
                     {formData.banner_image ? (
                       <img
@@ -364,12 +433,34 @@ export function ProfileContent() {
                       <div className="text-black/70 text-sm font-medium">No banner image</div>
                     )}
                   </div>
-                  {isEditing && (
+                  {isEditing && isPro ? (
                     <ImageUpload
                       value={formData.banner_image}
                       onChange={handleBannerImageChange}
                     />
-                  )}
+                  ) : isEditing && !isPro ? (
+                    <div className="bg-[#FEF18C] border-[3px] border-black p-3 rounded-lg shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Lock className="w-4 h-4 text-black" />
+                        <span className="text-xs font-black text-black">Pro Feature</span>
+                      </div>
+                      <p className="text-xs text-black/80 font-medium mb-2">
+                        Upgrade to Pro to customize your profile picture and banner!
+                      </p>
+                      <Button
+                        onClick={() => {
+                          toast.info('💎 Upgrade to Pro', {
+                            description: 'Go to your account settings to upgrade to Pro.',
+                            duration: 4000,
+                          });
+                        }}
+                        className="h-auto bg-black hover:bg-black/80 text-white font-black text-xs px-3 py-2 border-[2px] border-black shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] hover:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] hover:translate-x-0.5 hover:translate-y-0.5 transition-all duration-200"
+                      >
+                        <Star className="w-3 h-3 mr-1" />
+                        Upgrade to Pro
+                      </Button>
+                    </div>
+                  ) : null}
                 </div>
               </div>
             </div>

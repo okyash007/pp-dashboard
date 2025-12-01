@@ -7,10 +7,11 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { FileText, Bell, Smartphone, Play, MessageCircle } from "lucide-react";
+import { FileText, Bell, Smartphone, Play, MessageCircle, Crown, Sparkles, Lock } from "lucide-react";
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import { useAuthStore } from "../stores/authStore";
+import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { ExternalLink } from "lucide-react";
 import BlocksEditor from "./overlay/BlocksEditor";
@@ -273,6 +274,14 @@ export function OverviewContent() {
     );
   }
   if (blockType === "media_share") {
+    if (user?.subscription_status !== "pro") {
+      toast.info("💎 Upgrade to Pro", {
+        description: "Media Share is a Pro feature. Upgrade to unlock it!",
+        duration: 4000,
+      });
+      setSearchParams({});
+      return null;
+    }
     return (
       <MediaShareBlockEditor
         block={blocks.find((block) => block.type === "tip")}
@@ -436,23 +445,42 @@ export function OverviewContent() {
           </div>
         </div>
 
-        {/* Tip's Reply Tile */}
+        {/* Media Share Tile */}
         <div className="relative group flex flex-col min-h-0">
           <div
-            onClick={() => setSearchParams({ block_type: "media_share" })}
-            className="relative h-full bg-white border-[3px] border-black p-1.5 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-0.5 hover:translate-y-0.5 transition-all duration-200 flex flex-col overflow-hidden"
+            onClick={() => {
+              if (user?.subscription_status !== "pro") {
+                toast.info("💎 Upgrade to Pro", {
+                  description: "Media Share is a Pro feature. Upgrade to unlock it!",
+                  duration: 4000,
+                });
+                return;
+              }
+              setSearchParams({ block_type: "media_share" });
+            }}
+            className={`relative h-full bg-white border-[3px] border-black p-1.5 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-0.5 hover:translate-y-0.5 transition-all duration-200 flex flex-col overflow-hidden ${
+              user?.subscription_status !== "pro" ? "opacity-75" : ""
+            }`}
           >
             <div className="flex items-start justify-between mb-1.5">
               <div className="flex-1 min-w-0">
-                <h3 className="text-base font-black text-black mb-0.5 leading-tight">
-                  Tip's reply
-                </h3>
+                <div className="flex items-center gap-1.5 mb-0.5">
+                  <h3 className="text-base font-black text-black leading-tight">
+                    Media Share
+                  </h3>
+                  {user?.subscription_status !== "pro" && (
+                    <div className="flex items-center gap-1 bg-gray-200 border-[2px] border-black px-1.5 py-0.5 rounded">
+                      <Lock className="w-3 h-3 text-black" />
+                      <span className="text-[8px] font-black text-black uppercase">PRO</span>
+                    </div>
+                  )}
+                </div>
                 <p className="text-[9px] text-gray-600 leading-tight">
-                  Now! your fans can reply to each other's tips by tipping.
+                  Share videos and media when your fans tip you!
                 </p>
               </div>
               <div className="w-7 h-7 bg-[#828BF8] border-[2px] border-black flex items-center justify-center shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] flex-shrink-0 ml-1">
-                <MessageCircle className="w-3.5 h-3.5 text-white" />
+                <Play className="w-3.5 h-3.5 text-white" />
               </div>
             </div>
 

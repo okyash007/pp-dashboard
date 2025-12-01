@@ -8,6 +8,8 @@ import {
   Info,
   Volume2,
   Play,
+  Lock,
+  Star,
 } from "lucide-react";
 import LiquidRenderer from "../LiquidRenderer";
 import { Label } from "@/components/ui/label";
@@ -24,6 +26,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { toast } from "sonner";
 
 export const dummyTipBata = {
   visitor_name: "Rachit Yadav",
@@ -273,6 +276,14 @@ const TipBlockEditor = ({ block, setBlock }) => {
       return;
     }
 
+    if (user?.subscription_status !== "pro") {
+      toast.info("💎 Upgrade to Pro", {
+        description: "Text-to-speech is a Pro feature. Upgrade to unlock it!",
+        duration: 4000,
+      });
+      return;
+    }
+
     setIsPlayingTTS(true);
     try {
       const testText = dummyTipBata.message || "This is a test of the text to speech feature.";
@@ -472,15 +483,39 @@ const TipBlockEditor = ({ block, setBlock }) => {
               <Label className="text-xs font-bold text-gray-500">
                 Background Image
               </Label>
-              <ImageUpload
-                value={block.data.background_image}
-                onChange={(imageUrl) => {
-                  setBlock({
-                    ...block,
-                    data: { ...block.data, background_image: imageUrl },
-                  });
-                }}
-              />
+              {user?.subscription_status === "pro" ? (
+                <ImageUpload
+                  value={block.data.background_image}
+                  onChange={(imageUrl) => {
+                    setBlock({
+                      ...block,
+                      data: { ...block.data, background_image: imageUrl },
+                    });
+                  }}
+                />
+              ) : (
+                <div className="bg-[#FEF18C] border-[3px] border-black p-3 rounded-lg shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Lock className="w-4 h-4 text-black" />
+                    <span className="text-xs font-black text-black">Pro Feature</span>
+                  </div>
+                  <p className="text-xs text-black/80 font-medium mb-2">
+                    Upgrade to Pro to add custom background images to your tip overlays!
+                  </p>
+                  <Button
+                    onClick={() => {
+                      toast.info("💎 Upgrade to Pro", {
+                        description: "Go to your account settings to upgrade to Pro.",
+                        duration: 4000,
+                      });
+                    }}
+                    className="h-auto bg-black hover:bg-black/80 text-white font-black text-xs px-3 py-2 border-[2px] border-black shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] hover:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] hover:translate-x-0.5 hover:translate-y-0.5 transition-all duration-200"
+                  >
+                    <Star className="w-3 h-3 mr-1" />
+                    Upgrade to Pro
+                  </Button>
+                </div>
+              )}
             </div>
             <div className="space-y-3 pt-2 bg-white rounded-lg p-2 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
               <div className="flex items-center justify-between">
@@ -576,55 +611,91 @@ const TipBlockEditor = ({ block, setBlock }) => {
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-3 pt-2 bg-white rounded-lg p-3 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-teal-400 rounded-lg flex items-center justify-center border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                    <Volume2 className="h-4 w-4 text-white" strokeWidth={2.5} />
+            {user?.subscription_status === "pro" ? (
+              <div className="space-y-3 pt-2 bg-white rounded-lg p-3 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-teal-400 rounded-lg flex items-center justify-center border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                      <Volume2 className="h-4 w-4 text-white" strokeWidth={2.5} />
+                    </div>
+                    <Label className="text-xs font-bold text-gray-700">
+                      Text to Speech Voice
+                    </Label>
                   </div>
-                  <Label className="text-xs font-bold text-gray-700">
-                    Text to Speech Voice
-                  </Label>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleTestTTS}
+                    disabled={isPlayingTTS}
+                    className="h-7 px-2.5 bg-gradient-to-br from-green-400 to-teal-400 hover:from-green-500 hover:to-teal-500 text-white border-2 border-black rounded-md shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-0.5 hover:translate-y-0.5 transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <Play className="h-3 w-3" strokeWidth={2.5} />
+                  </Button>
                 </div>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={handleTestTTS}
-                  disabled={isPlayingTTS}
-                  className="h-7 px-2.5 bg-gradient-to-br from-green-400 to-teal-400 hover:from-green-500 hover:to-teal-500 text-white border-2 border-black rounded-md shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-0.5 hover:translate-y-0.5 transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+                <Select
+                  value={block.data.textToSpeechTemplate || "shimmer"}
+                  onValueChange={(value) => {
+                    setBlock({
+                      ...block,
+                      data: {
+                        ...block.data,
+                        textToSpeechTemplate: value,
+                      },
+                    });
+                  }}
                 >
-                  <Play className="h-3 w-3" strokeWidth={2.5} />
-                </Button>
+                  <SelectTrigger className="w-full h-9 bg-white border-2 border-black rounded-md shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-0.5 hover:translate-y-0.5 transition-all duration-150 font-semibold text-sm">
+                    <SelectValue placeholder="Select a voice" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                    {textToSpeechTemplates.map((template) => (
+                      <SelectItem
+                        key={template}
+                        value={template}
+                        className="font-medium cursor-pointer hover:bg-green-50 focus:bg-green-50"
+                      >
+                        <span className="capitalize">{template}</span>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
-              <Select
-                value={block.data.textToSpeechTemplate || "shimmer"}
-                onValueChange={(value) => {
-                  setBlock({
-                    ...block,
-                    data: {
-                      ...block.data,
-                      textToSpeechTemplate: value,
-                    },
-                  });
-                }}
-              >
-                <SelectTrigger className="w-full h-9 bg-white border-2 border-black rounded-md shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-0.5 hover:translate-y-0.5 transition-all duration-150 font-semibold text-sm">
-                  <SelectValue placeholder="Select a voice" />
-                </SelectTrigger>
-                <SelectContent className="bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-                  {textToSpeechTemplates.map((template) => (
-                    <SelectItem
-                      key={template}
-                      value={template}
-                      className="font-medium cursor-pointer hover:bg-green-50 focus:bg-green-50"
-                    >
-                      <span className="capitalize">{template}</span>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            ) : (
+              <div className="space-y-3 pt-2 bg-white rounded-lg p-3 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-teal-400 rounded-lg flex items-center justify-center border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                      <Volume2 className="h-4 w-4 text-white" strokeWidth={2.5} />
+                    </div>
+                    <Label className="text-xs font-bold text-gray-700">
+                      Text to Speech Voice
+                    </Label>
+                  </div>
+                </div>
+                <div className="bg-[#FEF18C] border-[3px] border-black p-3 rounded-lg shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Lock className="w-4 h-4 text-black" />
+                    <span className="text-xs font-black text-black">Pro Feature</span>
+                  </div>
+                  <p className="text-xs text-black/80 font-medium mb-2">
+                    Upgrade to Pro to use text-to-speech voices for your tip notifications!
+                  </p>
+                  <Button
+                    onClick={() => {
+                      toast.info("💎 Upgrade to Pro", {
+                        description: "Go to your account settings to upgrade to Pro.",
+                        duration: 4000,
+                      });
+                    }}
+                    className="h-auto bg-black hover:bg-black/80 text-white font-black text-xs px-3 py-2 border-[2px] border-black shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] hover:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] hover:translate-x-0.5 hover:translate-y-0.5 transition-all duration-200"
+                  >
+                    <Star className="w-3 h-3 mr-1" />
+                    Upgrade to Pro
+                  </Button>
+                </div>
+              </div>
+            )}
             <div className="space-y-3">
               <div className="bg-white rounded-lg p-3 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                 <div className="flex items-center justify-between mb-3">
