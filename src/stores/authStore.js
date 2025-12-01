@@ -219,4 +219,17 @@ export const useAuthStore = create((set, get) => ({
       throw error
     }
   },
+
+  // Update subscription status (frontend only, no backend call)
+  updateSubscriptionStatus: (status) => {
+    const { user } = get()
+    if (user) {
+      set({
+        user: {
+          ...user,
+          subscription_status: status,
+        },
+      })
+    }
+  },
 }))

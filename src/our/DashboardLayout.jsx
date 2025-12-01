@@ -60,6 +60,8 @@ import coolPotato from "@/assets/cool.svg?url";
 import { Copy, ExternalLinkIcon } from "lucide-react";
 import { toast } from "sonner";
 import triggerRazorpaySubscription from "../utils/razorpaySubscription";
+import { SubscriptionModalProvider } from "@/contexts/SubscriptionModalContext";
+import { CelebrationAnimation } from "@/components/CelebrationAnimation";
 
 // Custom Sidebar Trigger with Arrow Icons
 function CustomSidebarTrigger() {
@@ -149,7 +151,7 @@ const menuItems = [
 ];
 
 export function DashboardLayout({ children }) {
-  const { user, logout, loading, token } = useAuthStore();
+  const { user, logout, loading, token, updateSubscriptionStatus } = useAuthStore();
   const location = useLocation();
 
   const potatoMascots = [coolPotato];
@@ -158,6 +160,7 @@ export function DashboardLayout({ children }) {
   const [unreadCount, setUnreadCount] = useState(0);
   const [loadingNotifications, setLoadingNotifications] = useState(false);
   const [proDialogOpen, setProDialogOpen] = useState(false);
+  const [showCelebration, setShowCelebration] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -1032,12 +1035,10 @@ export function DashboardLayout({ children }) {
                           "Subscription payment successful:",
                           response
                         );
-                        toast.success(
-                          "Your Pro subscription will soon be activated",
-                          {
-                            duration: 5000,
-                          }
-                        );
+                        // Update subscription status to pro in frontend state
+                        updateSubscriptionStatus("pro");
+                        // Show celebration animation
+                        setShowCelebration(true);
                       },
                     });
                   }}
@@ -1062,6 +1063,13 @@ export function DashboardLayout({ children }) {
             </DialogContent>
           </Dialog>
 
+          {/* Celebration Animation */}
+          {showCelebration && (
+            <CelebrationAnimation
+              onComplete={() => setShowCelebration(false)}
+            />
+          )}
+
           <div className="flex-1 p-6 relative overflow-auto bg-[#FEF18C]/15">
             <style>{`
               @keyframes dashboardStripeMove {
@@ -1078,7 +1086,9 @@ export function DashboardLayout({ children }) {
                 animation: "dashboardStripeMove 25s linear infinite",
               }}
             ></div>
-            <div className="relative z-10 max-md:hidden">{children}</div>
+            <SubscriptionModalProvider setProDialogOpen={setProDialogOpen}>
+              <div className="relative z-10 max-md:hidden">{children}</div>
+            </SubscriptionModalProvider>
           </div>
         </main>
       </div>

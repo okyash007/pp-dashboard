@@ -9,7 +9,6 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
   Select,
@@ -22,7 +21,6 @@ import { Card } from "@/components/ui/card";
 import { useAuthStore } from "@/stores/authStore";
 import { toast } from "sonner";
 import {
-  Plus,
   MessageSquare,
   Eye,
   Clock,
@@ -30,6 +28,7 @@ import {
   XCircle,
   AlertCircle,
   Loader2,
+  Plus,
 } from "lucide-react";
 
 export function OutboundSupportContent() {
@@ -37,7 +36,6 @@ export function OutboundSupportContent() {
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedTicket, setSelectedTicket] = useState(null);
-  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
@@ -123,7 +121,6 @@ export function OutboundSupportContent() {
         toast.success("Ticket created successfully!", {
           description: "Your support ticket has been submitted",
         });
-        setIsCreateDialogOpen(false);
         setFormData({ title: "", description: "" });
         fetchTickets(); // Refresh the list
       }
@@ -227,104 +224,85 @@ export function OutboundSupportContent() {
 
   return (
     <div className="space-y-6">
-      {/* Header with Create Button */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-black text-black uppercase tracking-tight">
-            Outbound Support
-          </h2>
-          <p className="text-sm text-black/60 mt-1">
-            Create and manage your support tickets
+      {/* Header */}
+      <div>
+        <h2 className="text-2xl font-black text-black uppercase tracking-tight">
+          Outbound Support
+        </h2>
+        <p className="text-sm text-black/60 mt-1">
+          Create and manage your support tickets
+        </p>
+      </div>
+
+      {/* Create Ticket Card */}
+      <Card className="p-4 border-[3px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-white">
+        <div className="mb-3">
+          <h3 className="text-lg font-black uppercase text-black">
+            Create Support Ticket
+          </h3>
+          <p className="text-xs text-black/60 mt-0.5">
+            Describe your issue and we'll get back to you as soon as possible
           </p>
         </div>
-        <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-          <DialogTrigger asChild>
-            <Button
-              className="bg-[#828BF8] hover:bg-[#828BF8]/80 text-white font-black border-[3px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 transition-all duration-200"
+        <form onSubmit={handleCreateTicket} className="space-y-3">
+          <div className="space-y-1.5">
+            <Label htmlFor="title" className="text-xs font-black uppercase">
+              Title *
+            </Label>
+            <Input
+              id="title"
+              value={formData.title}
+              onChange={(e) =>
+                setFormData({ ...formData, title: e.target.value })
+              }
+              placeholder="Brief description of your issue"
+              className="border-[2px] border-black text-sm"
+              required
+              maxLength={200}
+            />
+            <p className="text-xs text-black/60">
+              {formData.title.length}/200 characters
+            </p>
+          </div>
+          <div className="space-y-1.5">
+            <Label
+              htmlFor="description"
+              className="text-xs font-black uppercase"
             >
-              <Plus className="w-4 h-4 mr-2" />
-              Create Ticket
+              Description *
+            </Label>
+            <Textarea
+              id="description"
+              value={formData.description}
+              onChange={(e) =>
+                setFormData({ ...formData, description: e.target.value })
+              }
+              placeholder="Provide detailed information about your issue..."
+              className="border-[2px] border-black min-h-[100px] text-sm"
+              required
+            />
+          </div>
+          <div className="flex justify-end pt-1">
+            <Button
+              type="submit"
+              className="bg-[#828BF8] hover:bg-[#828BF8]/80 text-white font-black border-[3px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 transition-all duration-200"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Creating...
+                </>
+              ) : (
+                <>
+                  <Plus className="w-4 h-4 mr-2" />
+                  Create Ticket
+                </>
+              )}
             </Button>
-          </DialogTrigger>
-          <DialogContent className="bg-white border-[4px] border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] max-w-2xl">
-            <DialogHeader>
-              <DialogTitle className="text-2xl font-black uppercase">
-                Create Support Ticket
-              </DialogTitle>
-              <DialogDescription>
-                Describe your issue and we'll get back to you as soon as possible
-              </DialogDescription>
-            </DialogHeader>
-            <form onSubmit={handleCreateTicket} className="space-y-4 mt-4">
-              <div className="space-y-2">
-                <Label htmlFor="title" className="text-sm font-black uppercase">
-                  Title *
-                </Label>
-                <Input
-                  id="title"
-                  value={formData.title}
-                  onChange={(e) =>
-                    setFormData({ ...formData, title: e.target.value })
-                  }
-                  placeholder="Brief description of your issue"
-                  className="border-[2px] border-black"
-                  required
-                  maxLength={200}
-                />
-                <p className="text-xs text-black/60">
-                  {formData.title.length}/200 characters
-                </p>
-              </div>
-              <div className="space-y-2">
-                <Label
-                  htmlFor="description"
-                  className="text-sm font-black uppercase"
-                >
-                  Description *
-                </Label>
-                <Textarea
-                  id="description"
-                  value={formData.description}
-                  onChange={(e) =>
-                    setFormData({ ...formData, description: e.target.value })
-                  }
-                  placeholder="Provide detailed information about your issue..."
-                  className="border-[2px] border-black min-h-[150px]"
-                  required
-                />
-              </div>
-              <div className="flex justify-end gap-3 pt-4">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setIsCreateDialogOpen(false)}
-                  className="border-[2px] border-black"
-                  disabled={isSubmitting}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  type="submit"
-                  className="bg-[#828BF8] hover:bg-[#828BF8]/80 text-white font-black border-[3px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Creating...
-                    </>
-                  ) : (
-                    <>
-                      <Plus className="w-4 h-4 mr-2" />
-                      Create Ticket
-                    </>
-                  )}
-                </Button>
-              </div>
-            </form>
-          </DialogContent>
-        </Dialog>
-      </div>
+          </div>
+        </form>
+      </Card>
 
       {/* Tickets List */}
       {loading ? (
@@ -337,16 +315,9 @@ export function OutboundSupportContent() {
           <h3 className="text-xl font-black text-black mb-2">
             No Tickets Yet
           </h3>
-          <p className="text-sm text-black/60 mb-6">
-            Create your first support ticket to get started
+          <p className="text-sm text-black/60">
+            Create your first support ticket using the form above
           </p>
-          <Button
-            onClick={() => setIsCreateDialogOpen(true)}
-            className="bg-[#828BF8] hover:bg-[#828BF8]/80 text-white font-black border-[3px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Create Ticket
-          </Button>
         </Card>
       ) : (
         <div className="grid gap-4">

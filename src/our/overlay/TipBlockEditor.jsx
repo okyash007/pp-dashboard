@@ -27,6 +27,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
+import { useSubscriptionModal } from "@/contexts/SubscriptionModalContext";
 
 export const dummyTipBata = {
   visitor_name: "Rachit Yadav",
@@ -247,6 +248,7 @@ const TEMPLATE_PREVIEW_SCALE = 0.45;
 const TipBlockEditor = ({ block, setBlock }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const { user, token } = useAuthStore();
+  const { setProDialogOpen } = useSubscriptionModal();
   const [isPlayingTTS, setIsPlayingTTS] = useState(false);
 
   const handleGoBack = () => {
@@ -277,10 +279,7 @@ const TipBlockEditor = ({ block, setBlock }) => {
     }
 
     if (user?.subscription_status !== "pro") {
-      toast.info("💎 Upgrade to Pro", {
-        description: "Text-to-speech is a Pro feature. Upgrade to unlock it!",
-        duration: 4000,
-      });
+      setProDialogOpen(true);
       return;
     }
 
@@ -504,10 +503,7 @@ const TipBlockEditor = ({ block, setBlock }) => {
                   </p>
                   <Button
                     onClick={() => {
-                      toast.info("💎 Upgrade to Pro", {
-                        description: "Go to your account settings to upgrade to Pro.",
-                        duration: 4000,
-                      });
+                      setProDialogOpen(true);
                     }}
                     className="h-auto bg-black hover:bg-black/80 text-white font-black text-xs px-3 py-2 border-[2px] border-black shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] hover:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] hover:translate-x-0.5 hover:translate-y-0.5 transition-all duration-200"
                   >
@@ -683,10 +679,7 @@ const TipBlockEditor = ({ block, setBlock }) => {
                   </p>
                   <Button
                     onClick={() => {
-                      toast.info("💎 Upgrade to Pro", {
-                        description: "Go to your account settings to upgrade to Pro.",
-                        duration: 4000,
-                      });
+                      setProDialogOpen(true);
                     }}
                     className="h-auto bg-black hover:bg-black/80 text-white font-black text-xs px-3 py-2 border-[2px] border-black shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] hover:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] hover:translate-x-0.5 hover:translate-y-0.5 transition-all duration-200"
                   >

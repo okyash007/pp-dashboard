@@ -12,6 +12,7 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import { useAuthStore } from "../stores/authStore";
 import { toast } from "sonner";
+import { useSubscriptionModal } from "@/contexts/SubscriptionModalContext";
 import { Card } from "@/components/ui/card";
 import { ExternalLink } from "lucide-react";
 import BlocksEditor from "./overlay/BlocksEditor";
@@ -209,6 +210,7 @@ function useDynamicScale() {
 
 export function OverviewContent() {
   const { token, user } = useAuthStore();
+  const { setProDialogOpen } = useSubscriptionModal();
   const [searchParams, setSearchParams] = useSearchParams(); // Get query params (e.g., ?key=value)
   const [isLinksEditorOpen, setIsLinksEditorOpen] = useState(false);
   const [blocks, setBlocks] = useState(null);
@@ -275,10 +277,7 @@ export function OverviewContent() {
   }
   if (blockType === "media_share") {
     if (user?.subscription_status !== "pro") {
-      toast.info("💎 Upgrade to Pro", {
-        description: "Media Share is a Pro feature. Upgrade to unlock it!",
-        duration: 4000,
-      });
+      setProDialogOpen(true);
       setSearchParams({});
       return null;
     }
@@ -450,10 +449,7 @@ export function OverviewContent() {
           <div
             onClick={() => {
               if (user?.subscription_status !== "pro") {
-                toast.info("💎 Upgrade to Pro", {
-                  description: "Media Share is a Pro feature. Upgrade to unlock it!",
-                  duration: 4000,
-                });
+                setProDialogOpen(true);
                 return;
               }
               setSearchParams({ block_type: "media_share" });

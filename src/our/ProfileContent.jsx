@@ -33,9 +33,11 @@ import {
 } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
 import { toast } from 'sonner';
+import { useSubscriptionModal } from '@/contexts/SubscriptionModalContext';
 
 export function ProfileContent() {
   const { user, token, updateProfile } = useAuthStore();
+  const { setProDialogOpen } = useSubscriptionModal();
   const [isEditing, setIsEditing] = useState(false);
   const [showAddSocialDialog, setShowAddSocialDialog] = useState(false);
   const [newSocialPlatform, setNewSocialPlatform] = useState('');
@@ -390,11 +392,7 @@ export function ProfileContent() {
                             </p>
                             <Button
                               onClick={() => {
-                                // Scroll to top or trigger pro dialog if available
-                                toast.info('💎 Upgrade to Pro', {
-                                  description: 'Go to your account settings to upgrade to Pro.',
-                                  duration: 4000,
-                                });
+                                setProDialogOpen(true);
                               }}
                               className="h-auto bg-black hover:bg-black/80 text-white font-black text-xs px-3 py-2 border-[2px] border-black shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] hover:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] hover:translate-x-0.5 hover:translate-y-0.5 transition-all duration-200"
                             >
@@ -449,10 +447,7 @@ export function ProfileContent() {
                       </p>
                       <Button
                         onClick={() => {
-                          toast.info('💎 Upgrade to Pro', {
-                            description: 'Go to your account settings to upgrade to Pro.',
-                            duration: 4000,
-                          });
+                          setProDialogOpen(true);
                         }}
                         className="h-auto bg-black hover:bg-black/80 text-white font-black text-xs px-3 py-2 border-[2px] border-black shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] hover:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] hover:translate-x-0.5 hover:translate-y-0.5 transition-all duration-200"
                       >
