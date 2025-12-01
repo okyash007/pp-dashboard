@@ -169,4 +169,54 @@ export const useAuthStore = create((set, get) => ({
     const { token } = get()
     return !!token
   },
+
+  // Forgot Password - Send reset email
+  forgotPassword: async (email) => {
+    try {
+      const encodedEmail = encodeURIComponent(email)
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/creator/forgot-password/${encodedEmail}`, {
+        method: 'GET',
+        headers: {
+          'accept': 'application/json',
+        },
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.message || 'Failed to send reset email')
+      }
+
+      const data = await response.json()
+      return data
+    } catch (error) {
+      throw error
+    }
+  },
+
+  // Reset Password - Update password with reset token
+  resetPassword: async (resetToken, newPassword) => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/creator/password`, {
+        method: 'PUT',
+        headers: {
+          'accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${resetToken}`,
+        },
+        body: JSON.stringify({
+          newPassword,
+        }),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.message || 'Failed to reset password')
+      }
+
+      const data = await response.json()
+      return data
+    } catch (error) {
+      throw error
+    }
+  },
 }))

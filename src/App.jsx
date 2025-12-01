@@ -7,6 +7,7 @@ import {
 import { useEffect } from "react";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import { ProtectedRoute } from "./our/ProtectedRoute";
 import { DashboardLayout } from "./our/DashboardLayout";
 import { OverviewContent } from "./our/OverviewContent";
@@ -120,6 +121,7 @@ function App() {
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route
           path="/onboarding"
           element={
