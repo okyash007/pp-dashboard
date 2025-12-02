@@ -73,7 +73,7 @@ export const dummyMediaShareBlocks = [
       '    <div class="relative z-10 p-5 space-y-3">',
       "      {% if youtube_video_key %}",
       '      <div class="youtube-video-container w-full border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] aspect-video mb-6">',
-      '        <iframe class="w-full h-full" src="https://www.youtube.com/embed/{{ youtube_video_key }}?autoplay=1&mute=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>',
+      '        <iframe class="w-full h-full" src="https://www.youtube.com/embed/{{ youtube_video_key }}?autoplay=1&mute=1&controls=0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>',
       "      </div>",
       "      {% endif %}",
       '      <div class="flex items-center gap-3">',
@@ -211,7 +211,7 @@ const MediaShareBlockEditor = ({ block, setBlock, isSaving, hasUnsavedChanges, l
           <div className="w-[400px]">
             <LiquidRenderer
               html={block.template}
-              data={{ ...dummyMediaShareData, data: block.data }}
+              data={{ ...dummyMediaShareData, data: {...block.data, mute: true} }}
               className={block.className}
               style={block.style}
             />
