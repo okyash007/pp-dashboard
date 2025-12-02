@@ -43,8 +43,7 @@ import {
   Palette,
   HelpCircle,
   FileText,
-  ArrowBigLeft,
-  ArrowBigRight,
+  Menu,
   MessageSquare,
   CheckCircle2,
   AlertCircle,
@@ -63,22 +62,21 @@ import triggerRazorpaySubscription from "../utils/razorpaySubscription";
 import { SubscriptionModalProvider } from "@/contexts/SubscriptionModalContext";
 import { CelebrationAnimation } from "@/components/CelebrationAnimation";
 
-// Custom Sidebar Trigger with Arrow Icons
+// Custom Sidebar Trigger with Hamburger Icon
 function CustomSidebarTrigger() {
-  const { toggleSidebar, state } = useSidebar();
-  const isOpen = state === "expanded";
+  const { toggleSidebar } = useSidebar();
 
   return (
     <button
       onClick={toggleSidebar}
-      className="p-0 bg-transparent border-0 cursor-pointer flex items-center justify-center hover:scale-110 transition-all duration-200"
+      className="p-2 bg-gradient-to-br from-[#FEF18C] via-[#FEF18C] to-[#FEF18C]/90 border-[3px] border-black rounded-lg cursor-pointer flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-0.5 hover:translate-y-0.5 hover:scale-105 transition-all duration-200 group relative overflow-hidden"
       aria-label="Toggle Sidebar"
     >
-      {isOpen ? (
-        <ArrowBigLeft className="h-6 w-6 fill-[#FEF18C] stroke-black stroke-2 drop-shadow-[3px_3px_0px_rgba(0,0,0,1)] hover:drop-shadow-[4px_4px_0px_rgba(0,0,0,1)] transition-all duration-200" />
-      ) : (
-        <ArrowBigRight className="h-6 w-6 fill-[#FEF18C] stroke-black stroke-2 drop-shadow-[3px_3px_0px_rgba(0,0,0,1)] hover:drop-shadow-[4px_4px_0px_rgba(0,0,0,1)] transition-all duration-200" />
-      )}
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-500"></div>
+      <Menu 
+        className="h-5 w-5 relative z-10 text-black group-hover:scale-110 transition-transform duration-300" 
+        strokeWidth={3}
+      />
       <span className="sr-only">Toggle Sidebar</span>
     </button>
   );
