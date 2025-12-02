@@ -854,14 +854,10 @@ export function DashboardLayout({ children }) {
                   <div
                     className="flex items-center justify-end gap-3 p-3 border-[2px] border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] relative overflow-hidden"
                     style={{
-                      backgroundImage: user?.banner_image?.src
-                        ? `url(${user.banner_image.src})`
-                        : "none",
+                      backgroundImage: `url(${user?.banner_image?.src || 'https://res.cloudinary.com/dspp405ug/image/upload/v1764622261/banner_e8ehdk.jpg'})`,
                       backgroundSize: "cover",
                       backgroundPosition: "center",
-                      backgroundColor: user?.banner_image?.src
-                        ? "transparent"
-                        : "#6E77F6",
+                      backgroundColor: "transparent",
                     }}
                   >
                     <div className="absolute inset-0 bg-[#6E77F6]/20"></div>

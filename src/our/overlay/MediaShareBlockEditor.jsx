@@ -4,10 +4,12 @@ import { useAuthStore } from "../../stores/authStore";
 import { ArrowLeft, RotateCcw, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Label as LabelComponent } from "@/components/ui/label";
 import ColorPicker from "../../components/ColorPicker";
 import ImageUpload from "../../components/ImageUpload";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
+import { Save, CheckCircle2 } from "lucide-react";
 import LiquidRenderer from "../LiquidRenderer";
 
 export const dummyMediaShareData = {
@@ -77,7 +79,7 @@ export const dummyMediaShareBlocks = [
       '      <div class="flex items-center gap-3">',
       '        <div class="relative flex-shrink-0">',
       '          <div class="w-16 h-16 border-[4px] border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] bg-white overflow-hidden" style="box-shadow: 6px 6px 0px 0px rgba(0,0,0,1), 0 0 0 2px white;">',
-      '            <img src="{{ avatar_url | default: data.tipper_image | default: \'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgR9r41BZgGUwrhGFOdxexfLGxklkEyPVxNg&s\' }}" alt="{{ display_name | default: \'Potato Pal\' }}" class="w-full h-full object-cover" style="filter: contrast(1.05) saturate(1.1);" />',
+      '            <img src="{{ avatar_url | default: data.tipper_image | default: \'https://res.cloudinary.com/dspp405ug/image/upload/v1764621993/poo_1_a7oemg.png\' }}" alt="{{ display_name | default: \'Potato Pal\' }}" class="w-full h-full object-cover" style="filter: contrast(1.05) saturate(1.1);" />',
       "          </div>",
       '          <div class="rotate-12 badge-pulse absolute -top-1 -right-1 bg-[#AAD6B8] text-black text-[8px] font-black px-1.5 py-0.5 border-[3px] border-black uppercase tracking-wider" style="box-shadow: 3px 3px 0px rgba(0,0,0,0.8);">Fresh Tip!</div>',
       "        </div>",
@@ -115,7 +117,7 @@ export const dummyMediaShareBlocks = [
   },
 ];
 
-const MediaShareBlockEditor = ({ block, setBlock }) => {
+const MediaShareBlockEditor = ({ block, setBlock, isSaving, hasUnsavedChanges, lastSaved, onSave, autoSaveEnabled, onAutoSaveToggle }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const { user } = useAuthStore();
 
@@ -215,47 +217,89 @@ const MediaShareBlockEditor = ({ block, setBlock }) => {
             />
           </div>
         </div>
-        <div className="w-[300px] p-2">
-          <div className="space-y-4">
-            <div className="space-y-3 pt-2 bg-white rounded-lg p-2 border-2 border-black">
-              <div className="flex items-center justify-between">
-                <Label className="text-xs font-bold text-gray-500">
-                  Media Share Time
-                </Label>
-                <div className="flex items-center gap-1.5 px-2.5 py-1 bg-gray-200 rounded-md border border-gray-300">
-                  <span className="text-sm font-semibold text-gray-700">
-                    {block.data.media_share_time || 10}
-                  </span>
-                  <span className="text-xs text-gray-500 font-medium">sec</span>
+        <div className="flex flex-col">
+          {/* Editor Content - Inside white border box, scrollable */}
+          <div className="w-[300px] flex-1 overflow-y-auto bg-[#F5F5F55a] border-4 border-white rounded-xl p-4">
+            <div className="space-y-4">
+              <div className="space-y-3 pt-2 bg-white rounded-lg p-2 border-2 border-black">
+                <div className="flex items-center justify-between">
+                  <Label className="text-xs font-bold text-gray-500">
+                    Media Share Time
+                  </Label>
+                  <div className="flex items-center gap-1.5 px-2.5 py-1 bg-gray-200 rounded-md border border-gray-300">
+                    <span className="text-sm font-semibold text-gray-700">
+                      {block.data.media_share_time || 10}
+                    </span>
+                    <span className="text-xs text-gray-500 font-medium">sec</span>
+                  </div>
+                </div>
+                <div className="px-1">
+                  <Slider
+                    min={1}
+                    max={60}
+                    step={1}
+                    value={[block.data.media_share_time || 10]}
+                    onValueChange={(value) => {
+                      setBlock({
+                        ...block,
+                        data: { ...block.data, media_share_time: value[0] },
+                      });
+                    }}
+                    className="w-full"
+                  />
+                </div>
+                <div className="flex justify-between text-[10px] text-gray-400 px-1">
+                  <span>1s</span>
+                  <span>60s</span>
                 </div>
               </div>
-              <div className="px-1">
-                <Slider
-                  min={1}
-                  max={60}
-                  step={1}
-                  value={[block.data.media_share_time || 10]}
-                  onValueChange={(value) => {
-                    setBlock({
-                      ...block,
-                      data: { ...block.data, media_share_time: value[0] },
-                    });
-                  }}
-                  className="w-full"
-                />
-              </div>
-              <div className="flex justify-between text-[10px] text-gray-400 px-1">
-                <span>1s</span>
-                <span>60s</span>
+              <div className="mt-4 p-3 bg-yellow-50 border-2 border-yellow-300 rounded-lg">
+                <p className="text-xs font-semibold text-yellow-800 mb-1">
+                  ⚠️ Copyright Notice
+                </p>
+                <p className="text-[10px] text-yellow-700 leading-relaxed">
+                  Please avoid increasing media share time by 14 seconds for copyright reasons.
+                </p>
               </div>
             </div>
-            <div className="mt-4 p-3 bg-yellow-50 border-2 border-yellow-300 rounded-lg">
-              <p className="text-xs font-semibold text-yellow-800 mb-1">
-                ⚠️ Copyright Notice
-              </p>
-              <p className="text-[10px] text-yellow-700 leading-relaxed">
-                Please avoid increasing media share time by 14 seconds for copyright reasons.
-              </p>
+          </div>
+          {/* Save Controls Section - Outside white border box, sticky at bottom */}
+          <div className="sticky bottom-0 z-10 mt-3">
+            <div className="bg-white rounded-lg border-2 border-black p-3 space-y-3">
+              <div className="flex items-center justify-between">
+                <LabelComponent className="text-sm font-bold text-gray-700">Overlay</LabelComponent>
+                <div className="flex items-center gap-2">
+                  {lastSaved && !hasUnsavedChanges && (
+                    <div className="flex items-center gap-1 px-2 py-1 bg-green-100 border border-green-300 rounded">
+                      <CheckCircle2 className="w-3 h-3 text-green-600" />
+                      <span className="text-[10px] font-semibold text-green-700">Saved</span>
+                    </div>
+                  )}
+                  {hasUnsavedChanges && (
+                    <span className="text-[10px] font-black text-orange-600 bg-orange-100 px-2 py-1 border border-orange-300 rounded uppercase tracking-wide">
+                      Unsaved
+                    </span>
+                  )}
+                  <Button
+                    onClick={onSave}
+                    disabled={isSaving || !hasUnsavedChanges}
+                    className="bg-[#828BF8] hover:bg-[#828BF8]/80 text-white font-black text-xs px-3 py-1.5 h-auto border-[2px] border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-0.5 hover:translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-x-0 disabled:hover:translate-y-0"
+                  >
+                    <Save className="w-3 h-3 mr-1.5" />
+                    {isSaving ? 'Saving...' : 'Save'}
+                  </Button>
+                </div>
+              </div>
+              <div className="flex items-center justify-between pt-2 border-t border-gray-200">
+                <LabelComponent htmlFor="auto-save-media" className="text-xs font-semibold text-gray-600 cursor-pointer">
+                  Auto Save
+                </LabelComponent>
+                <Switch
+                  id="auto-save-media"
+                  checked={autoSaveEnabled}
+                  onCheckedChange={onAutoSaveToggle}
+                />
+              </div>
             </div>
           </div>
         </div>

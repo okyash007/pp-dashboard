@@ -10,10 +10,12 @@ import {
   Play,
   Lock,
   Star,
+  Save,
 } from "lucide-react";
 import LiquidRenderer from "../LiquidRenderer";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { Label as LabelComponent } from "@/components/ui/label";
 import ColorPicker from "../../components/ColorPicker";
 import ImageUpload from "../../components/ImageUpload";
 import { Slider } from "@/components/ui/slider";
@@ -127,7 +129,7 @@ export const dummyTipBlocks = [
       '      <div class="flex items-center gap-3">',
       '        <div class="relative flex-shrink-0">',
       '          <div class="w-16 h-16 border-[4px] border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] bg-white overflow-hidden" style="box-shadow: 6px 6px 0px 0px rgba(0,0,0,1), 0 0 0 2px white;">',
-      '            <img src="{{ avatar_url | default: data.tipper_image | default: \'https://res.cloudinary.com/dspp405ug/image/upload/v1763574851/rachitroo_bonkxz.jpg\' }}" alt="{{ display_name | default: \'Potato Pal\' }}" class="w-full h-full object-cover" style="filter: contrast(1.05) saturate(1.1);" />',
+      '            <img src="{{ avatar_url | default: data.tipper_image | default: \'https://res.cloudinary.com/dspp405ug/image/upload/v1764621993/poo_1_a7oemg.png\' }}" alt="{{ display_name | default: \'Potato Pal\' }}" class="w-full h-full object-cover" style="filter: contrast(1.05) saturate(1.1);" />',
       "          </div>",
       '          <div class="rotate-12 badge-pulse absolute -top-1 -right-1 bg-[#AAD6B8] text-black text-[8px] font-black px-1.5 py-0.5 border-[3px] border-black uppercase tracking-wider" style="box-shadow: 3px 3px 0px rgba(0,0,0,0.8);">Fresh Tip!</div>',
       "        </div>",
@@ -210,9 +212,14 @@ export const dummyTipBlocks = [
       "  .amount-gradient { background: linear-gradient(90deg, rgba(130, 139, 248, 0.1), rgba(130, 139, 248, 0.3), rgba(130, 139, 248, 0.1)); background-size: 200% 100%; animation: gradientShift 3s ease infinite; }",
       "</style>",
       "<div class=\"tip-card-2 bg-white p-4 rounded-lg border-2 border-black w-full shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]\" style=\"{% if data.background_image %}background-image: url('{{ data.background_image }}'); background-size: cover; background-position: center; background-repeat: no-repeat;{% else %}background-color: {{ data.primary_color | default: '#FFFFFF' }};{% endif %}\">",
+      "      {% if youtube_video_key %}",
+      '      <div class="youtube-video-container w-full border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] aspect-video mb-3 rounded-md overflow-hidden">',
+      '        <iframe class="w-full h-full" src="https://www.youtube.com/embed/{{ youtube_video_key }}?autoplay=1&mute=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>',
+      "      </div>",
+      "      {% endif %}",
       '  <div class="flex items-center gap-3 mb-3">',
       '    <div class="flex-shrink-0 border-2 border-black rounded-full p-2 bg-[#828BF8] avatar-float">',
-      '      <img src="{{ avatar_url | default: data.tipper_image | default: \'https://res.cloudinary.com/dspp405ug/image/upload/v1763575358/download_woag77.png\' }}" alt="{{ display_name | default: \'Tipper\' }}" class="w-12 h-12 rounded-full object-contain" />',
+      '      <img src="{{ avatar_url | default: data.tipper_image | default: \'https://res.cloudinary.com/dspp405ug/image/upload/v1764621993/poo_1_a7oemg.png\' }}" alt="{{ display_name | default: \'Tipper\' }}" class="w-12 h-12 rounded-full object-contain" />',
       "    </div>",
       '    <div class="flex-1 min-w-0">',
       '      <p class="text-sm font-semibold mb-1 name-slide" style="color: {{ data.text_color | default: \'#000000\' }};">',
@@ -241,15 +248,103 @@ export const dummyTipBlocks = [
     ].join("\n"),
     style: {},
   },
+  {
+    type: "tip",
+    name: "tip-card-11",
+    data: {
+      primary_color: "#4A3C4A",
+      secondary_color: "#3A2D3A",
+      text_color: "#E8E8E8",
+      message_text_color: "#FFFFFF",
+      background_image: null,
+    },
+    className: "p-4",
+    template: [
+      "<style>",
+      "  @keyframes slideInUp {",
+      "    0% { transform: translateY(30px); opacity: 0; }",
+      "    100% { transform: translateY(0); opacity: 1; }",
+      "  }",
+      "  @keyframes fadeIn {",
+      "    0% { opacity: 0; }",
+      "    100% { opacity: 1; }",
+      "  }",
+      "  @keyframes scaleIn {",
+      "    0% { transform: scale(0.9); opacity: 0; }",
+      "    100% { transform: scale(1); opacity: 1; }",
+      "  }",
+      "  @keyframes patternMove {",
+      "    0% { background-position: 0 0; }",
+      "    100% { background-position: 20px 20px; }",
+      "  }",
+      "  @keyframes subtleGlow {",
+      "    0%, 100% { box-shadow: 0 0 0 rgba(232, 232, 232, 0); }",
+      "    50% { box-shadow: 0 0 15px rgba(232, 232, 232, 0.2); }",
+      "  }",
+      "  .tip-card-11 { animation: slideInUp 0.6s ease-out; position: relative; overflow: hidden; }",
+      "  .pattern-bg { background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(0, 0, 0, 0.1) 10px, rgba(0, 0, 0, 0.1) 20px), repeating-linear-gradient(-45deg, transparent, transparent 10px, rgba(0, 0, 0, 0.1) 10px, rgba(0, 0, 0, 0.1) 20px); background-size: 40px 40px; animation: patternMove 20s linear infinite; }",
+      "  .avatar-fade { animation: fadeIn 0.8s ease-out 0.2s both; }",
+      "  .content-slide { animation: slideInUp 0.7s ease-out 0.3s both; }",
+      "  .amount-scale { animation: scaleIn 0.6s ease-out 0.5s both; }",
+      "  .message-overlay { animation: slideInUp 0.8s ease-out 0.6s both; }",
+      "  .avatar-glow { animation: subtleGlow 3s ease-in-out infinite; }",
+      "</style>",
+      "<div class=\"tip-card-11 w-full rounded-xl overflow-hidden relative\" style=\"background: linear-gradient(to bottom, {{ data.primary_color | default: '#4A3C4A' }}, {{ data.secondary_color | default: '#3A2D3A' }}); {% if data.background_image %}background-image: url('{{ data.background_image }}'); background-size: cover; background-position: center; background-repeat: no-repeat;{% endif %}\">",
+      '  <div class="pattern-bg absolute inset-0 opacity-30 pointer-events-none"></div>',
+      '  <div class="relative z-10 p-5 space-y-4">',
+      "      {% if youtube_video_key %}",
+      '      <div class="youtube-video-container w-full border border-white/20 shadow-lg aspect-video mb-4 rounded-lg overflow-hidden backdrop-blur-sm" style="background: rgba(0, 0, 0, 0.2);">',
+      '        <iframe class="w-full h-full" src="https://www.youtube.com/embed/{{ youtube_video_key }}?autoplay=1&mute=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>',
+      "      </div>",
+      "      {% endif %}",
+      '    <div class="flex items-center gap-4 content-slide">',
+      '      <div class="flex-shrink-0 avatar-fade">',
+      '        <div class="w-16 h-16 rounded-full overflow-hidden border-2 border-white/30 avatar-glow" style="background-color: {{ data.secondary_color | default: \'#3A2D3A\' }};">',
+      '          <img src="{{ avatar_url | default: data.tipper_image | default: \'https://res.cloudinary.com/dspp405ug/image/upload/v1764621993/poo_1_a7oemg.png\' }}" alt="{{ display_name | default: \'Tipper\' }}" class="w-full h-full object-cover" />',
+      "        </div>",
+      "      </div>",
+      '      <div class="flex-1 min-w-0">',
+      '        <p class="text-base font-semibold mb-2" style="color: {{ data.text_color | default: \'#E8E8E8\' }};">',
+      "          {{ display_name | default: visitor_name }}",
+      "        </p>",
+      '        <div class="inline-flex items-center gap-1.5 amount-scale">',
+      '          <span class="text-xl font-bold" style="color: {{ data.text_color | default: \'#E8E8E8\' }};">',
+      "            {% if currency == 'INR' %}₹{% elsif currency == 'USD' %}${% elsif currency == 'EUR' %}€{% elsif currency == 'GBP' %}£{% else %}{{ currency }}{% endif %}",
+      "          </span>",
+      '          <span class="text-2xl font-bold" style="color: {{ data.text_color | default: \'#E8E8E8\' }};">',
+      "            {{ amount | divided_by: 100 | round: 2 }}",
+      "          </span>",
+      "        </div>",
+      "      </div>",
+      "    </div>",
+      "    {% if message and message != '' %}",
+      '    <div class="message-overlay mt-4">',
+      '      <div class="p-4 rounded-xl backdrop-blur-sm" style="background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.1);">',
+      '        <p class="text-lg font-bold leading-relaxed" style="color: {{ data.message_text_color | default: \'#FFFFFF\' }};">',
+      "          {{ message }}",
+      "        </p>",
+      "      </div>",
+      "    </div>",
+      "    {% endif %}",
+      "  </div>",
+      "</div>",
+    ].join("\n"),
+    style: {},
+  },
 ];
 
 const TEMPLATE_PREVIEW_SCALE = 0.45;
 
-const TipBlockEditor = ({ block, setBlock }) => {
+const TipBlockEditor = ({ block, setBlock, isSaving, hasUnsavedChanges, lastSaved, onSave, autoSaveEnabled, onAutoSaveToggle }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const { user, token } = useAuthStore();
   const { setProDialogOpen } = useSubscriptionModal();
   const [isPlayingTTS, setIsPlayingTTS] = useState(false);
+
+  const isProTemplate = (templateName) => {
+    const templateIndex = dummyTipBlocks.findIndex(t => t.name === templateName);
+    return templateIndex >= 2; // First 2 templates (index 0, 1) are free, rest are pro
+  };
 
   const handleGoBack = () => {
     // Remove all URL parameters by navigating to the current pathname
@@ -367,26 +462,48 @@ const TipBlockEditor = ({ block, setBlock }) => {
         </div>
       </div>
       <div className="flex h-full">
-        <div className=" w-[200px] pt-8 overflow-y-auto p-2">
-          {dummyTipBlocks.map((blockh) => {
+        <div className=" w-[200px] pt-12 overflow-y-auto">
+          {dummyTipBlocks.map((blockh, index) => {
+            const templateIsPro = index >= 2; // First 2 templates (index 0, 1) are free, rest are pro
+            const isProUser = user?.subscription_status === "pro";
+            const isLocked = templateIsPro && !isProUser;
+
             return (
               <div
                 key={blockh.type}
-                className={`p-2 relative h-fit`}
-                onClick={() =>
+                className={`relative h-fit ${isLocked ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                onClick={() => {
+                  if (isLocked) {
+                    setProDialogOpen(true);
+                    return;
+                  }
+                  // Additional safeguard: check if template is pro before setting
+                  if (isProTemplate(blockh.name) && !isProUser) {
+                    setProDialogOpen(true);
+                    return;
+                  }
                   setBlock({
                     ...block,
                     template: blockh.template,
+                    data: { ...blockh.data },
                     name: blockh.name,
-                  })
-                }
+                  });
+                }}
               >
                 {block.name === blockh.name && (
-                  <div className="absolute top-2 left-2 z-10">
+                  <div className="absolute top-0 left-0 z-10">
                     <CheckCircle2
                       className="h-6 w-6 text-green-500 bg-white rounded-full border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
                       strokeWidth={3}
                     />
+                  </div>
+                )}
+                {isLocked && (
+                  <div className="absolute inset-0 z-20 bg-black/30 backdrop-blur-[1px] rounded-lg flex flex-col items-center justify-center gap-2 pointer-events-none">
+                    <Lock className="h-8 w-8 text-white drop-shadow-lg" strokeWidth={2.5} />
+                    <div className="bg-[#FEF18C] border-2 border-black px-3 py-1 rounded-md shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                      <span className="text-xs font-black text-black uppercase">Pro</span>
+                    </div>
                   </div>
                 )}
                 <div
@@ -420,8 +537,10 @@ const TipBlockEditor = ({ block, setBlock }) => {
             />
           </div>
         </div>
-        <div className="w-[300px] p-4 overflow-y-auto bg-[#F5F5F55a] border-4 border-white rounded-xl">
-          <div className="space-y-4">
+        <div className="flex flex-col">
+          {/* Editor Content - Inside white border box, scrollable */}
+          <div className="w-[300px] flex-1 overflow-y-auto bg-[#F5F5F55a] border-4 border-white rounded-xl p-4">
+            <div className="space-y-4">
             <div className="space-y-2">
               <Label className="text-xs font-bold text-gray-500">
                 Primary Color
@@ -763,6 +882,46 @@ const TipBlockEditor = ({ block, setBlock }) => {
                     </div>
                   </div>
                 </div>
+              </div>
+            </div>
+          </div>
+          </div>
+          {/* Save Controls Section - Outside white border box, sticky at bottom */}
+          <div className="sticky bottom-0 z-10 mt-3">
+            <div className="bg-white rounded-lg border-2 border-black p-3 space-y-3">
+              <div className="flex items-center justify-between">
+                <LabelComponent className="text-sm font-bold text-gray-700">Overlay</LabelComponent>
+                <div className="flex items-center gap-2">
+                  {lastSaved && !hasUnsavedChanges && (
+                    <div className="flex items-center gap-1 px-2 py-1 bg-green-100 border border-green-300 rounded">
+                      <CheckCircle2 className="w-3 h-3 text-green-600" />
+                      <span className="text-[10px] font-semibold text-green-700">Saved</span>
+                    </div>
+                  )}
+                  {hasUnsavedChanges && (
+                    <span className="text-[10px] font-black text-orange-600 bg-orange-100 px-2 py-1 border border-orange-300 rounded uppercase tracking-wide">
+                      Unsaved
+                    </span>
+                  )}
+                  <Button
+                    onClick={onSave}
+                    disabled={isSaving || !hasUnsavedChanges}
+                    className="bg-[#828BF8] hover:bg-[#828BF8]/80 text-white font-black text-xs px-3 py-1.5 h-auto border-[2px] border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-0.5 hover:translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-x-0 disabled:hover:translate-y-0"
+                  >
+                    <Save className="w-3 h-3 mr-1.5" />
+                    {isSaving ? 'Saving...' : 'Save'}
+                  </Button>
+                </div>
+              </div>
+              <div className="flex items-center justify-between pt-2 border-t border-gray-200">
+                <LabelComponent htmlFor="auto-save-overlay" className="text-xs font-semibold text-gray-600 cursor-pointer">
+                  Auto Save
+                </LabelComponent>
+                <Switch
+                  id="auto-save-overlay"
+                  checked={autoSaveEnabled}
+                  onCheckedChange={onAutoSaveToggle}
+                />
               </div>
             </div>
           </div>

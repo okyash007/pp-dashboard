@@ -3,9 +3,13 @@ import TipsEditor from "./TipsEditor";
 import RazorparBtnEditor from "./RazorparBtnEditor";
 import UserFormEditor from "./UserFormEditor";
 
-const TipPageBlocksEditor = ({ blocks, setBlocks }) => {
+const TipPageBlocksEditor = ({ 
+  blocks, 
+  setBlocks
+}) => {
   return (
-    <div className="space-y-3">
+    <div className="space-y-3 p-3">
+      {/* Block Editors */}
       {blocks.map((block) => {
         if (block.type === "tips") {
           return (

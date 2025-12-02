@@ -7,7 +7,9 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { FileText, Bell, Smartphone, Play, MessageCircle, Crown, Sparkles, Lock } from "lucide-react";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { FileText, Bell, Smartphone, Play, MessageCircle, Crown, Sparkles, Lock, Save, CheckCircle2 } from "lucide-react";
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import { useAuthStore } from "../stores/authStore";
@@ -214,17 +216,91 @@ export function OverviewContent() {
   const [searchParams, setSearchParams] = useSearchParams(); // Get query params (e.g., ?key=value)
   const [isLinksEditorOpen, setIsLinksEditorOpen] = useState(false);
   const [blocks, setBlocks] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [lastSaved, setLastSaved] = useState(null);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [autoSaveEnabled, setAutoSaveEnabled] = useState(true);
+  const initialBlocksRef = useRef(null);
+  const debounceTimerRef = useRef(null);
 
   useEffect(() => {
     getOverlay(token).then((data) => {
       setBlocks(data);
+      initialBlocksRef.current = JSON.stringify(data);
     });
   }, [token]);
 
-  useEffect(() => {
+  const saveOverlay = useCallback(async (showToast = false) => {
     if (!blocks || blocks.length === 0) return;
-    updateOverlay(token, { blocks });
-  }, [blocks]);
+    
+    setIsSaving(true);
+    const loadingToastId = showToast ? toast.loading('💾 Saving Overlay...', {
+      description: 'Please wait while we update your overlay.',
+    }) : null;
+
+    try {
+      const result = await updateOverlay(token, { blocks });
+      if (result) {
+        initialBlocksRef.current = JSON.stringify(blocks);
+        setHasUnsavedChanges(false);
+        setLastSaved(new Date());
+        if (showToast) {
+          toast.dismiss(loadingToastId);
+          toast.success('🎉 Overlay Saved!', {
+            description: 'Your overlay has been saved successfully.',
+            duration: 3000,
+          });
+        }
+      } else {
+        throw new Error('Failed to save');
+      }
+    } catch (error) {
+      console.error(error);
+      if (showToast) {
+        toast.dismiss(loadingToastId);
+        toast.error('❌ Save Failed', {
+          description: error.message || 'Something went wrong. Please try again.',
+          duration: 5000,
+        });
+      }
+    } finally {
+      setIsSaving(false);
+    }
+  }, [blocks, token]);
+
+  // Debounced auto-save
+  useEffect(() => {
+    if (!blocks || blocks.length === 0 || !initialBlocksRef.current) return;
+    
+    const currentBlocks = JSON.stringify(blocks);
+    const hasChanges = currentBlocks !== initialBlocksRef.current;
+    setHasUnsavedChanges(hasChanges);
+
+    if (hasChanges && autoSaveEnabled) {
+      // Clear existing timer
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+
+      // Set new timer for auto-save (2 seconds debounce)
+      debounceTimerRef.current = setTimeout(() => {
+        saveOverlay(false);
+      }, 2000);
+    } else if (!autoSaveEnabled && debounceTimerRef.current) {
+      // Clear timer if auto-save is disabled
+      clearTimeout(debounceTimerRef.current);
+    }
+
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, [blocks, saveOverlay, autoSaveEnabled]);
+
+  const handleManualSave = () => {
+    saveOverlay(true);
+  };
 
   // Dynamic scale hooks for each tile - must be called before any conditional returns
   const alertsScale = useDynamicScale();
@@ -248,6 +324,12 @@ export function OverviewContent() {
             prev.map((b) => (b.type === "tip" ? newBlock : b))
           );
         }}
+        isSaving={isSaving}
+        hasUnsavedChanges={hasUnsavedChanges}
+        lastSaved={lastSaved}
+        onSave={handleManualSave}
+        autoSaveEnabled={autoSaveEnabled}
+        onAutoSaveToggle={setAutoSaveEnabled}
       />
     );
   }
@@ -260,6 +342,12 @@ export function OverviewContent() {
             prev.map((b) => (b.type === "leaderboard" ? newBlock : b))
           );
         }}
+        isSaving={isSaving}
+        hasUnsavedChanges={hasUnsavedChanges}
+        lastSaved={lastSaved}
+        onSave={handleManualSave}
+        autoSaveEnabled={autoSaveEnabled}
+        onAutoSaveToggle={setAutoSaveEnabled}
       />
     );
   }
@@ -272,6 +360,12 @@ export function OverviewContent() {
             prev.map((b) => (b.type === "qr_code" ? newBlock : b))
           );
         }}
+        isSaving={isSaving}
+        hasUnsavedChanges={hasUnsavedChanges}
+        lastSaved={lastSaved}
+        onSave={handleManualSave}
+        autoSaveEnabled={autoSaveEnabled}
+        onAutoSaveToggle={setAutoSaveEnabled}
       />
     );
   }
@@ -289,6 +383,12 @@ export function OverviewContent() {
             prev.map((b) => (b.type === "tip" ? newBlock : b))
           );
         }}
+        isSaving={isSaving}
+        hasUnsavedChanges={hasUnsavedChanges}
+        lastSaved={lastSaved}
+        onSave={handleManualSave}
+        autoSaveEnabled={autoSaveEnabled}
+        onAutoSaveToggle={setAutoSaveEnabled}
       />
     );
   }

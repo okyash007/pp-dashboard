@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import ImageUpload from '@/components/ImageUpload';
@@ -50,6 +51,8 @@ export function ProfileContent() {
     username: user?.username || '',
     email: user?.email || '',
     phone: user?.phone || '',
+    display_name: user?.display_name || '',
+    bio: user?.bio || '',
     socials: user?.socials || [],
     image: user?.image?.src || '',
     banner_image: user?.banner_image?.src || '',
@@ -157,6 +160,8 @@ export function ProfileContent() {
         username: formData.username,
         email: formData.email,
         phone: formData.phone,
+        display_name: formData.display_name,
+        bio: formData.bio,
         socials: formData.socials.filter(social => social.url.trim() !== ''), // Only include socials with URLs
       };
 
@@ -209,6 +214,8 @@ export function ProfileContent() {
       username: user?.username || '',
       email: user?.email || '',
       phone: user?.phone || '',
+      display_name: user?.display_name || '',
+      bio: user?.bio || '',
       socials: user?.socials || [],
       image: user?.image?.src || '',
       banner_image: user?.banner_image?.src || '',
@@ -308,6 +315,39 @@ export function ProfileContent() {
                     disabled={!isEditing}
                     className="border-[3px] border-black rounded-lg font-medium bg-white"
                   />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="display_name" className="text-xs font-black text-white">Display Name</Label>
+                  <Input
+                    id="display_name"
+                    value={formData.display_name}
+                    onChange={(e) => handleInputChange('display_name', e.target.value)}
+                    disabled={!isEditing}
+                    placeholder="Your public display name"
+                    maxLength={100}
+                    className="border-[3px] border-black rounded-lg font-medium bg-white"
+                  />
+                  <p className="text-[10px] text-white/70 font-medium">
+                    {formData.display_name.length}/100 characters
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="bio" className="text-xs font-black text-white">Bio</Label>
+                  <Textarea
+                    id="bio"
+                    value={formData.bio}
+                    onChange={(e) => handleInputChange('bio', e.target.value)}
+                    disabled={!isEditing}
+                    placeholder="Tell us about yourself..."
+                    maxLength={500}
+                    rows={4}
+                    className="border-[3px] border-black rounded-lg font-medium bg-white resize-none"
+                  />
+                  <p className="text-[10px] text-white/70 font-medium">
+                    {formData.bio.length}/500 characters
+                  </p>
                 </div>
               </div>
             </div>

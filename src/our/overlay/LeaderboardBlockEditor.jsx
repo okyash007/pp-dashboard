@@ -1,11 +1,13 @@
 import React from "react";
 import LiquidRenderer from "../LiquidRenderer";
 import { Label } from "@/components/ui/label";
+import { Label as LabelComponent } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import ColorPicker from "../../components/ColorPicker";
 import ImageUpload from "../../components/ImageUpload";
+import { Switch } from "@/components/ui/switch";
 import { useSearchParams } from "react-router-dom";
-import { ArrowLeft, ExternalLink, RotateCcw } from "lucide-react";
+import { ArrowLeft, ExternalLink, RotateCcw, Save, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuthStore } from "../../stores/authStore";
 
@@ -318,7 +320,7 @@ export const dummyLeaderboardData = {
   ],
 };
 
-const LeaderboardBlockEditor = ({ block, setBlock }) => {
+const LeaderboardBlockEditor = ({ block, setBlock, isSaving, hasUnsavedChanges, lastSaved, onSave, autoSaveEnabled, onAutoSaveToggle }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const { user } = useAuthStore();
 
@@ -338,7 +340,7 @@ const LeaderboardBlockEditor = ({ block, setBlock }) => {
 
   const handleOpenOverlay = () => {
     if (user?.username) {
-      const overlayUrl = `https://link.apextip.space/overlay/${user.username}?block_type=tip`;
+      const overlayUrl = `https://link.apextip.space/overlay/${user.username}?block_type=leaderboard`;
       window.open(overlayUrl, "_blank", "noopener,noreferrer");
     }
   };
@@ -415,8 +417,10 @@ const LeaderboardBlockEditor = ({ block, setBlock }) => {
           style={block.style}
         />
       </div>
-      <div className="w-[300px] overflow-y-auto p-4 bg-[#F5F5F55a] border-4 border-white rounded-xl">
-        <div className="space-y-4">
+      <div className="flex flex-col">
+        {/* Editor Content - Inside white border box, scrollable */}
+        <div className="w-[300px] flex-1 overflow-y-auto bg-[#F5F5F55a] border-4 border-white rounded-xl p-4">
+          <div className="space-y-4">
           <div className="space-y-2">
             <Label className="text-xs font-bold text-gray-700 uppercase tracking-wide">
               Title
@@ -479,6 +483,46 @@ const LeaderboardBlockEditor = ({ block, setBlock }) => {
               <p className="text-[10px] font-bold text-black uppercase tracking-wide">
                 💡 Each rank gets a unique color automatically!
               </p>
+            </div>
+          </div>
+        </div>
+        </div>
+        {/* Save Controls Section - Outside white border box, sticky at bottom */}
+        <div className="sticky bottom-0 z-10 mt-3">
+          <div className="bg-white rounded-lg border-2 border-black p-3 space-y-3">
+            <div className="flex items-center justify-between">
+              <LabelComponent className="text-sm font-bold text-gray-700">Overlay</LabelComponent>
+              <div className="flex items-center gap-2">
+                {lastSaved && !hasUnsavedChanges && (
+                  <div className="flex items-center gap-1 px-2 py-1 bg-green-100 border border-green-300 rounded">
+                    <CheckCircle2 className="w-3 h-3 text-green-600" />
+                    <span className="text-[10px] font-semibold text-green-700">Saved</span>
+                  </div>
+                )}
+                {hasUnsavedChanges && (
+                  <span className="text-[10px] font-black text-orange-600 bg-orange-100 px-2 py-1 border border-orange-300 rounded uppercase tracking-wide">
+                    Unsaved
+                  </span>
+                )}
+                <Button
+                  onClick={onSave}
+                  disabled={isSaving || !hasUnsavedChanges}
+                  className="bg-[#828BF8] hover:bg-[#828BF8]/80 text-white font-black text-xs px-3 py-1.5 h-auto border-[2px] border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-0.5 hover:translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-x-0 disabled:hover:translate-y-0"
+                >
+                  <Save className="w-3 h-3 mr-1.5" />
+                  {isSaving ? 'Saving...' : 'Save'}
+                </Button>
+              </div>
+            </div>
+            <div className="flex items-center justify-between pt-2 border-t border-gray-200">
+              <LabelComponent htmlFor="auto-save-leaderboard" className="text-xs font-semibold text-gray-600 cursor-pointer">
+                Auto Save
+              </LabelComponent>
+              <Switch
+                id="auto-save-leaderboard"
+                checked={autoSaveEnabled}
+                onCheckedChange={onAutoSaveToggle}
+              />
             </div>
           </div>
         </div>

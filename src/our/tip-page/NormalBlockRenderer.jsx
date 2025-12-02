@@ -4,7 +4,8 @@ import LiquidRenderer from "../LiquidRenderer";
 
 const NormalBlockRenderer = ({ block }) => {
   const { user } = useAuthStore();
-  console.log(user)
+
+  console.log(block.template)
   return (
     <LiquidRenderer
       html={block.template}
