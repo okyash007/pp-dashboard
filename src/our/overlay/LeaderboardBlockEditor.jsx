@@ -340,7 +340,7 @@ const LeaderboardBlockEditor = ({ block, setBlock, isSaving, hasUnsavedChanges, 
 
   const handleOpenOverlay = () => {
     if (user?.username) {
-      const overlayUrl = `https://link.apextip.space/overlay/${user.username}?block_type=leaderboard`;
+      const overlayUrl = `https://link.potatopay.co/overlay/${user.username}?block_type=leaderboard`;
       window.open(overlayUrl, "_blank", "noopener,noreferrer");
     }
   };

@@ -71,9 +71,17 @@ export default function ForgotPasswordPage() {
 
     if (!newErrors.email) {
       try {
-        await forgotPassword(formData.email);
-        setSuccessMessage('If an account with that email exists, a password reset link has been sent.');
-        setFormData({ ...formData, email: '' });
+        const response = await forgotPassword(formData.email);
+        // Display the message from API response
+        const apiMessage = response?.message || 'If an account with that email exists, a password reset link has been sent.';
+        
+        // Check if the message indicates an error (like "Creator not found")
+        if (response?.statusCode === 400 || apiMessage.toLowerCase().includes('not found')) {
+          setApiError(apiMessage);
+        } else {
+          setSuccessMessage(apiMessage);
+          setFormData({ ...formData, email: '' });
+        }
       } catch (error) {
         setApiError(error.message || 'Failed to send reset email. Please try again.');
       }
@@ -100,8 +108,10 @@ export default function ForgotPasswordPage() {
 
     if (!hasErrors) {
       try {
-        await resetPassword(token, formData.password);
-        setSuccessMessage('Password reset successfully! Redirecting to login...');
+        const response = await resetPassword(token, formData.password);
+        // Display the message from API response
+        const apiMessage = response?.message || 'Password reset successfully! Redirecting to login...';
+        setSuccessMessage(apiMessage);
         setTimeout(() => {
           navigate('/login', { replace: true });
         }, 2000);

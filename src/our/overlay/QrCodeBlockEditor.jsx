@@ -19,7 +19,7 @@ export const dummyQrCodeBlocks = [
       qr_code_color: "black",
     },
     template: `
-      <img style="background-color: {{ data.background_color | default: '#ffffff' }}; padding: 10px; border-radius: 10px;" src="https://api.qrserver.com/v1/create-qr-code/?data=https://link.apextip.space/vt/{{ username }}&amp;color={{ data.qr_code_color | remove: '#' }}&amp;bgcolor={{ data.background_color | remove: '#' }}" alt="QR Code" />
+      <img style="background-color: {{ data.background_color | default: '#ffffff' }}; padding: 10px; border-radius: 10px;" src="https://api.qrserver.com/v1/create-qr-code/?data=https://link.potatopay.co/vt/{{ username }}&amp;color={{ data.qr_code_color | remove: '#' }}&amp;bgcolor={{ data.background_color | remove: '#' }}" alt="QR Code" />
       `,
     style: {},
   },
@@ -50,7 +50,7 @@ const QrCodeBlockEditor = ({ block, setBlock, isSaving, hasUnsavedChanges, lastS
 
   const handleOpenOverlay = () => {
     if (user?.username) {
-      const overlayUrl = `https://link.apextip.space/overlay/${user.username}?block_type=qr_code`;
+      const overlayUrl = `https://link.potatopay.co/overlay/${user.username}?block_type=qr_code`;
       window.open(overlayUrl, '_blank', 'noopener,noreferrer');
     }
   };

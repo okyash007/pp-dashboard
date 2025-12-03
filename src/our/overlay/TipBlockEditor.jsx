@@ -362,7 +362,7 @@ const TipBlockEditor = ({ block, setBlock, isSaving, hasUnsavedChanges, lastSave
 
   const handleOpenOverlay = () => {
     if (user?.username) {
-      const overlayUrl = `https://link.apextip.space/overlay/${user.username}?block_type=tip`;
+      const overlayUrl = `https://link.potatopay.co/overlay/${user.username}?block_type=tip`;
       window.open(overlayUrl, "_blank", "noopener,noreferrer");
     }
   };
