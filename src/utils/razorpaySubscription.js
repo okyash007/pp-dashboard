@@ -37,7 +37,7 @@ import { toast } from "sonner";
 export const triggerRazorpaySubscription = (options = {}) => {
   const {
     subscriptionId = "sub_Rm1uh0HJlE4ZEA",
-    key = "rzp_test_RlisDJzfagn5g8",
+    key = import.meta.env.VITE_RAZORPAY_KEY_ID,
     name = "PotatoPay",
     description = "Subscription Payment",
     prefill = {},
