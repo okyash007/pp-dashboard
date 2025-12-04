@@ -359,7 +359,7 @@ const Tips = ({ startDate, endDate, showTipAmounts = true, showFilter = true }) 
                         ) : (
                           <div className='inline-flex items-center gap-1.5 px-2.5 py-1 bg-pink-50/50 border border-pink-200/60 text-pink-700/80 text-xs font-medium'>
                             <XCircle className='h-3 w-3' />
-                            Pending
+                            Unsettled
                           </div>
                         )}
                       </td>
