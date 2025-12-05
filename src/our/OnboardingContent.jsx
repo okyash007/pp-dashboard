@@ -569,38 +569,9 @@ const OnboardingContent = () => {
       title: 'Complete',
       shortTitle: 'Ready',
       icon: CheckCircle,
-      tagline: 'You’re all set. Time to start collecting tips from your fans!',
+      tagline: "You're all set. Time to start collecting tips from your fans!",
       accent: '#FEC4FF',
-      content: (
-        <div className='h-full flex flex-col items-center justify-center text-center gap-8'>
-          <div className='relative'>
-            <div className='w-28 h-28 bg-[#AAD6B8] border-[6px] border-black rounded-3xl flex items-center justify-center shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]'>
-              <CheckCircle className='h-16 w-16 text-black' />
-            </div>
-            <div className='absolute -top-4 -right-4 bg-[#FEF18C] border-[3px] border-black px-4 py-1 text-xs font-black rotate-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]'>
-              DONE!
-            </div>
-          </div>
-          <div className='space-y-3 max-w-lg'>
-            <h3 className='text-3xl font-black text-black tracking-tight uppercase'>
-              Onboarding Complete
-            </h3>
-            <p className='text-base font-semibold text-black/70'>
-              Your identity and payout details look great. Turn on your tip jar, share your link,
-              and let the love (and fries) roll in.
-            </p>
-          </div>
-          <div className='flex flex-col items-center gap-3'>
-            <div className='flex items-center gap-2 text-sm font-black text-black/60 uppercase tracking-widest'>
-              <Share className='h-4 w-4' />
-              Spread the word
-            </div>
-            <p className='text-sm font-semibold text-black/70'>
-              Share your tip page and start getting recognised by your community.
-            </p>
-          </div>
-        </div>
-      ),
+      content: null, // Will be rendered conditionally
     },
   ];
 
@@ -798,7 +769,55 @@ const OnboardingContent = () => {
         <main className='flex-1 overflow-y-auto px-6 py-8 pb-32'>
           <div className='mx-auto flex w-full max-w-5xl flex-col gap-6'>
             <div className='rounded-[32px] border border-black/5 bg-white p-6 shadow-sm'>
-              {steps[currentStep].content}
+              {currentStep === steps.length - 1 ? (
+                user?.approved ? (
+                  <div className='h-full flex flex-col items-center justify-center text-center gap-8'>
+                    <div className='relative'>
+                      <div className='w-28 h-28 bg-[#AAD6B8] border-[6px] border-black rounded-3xl flex items-center justify-center shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]'>
+                        <CheckCircle className='h-16 w-16 text-black' />
+                      </div>
+                      <div className='absolute -top-4 -right-4 bg-[#FEF18C] border-[3px] border-black px-4 py-1 text-xs font-black rotate-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]'>
+                        DONE!
+                      </div>
+                    </div>
+                    <div className='space-y-3 max-w-lg'>
+                      <h3 className='text-3xl font-black text-black tracking-tight uppercase'>
+                        Onboarding Complete
+                      </h3>
+                      <p className='text-xl font-bold text-black/70'>
+                        You are an approved creator now!
+                      </p>
+                      <p className='text-base font-semibold text-black/70'>
+                        Congratulations! Your account has been approved. You can now visit our dashboard and start using all the features.
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className='h-full flex flex-col items-center justify-center text-center gap-8'>
+                    <div className='relative'>
+                      <div className='w-28 h-28 bg-[#FEF18C] border-[6px] border-black rounded-3xl flex items-center justify-center shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]'>
+                        <AlertCircle className='h-16 w-16 text-black' />
+                      </div>
+                      <div className='absolute -top-4 -right-4 bg-[#AAD6B8] border-[3px] border-black px-4 py-1 text-xs font-black rotate-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]'>
+                        PENDING
+                      </div>
+                    </div>
+                    <div className='space-y-3 max-w-lg'>
+                      <h3 className='text-3xl font-black text-black tracking-tight uppercase'>
+                        Onboarding Complete
+                      </h3>
+                      <p className='text-xl font-bold text-black/70'>
+                        Your approval is pending
+                      </p>
+                      <p className='text-base font-semibold text-black/70'>
+                        Our team is verifying your document. We'll notify you once your account has been approved.
+                      </p>
+                    </div>
+                  </div>
+                )
+              ) : (
+                steps[currentStep].content
+              )}
             </div>
           </div>
         </main>
@@ -814,14 +833,16 @@ const OnboardingContent = () => {
               Back
             </Button>
             {currentStep === steps.length - 1 ? (
-              <Button
-                onClick={finishOnboarding}
-                disabled={isSaving}
-                className={`${buttonAccentClass} flex items-center gap-2`}
-              >
-                <CheckCircle className='h-4 w-4' />
-                View dashboard
-              </Button>
+              user?.approved && (
+                <Button
+                  onClick={finishOnboarding}
+                  disabled={isSaving}
+                  className={`${buttonAccentClass} flex items-center gap-2`}
+                >
+                  <CheckCircle className='h-4 w-4' />
+                  View dashboard
+                </Button>
+              )
             ) : (
               <Button
                 onClick={nextStep}
